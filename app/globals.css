@@ -1,0 +1,150 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --c-base: 255 255 255;
+  --c-surface: 255 255 255;
+  --c-cream: 246 246 244;
+  --c-content: 11 11 15;
+  --c-muted: 107 114 128;
+  --c-line: 236 238 241;
+}
+
+.dark {
+  --c-base: 11 11 15;
+  --c-surface: 20 20 25;
+  --c-cream: 22 22 28;
+  --c-content: 231 231 234;
+  --c-muted: 154 154 163;
+  --c-line: 38 38 44;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: rgb(var(--c-content));
+  background: rgb(var(--c-base));
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Placeholder photos are random stock images that can contain blue
+   (skies/water). Force them to black & white so no blue appears anywhere. */
+img {
+  filter: grayscale(1);
+}
+
+/* Kill the default blue text-selection highlight */
+::selection {
+  background-color: #9fe870;
+  color: #163300;
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-container px-5 md:px-8;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-pill px-5 py-3 text-sm font-semibold transition-all;
+  }
+
+  /* Primary button inverts with theme (dark on light, light on dark) */
+  .btn-dark {
+    @apply btn;
+    background-color: rgb(var(--c-content));
+    color: rgb(var(--c-base));
+  }
+  .btn-dark:hover {
+    opacity: 0.88;
+  }
+
+  .btn-light {
+    @apply btn border border-line bg-surface text-content;
+  }
+
+  .btn-brand {
+    @apply btn text-white;
+    background-color: #163300;
+  }
+  .btn-brand:hover {
+    background-color: #0e2400;
+  }
+
+  .btn-accent {
+    @apply btn;
+    background-color: #9fe870;
+    color: #163300;
+  }
+  .btn-accent:hover {
+    background-color: #86d957;
+  }
+
+  .section {
+    @apply py-14 md:py-20;
+  }
+
+  .section-title {
+    @apply text-2xl font-bold tracking-tight md:text-3xl;
+  }
+
+  .chip {
+    @apply inline-flex items-center rounded-pill border border-line bg-surface px-3 py-1 text-xs font-medium text-muted;
+  }
+
+  .link-more {
+    @apply inline-flex items-center gap-1 text-sm font-semibold text-content hover:text-[#163300];
+  }
+}
+
+/* Animated brush-stroke underline (Highlight variant 7) */
+@keyframes brush-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.brush-draw {
+  stroke-dasharray: 340;
+  stroke-dashoffset: 340;
+  animation: brush-draw 0.9s ease-out 0.35s forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .brush-draw {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  will-change: opacity, transform;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
