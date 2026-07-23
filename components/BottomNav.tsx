@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Icon } from "./icons";
 
-const OPEN_EVENT = "swiftmove:open-search";
+const OPEN_EVENT = "phimovers:open-search";
 
 const moreLinks = [
   { label: "Areas", href: "/areas", icon: "mapPin" },

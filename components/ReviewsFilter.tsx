@@ -66,7 +66,7 @@ export default function ReviewsFilter({ reviews }: { reviews: SiteReview[] }) {
               <span className="text-base font-semibold text-muted"> / 5</span>
             </p>
             <p className="text-sm text-muted">
-              {reviews.length} verified reviews
+              {reviews.length} customer reviews
             </p>
           </div>
         </div>

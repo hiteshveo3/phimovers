@@ -8,6 +8,8 @@ import BackToTop from "@/components/blog/BackToTop";
 import ServiceFaq from "@/components/ServiceFaq";
 import ReviewCard, { type Review } from "@/components/ReviewCard";
 import Reveal from "@/components/Reveal";
+import SoftImage from "@/components/SoftImage";
+import QuoteForm from "@/components/QuoteForm";
 import { Icon } from "@/components/icons";
 import {
   CALL_HREF,
@@ -24,6 +26,7 @@ import {
 } from "@/lib/data";
 import { areas, comboHref } from "@/lib/areas";
 import { buildServiceCopy, relatedServices } from "@/lib/services";
+import { offerFromPrice } from "@/lib/seo";
 
 const SITE = SITE_URL;
 
@@ -390,66 +393,20 @@ export default function ServiceDetailPage({
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "LocalBusiness",
-        "@id": `${SITE}/#business`,
-        name: "Phi Movers",
-        url: SITE,
-        telephone: PHONE_E164,
-        image: `${SITE}/logo.png`,
-        priceRange: "££",
-        address: {
-          "@type": "PostalAddress",
-          streetAddress: "71–75 Shelton Street, Covent Garden",
-          addressLocality: "London",
-          postalCode: "WC2H 9JQ",
-          addressCountry: "GB",
-        },
-        areaServed: {
-          "@type": "City",
-          name: "London",
-        },
-        openingHoursSpecification: [
-          {
-            "@type": "OpeningHoursSpecification",
-            dayOfWeek: [
-              "Monday",
-              "Tuesday",
-              "Wednesday",
-              "Thursday",
-              "Friday",
-              "Saturday",
-              "Sunday",
-            ],
-            opens: "07:00",
-            closes: "21:00",
-          },
-        ],
-      },
-      {
         "@type": "Service",
         name: item.title,
         description: item.desc,
         serviceType: item.title,
-        provider: { "@id": `${SITE}/#business` },
+        provider: {
+          "@type": "MovingCompany",
+          "@id": `${SITE}/#business`,
+          name: "Phi Movers",
+          url: SITE,
+          telephone: PHONE_E164,
+        },
         areaServed: { "@type": "City", name: "London" },
         url,
-        ...(item.price.replace(/[^\d.]/g, "")
-          ? {
-              offers: {
-                "@type": "Offer",
-                priceCurrency: "GBP",
-                price: item.price.replace(/[^\d.]/g, ""),
-                availability: "https://schema.org/InStock",
-              },
-            }
-          : {
-              offers: {
-                "@type": "Offer",
-                priceCurrency: "GBP",
-                description: "Fixed quotation after enquiry",
-                availability: "https://schema.org/InStock",
-              },
-            }),
+        offers: offerFromPrice(item.price),
       },
     ],
   };
@@ -576,11 +533,13 @@ export default function ServiceDetailPage({
               </div>
             </div>
 
-            <img
+            <SoftImage
               src={item.image}
               alt={`${item.title} crew loading furniture into a van in London`}
-              className="aspect-[16/11] w-full -translate-y-1 animate-fade-up rounded-[24px] object-cover object-top shadow-soft sm:-translate-y-2 lg:-translate-y-4"
-              style={{ animationDelay: "120ms" }}
+              icon={item.icon}
+              priority
+              className="aspect-[16/11] w-full -translate-y-1 animate-fade-up rounded-[24px] sm:-translate-y-2 lg:-translate-y-4"
+              imgClassName="aspect-[16/11] w-full rounded-[24px] object-cover object-top"
             />
           </div>
         </div>
@@ -930,7 +889,7 @@ export default function ServiceDetailPage({
                   <P>
                     Typical routes and access challenges we handle — illustrative
                     examples to help you picture your own moving day (not a claim
-                    of verified case-study photography).
+                    of case-study photography).
                   </P>
                   <div className="mt-4 grid gap-4 md:grid-cols-3">
                     {(
@@ -1010,29 +969,19 @@ export default function ServiceDetailPage({
               </Link>
             </div>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {related.map((s) => {
-                const isStock = s.image.includes("picsum.photos");
-                return (
+              {related.map((s) => (
                   <Link
                     key={s.slug}
                     href={s.href}
                     className="group overflow-hidden rounded-2xl border border-line bg-surface"
                   >
-                    {isStock ? (
-                      <div className="relative flex aspect-[16/9] w-full items-center justify-center bg-[#9fe870]/35">
-                        <Icon
-                          name={s.icon || "box"}
-                          className="h-12 w-12 text-[#163300]"
-                        />
-                      </div>
-                    ) : (
-                      <img
-                        src={s.image}
-                        alt={s.title}
-                        loading="lazy"
-                        className="aspect-[16/9] w-full object-cover"
-                      />
-                    )}
+                    <SoftImage
+                      src={s.image}
+                      alt={s.title}
+                      icon={s.icon || "box"}
+                      className="aspect-[16/9] w-full"
+                      imgClassName="aspect-[16/9] w-full object-cover"
+                    />
                     <div className="p-5">
                       <span className="inline-flex rounded-pill bg-[#9fe870]/35 px-2.5 py-0.5 text-xs font-semibold text-[#163300]">
                         {priceLabel(s.price)}
@@ -1046,12 +995,16 @@ export default function ServiceDetailPage({
                       </span>
                     </div>
                   </Link>
-                );
-              })}
+              ))}
             </div>
           </section>
           </Reveal>
         </div>
+
+        {/* Quote form */}
+        <section className="container-page pb-8">
+          <QuoteForm serviceTitle={item.title} />
+        </section>
 
         {/* Final CTA — WhatsApp + Call */}
         <section className="container-page pb-4">

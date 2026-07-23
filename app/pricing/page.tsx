@@ -13,6 +13,13 @@ export const metadata: Metadata = {
   title: "Man & Van Pricing — Phi Movers",
   description:
     "Simple man & van pricing from £50/hour — no complicated calculator. Choose your van, add a helper if needed, minimum 2 hours. Loading & unloading included.",
+  alternates: { canonical: "https://phimovers.co.uk/pricing" },
+  openGraph: {
+    title: "Man & Van Pricing — Phi Movers",
+    description:
+      "Simple man & van pricing from £50/hour. Choose your van, add a helper if needed, minimum 2 hours.",
+    url: "https://phimovers.co.uk/pricing",
+  },
 };
 
 /* ---------- Van categories ---------- */

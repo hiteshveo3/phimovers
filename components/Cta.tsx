@@ -110,13 +110,11 @@ function Cta({ variant = 1, btn = 1 }: { variant?: number; btn?: number }) {
             </p>
             <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap sm:items-center">
               <a
-                href={WHATSAPP_HREF}
-                target="_blank"
-                rel="noopener noreferrer"
+                href="/contact#quote"
                 className={"btn w-full px-6 sm:w-auto " + b.primary}
               >
-                <Icon name="whatsapp" className="h-4 w-4" />
-                WhatsApp
+                Get my free quote
+                <Icon name="arrowRight" className="h-4 w-4" />
               </a>
               <a
                 href={CALL_HREF}

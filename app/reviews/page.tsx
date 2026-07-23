@@ -10,13 +10,45 @@ import { SITE_URL } from "@/lib/contact";
 export const metadata: Metadata = {
   title: "Customer Reviews — Phi Movers | London Removals",
   description:
-    "Read verified Phi Movers reviews from house moves, man & van, sofa delivery and office removals across all 32 London boroughs.",
+    "Read Phi Movers customer reviews from house moves, man & van, sofa delivery and office removals across all 32 London boroughs.",
   alternates: { canonical: `${SITE_URL}/reviews` },
 };
 
 export default function ReviewsPage() {
+  const ratingSum = siteReviews.reduce((n, r) => n + r.rating, 0);
+  const ratingValue = (ratingSum / siteReviews.length).toFixed(1);
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "MovingCompany",
+    name: "Phi Movers",
+    url: SITE_URL,
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue,
+      reviewCount: String(siteReviews.length),
+      bestRating: "5",
+      worstRating: "1",
+    },
+    review: siteReviews.slice(0, 10).map((r) => ({
+      "@type": "Review",
+      author: { "@type": "Person", name: r.name },
+      reviewRating: {
+        "@type": "Rating",
+        ratingValue: String(r.rating),
+        bestRating: "5",
+      },
+      reviewBody: r.text,
+      datePublished: r.date,
+    })),
+  };
+
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Navbar />
 
       <section className="relative isolate overflow-hidden">
@@ -37,7 +69,7 @@ export default function ReviewsPage() {
           </nav>
 
           <span className="mt-6 inline-flex rounded-pill bg-[#9fe870] px-3 py-1 text-xs font-bold text-[#163300]">
-            Verified customer reviews
+            Customer reviews
           </span>
           <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-content md:text-5xl">
             What customers say

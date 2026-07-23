@@ -3,6 +3,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HeroBg from "@/components/HeroBg";
+import QuoteForm from "@/components/QuoteForm";
 import { Icon } from "@/components/icons";
 import {
   CALL_HREF,
@@ -126,6 +127,10 @@ export default function ContactPage() {
             ))}
           </div>
 
+          <div className="mt-10">
+            <QuoteForm />
+          </div>
+
           <div className="mt-10 rounded-2xl border border-line bg-surface p-6 md:p-8">
             <h2 className="text-xl font-extrabold text-content">
               What to include for a faster quote
@@ -148,9 +153,8 @@ export default function ContactPage() {
             </ul>
           </div>
         </div>
+        <Footer />
       </div>
-
-      <Footer />
     </main>
   );
 }

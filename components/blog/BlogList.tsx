@@ -2,9 +2,9 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import SoftImage from "../SoftImage";
 import { Icon } from "../icons";
-import { img } from "@/lib/data";
-import { authors, type BlogPost } from "@/lib/blog";
+import { authors, blogCover, type BlogPost } from "@/lib/blog";
 
 const PAGE_SIZE = 6;
 const author = authors[0];
@@ -16,10 +16,12 @@ function Card({ post, large = false }: { post: BlogPost; large?: boolean }) {
         href={`/blog/${post.slug}`}
         className="group grid overflow-hidden rounded-[24px] border border-line bg-surface transition-colors hover:bg-cream md:grid-cols-2"
       >
-        <img
-          src={img(post.coverSeed, 800, 520)}
+        <SoftImage
+          src={blogCover(post)}
           alt={post.title}
-          className="h-56 w-full object-cover md:h-full"
+          icon="box"
+          className="h-56 w-full md:h-full"
+          imgClassName="h-56 w-full object-cover md:h-full"
         />
         <div className="flex flex-col justify-center p-6 md:p-8">
           <span className="inline-flex w-fit rounded-pill bg-[#9fe870] px-3 py-1 text-xs font-bold text-[#163300]">
@@ -52,11 +54,12 @@ function Card({ post, large = false }: { post: BlogPost; large?: boolean }) {
       href={`/blog/${post.slug}`}
       className="group flex flex-col overflow-hidden rounded-2xl border border-line bg-surface transition-colors hover:bg-cream"
     >
-      <img
-        src={img(post.coverSeed, 600, 360)}
+      <SoftImage
+        src={blogCover(post)}
         alt={post.title}
-        loading="lazy"
-        className="aspect-[16/9] w-full object-cover"
+        icon="box"
+        className="aspect-[16/9] w-full"
+        imgClassName="aspect-[16/9] w-full object-cover"
       />
       <div className="flex flex-1 flex-col p-5">
         <span className="inline-flex w-fit rounded-pill bg-[#9fe870]/25 px-2.5 py-0.5 text-xs font-semibold text-[#163300]">

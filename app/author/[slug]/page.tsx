@@ -3,9 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SoftImage from "@/components/SoftImage";
 import { Icon } from "@/components/icons";
-import { img } from "@/lib/data";
-import { authors, getAuthor, postsByAuthor } from "@/lib/blog";
+import { authors, blogCover, getAuthor, postsByAuthor } from "@/lib/blog";
 
 const SITE = "https://phimovers.co.uk";
 
@@ -122,11 +122,12 @@ export default function AuthorPage({ params }: { params: { slug: string } }) {
                   href={`/blog/${p.slug}`}
                   className="group flex flex-col overflow-hidden rounded-2xl border border-line bg-surface transition-shadow hover:shadow-soft"
                 >
-                  <img
-                    src={img(p.coverSeed, 600, 360)}
+                  <SoftImage
+                    src={blogCover(p)}
                     alt={p.title}
-                    loading="lazy"
-                    className="aspect-[16/9] w-full object-cover"
+                    icon="box"
+                    className="aspect-[16/9] w-full"
+                    imgClassName="aspect-[16/9] w-full object-cover"
                   />
                   <div className="flex flex-1 flex-col p-5">
                     <span className="inline-flex w-fit rounded-pill bg-[#9fe870]/25 px-2.5 py-0.5 text-xs font-semibold text-[#163300]">

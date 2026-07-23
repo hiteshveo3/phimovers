@@ -4,7 +4,7 @@ export default function FeatureGrid() {
   return (
     <section id="how" className="section">
       <div className="container-page">
-        <h2 className="section-title mb-8">Why choose SwiftMove?</h2>
+        <h2 className="section-title mb-8">Why choose Phi Movers?</h2>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {features.map((f) => (
             <div

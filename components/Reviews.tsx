@@ -12,7 +12,7 @@ export default function Reviews() {
         <div className="mx-auto max-w-2xl text-center">
           <span className="chip border-[#163300]/15 bg-[#9fe870]/25 text-[#163300]">
             <Icon name="star" className="mr-1 h-3.5 w-3.5" />
-            Verified customer reviews
+            Customer reviews
           </span>
           <h2 className="section-title mt-4">Loved by movers across London</h2>
           <p className="mx-auto mt-3 max-w-xl text-sm text-muted">
