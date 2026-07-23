@@ -60,9 +60,11 @@ function initialsOf(name: string) {
 export default function ReviewCard({
   review = defaultReview,
   variant = 1,
+  meta,
 }: {
   review?: Review;
   variant?: number;
+  meta?: string;
 }) {
   const initials = initialsOf(review.name);
 
@@ -101,7 +103,7 @@ export default function ReviewCard({
         <figure className="relative w-full max-w-md overflow-hidden rounded-[22px] bg-[#9fe870] p-7 text-[#163300]">
           <div className="flex items-center justify-between">
             <Stars rating={review.rating} className="text-[#163300]" />
-            <span className="inline-flex items-center gap-1.5 rounded-pill bg-white/25 px-3 py-1 text-[11px] font-bold text-[#163300] ring-1 ring-white/50 backdrop-blur-md">
+            <span className="inline-flex items-center gap-1.5 rounded-pill bg-white/25 px-3 py-1 text-[11px] font-bold text-[#163300] backdrop-blur-md">
               <Icon name="check" className="h-4 w-4" size={15} strokeWidth={2.2} />
               Verified move
             </span>
@@ -121,6 +123,11 @@ export default function ReviewCard({
               <span className="block text-xs text-[#163300]/70">
                 {review.location}
               </span>
+              {meta ? (
+                <span className="mt-1 block text-[11px] font-semibold text-[#163300]/80">
+                  {meta}
+                </span>
+              ) : null}
             </span>
           </figcaption>
         </figure>
@@ -134,9 +141,27 @@ export default function ReviewCard({
           <blockquote className="mt-4 text-[16px] leading-relaxed text-content">
             {review.text}
           </blockquote>
-          <figcaption className="mt-5 text-sm">
-            <span className="font-bold text-content">{review.name}</span>
-            <span className="text-muted"> · {review.location}</span>
+          <figcaption className="mt-5 flex items-center gap-3">
+            {review.avatar ? (
+              <img
+                src={review.avatar}
+                alt={review.name}
+                loading="lazy"
+                className="h-11 w-11 shrink-0 rounded-full object-cover ring-2 ring-[#9fe870]/50"
+              />
+            ) : (
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#163300] text-sm font-bold text-[#9fe870]">
+                {initials}
+              </span>
+            )}
+            <span className="text-sm">
+              <span className="block font-bold text-content">
+                {review.name}
+              </span>
+              <span className="block text-xs text-muted">
+                {review.location}
+              </span>
+            </span>
           </figcaption>
         </figure>
       );
@@ -225,7 +250,7 @@ export default function ReviewCard({
                 <Icon name="check" className="h-4 w-4" />
               </span>
               <span className="text-sm font-bold text-content">
-                Verified review
+                Customer review
               </span>
             </div>
             <Stars rating={review.rating} className="text-[#163300]" />

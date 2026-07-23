@@ -1,4 +1,5 @@
 import Badge from "./Badge";
+import { WHATSAPP_HREF } from "@/lib/contact";
 
 // Change this (1-10) to switch the badge style.
 const BADGE_VARIANT = 10;
@@ -17,9 +18,14 @@ export default function ProBanner() {
           </div>
           <div className="flex shrink-0 flex-col items-start gap-3">
             <div className="text-sm text-ink/70">
-              <span className="text-2xl font-bold text-ink">No obligation</span> · 60-second quote
+              <span className="text-2xl font-bold text-ink">No obligation</span> · fixed-price quote
             </div>
-            <a href="#pricing" className="btn bg-black text-white hover:bg-[#1a1a1a]">
+            <a
+              href={WHATSAPP_HREF}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn bg-black text-white hover:bg-[#1a1a1a]"
+            >
               Book Free Survey
             </a>
           </div>

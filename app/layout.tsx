@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Manrope } from "next/font/google";
+import { Manrope, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
 import BottomNav from "@/components/BottomNav";
 
@@ -7,6 +7,13 @@ const manrope = Manrope({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
   variable: "--font-grotesk",
+  display: "swap",
+});
+
+const sourceSerif = Source_Serif_4({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-serif",
   display: "swap",
 });
 
@@ -22,26 +29,17 @@ export const metadata: Metadata = {
   },
 };
 
-const themeScript = `
-(function () {
-  try {
-    var t = localStorage.getItem('theme');
-    var m = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (t === 'dark' || (!t && m)) document.documentElement.classList.add('dark');
-  } catch (e) {}
-})();
-`;
-
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={manrope.variable} suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-      </head>
+    <html
+      lang="en"
+      className={`${manrope.variable} ${sourceSerif.variable}`}
+      suppressHydrationWarning
+    >
       <body className="bg-base font-sans antialiased pb-16 lg:pb-0">
         {children}
         <BottomNav />

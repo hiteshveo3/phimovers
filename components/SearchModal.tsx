@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { allProducts } from "@/lib/data";
+import { allProducts, priceLabel } from "@/lib/data";
+import { WHATSAPP_HREF } from "@/lib/contact";
 import { Icon } from "./icons";
 
 const OPEN_EVENT = "swiftmove:open-search";
@@ -12,15 +13,15 @@ export function SearchTrigger({ className = "" }: { className?: string }) {
       type="button"
       onClick={() => window.dispatchEvent(new Event(OPEN_EVENT))}
       className={
-        "flex h-10 w-full items-center gap-3 rounded-pill border border-line bg-cream px-4 text-left text-sm text-muted transition-colors hover:border-[#163300]/40 " +
+        "flex h-10 w-full items-center gap-3 rounded-pill border border-line bg-cream px-4 text-left text-sm text-muted transition-colors hover:bg-[#9fe870]/15 " +
         className
       }
     >
       <Icon name="search" className="h-4 w-4 shrink-0" />
       <span className="flex-1 truncate">Search services, areas…</span>
-      <span className="hidden shrink-0 rounded-md border border-line bg-surface px-1.5 py-0.5 text-[11px] font-medium text-muted sm:block">
-        ⌘ K
-      </span>
+      <kbd className="hidden shrink-0 items-center gap-0.5 rounded-md border border-line bg-surface px-1.5 py-0.5 font-sans text-[10px] font-semibold text-muted sm:inline-flex">
+        Ctrl&nbsp;K
+      </kbd>
     </button>
   );
 }
@@ -126,7 +127,7 @@ export default function SearchModal() {
                         </span>
                       </span>
                       <span className="shrink-0 text-sm font-bold text-content">
-                        {p.price}
+                        {priceLabel(p.price)}
                       </span>
                     </a>
                   </li>
@@ -136,9 +137,9 @@ export default function SearchModal() {
           </div>
 
           <div className="flex items-center justify-between border-t border-line px-4 py-2.5 text-[11px] text-muted">
-            <span>Press Esc to close</span>
+            <span>Press Esc to close · Ctrl+K to toggle</span>
             <a
-              href="#pricing"
+              href={WHATSAPP_HREF}
               onClick={() => setOpen(false)}
               className="font-semibold text-[#163300]"
             >

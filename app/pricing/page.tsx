@@ -7,6 +7,7 @@ import Cta from "@/components/Cta";
 import HeroBg from "@/components/HeroBg";
 import PriceCalculator from "@/components/PriceCalculator";
 import { Icon } from "@/components/icons";
+import { WHATSAPP_HREF } from "@/lib/contact";
 
 export const metadata: Metadata = {
   title: "Man & Van Pricing — Phi Movers",
@@ -121,7 +122,7 @@ function VanCard({ van }: { van: Van }) {
       }
     >
       {van.popular && (
-        <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-pill bg-white/20 px-3.5 py-1 text-[11px] font-bold text-[#163300] shadow-sm ring-1 ring-white/50 backdrop-blur-md">
+        <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-pill bg-white/20 px-3.5 py-1 text-[11px] font-bold text-[#163300] shadow-sm backdrop-blur-md">
           Most popular
         </span>
       )}
@@ -151,13 +152,15 @@ function VanCard({ van }: { van: Van }) {
         ))}
       </ul>
 
-      <Link
-        href="/#quote"
+      <a
+        href={WHATSAPP_HREF}
+        target="_blank"
+        rel="noopener noreferrer"
         className="btn mt-7 w-full bg-[#163300] px-6 text-[#9fe870] hover:bg-[#0e2400]"
       >
         Book this van
         <Icon name="arrowRight" className="h-4 w-4" />
-      </Link>
+      </a>
     </div>
   );
 }

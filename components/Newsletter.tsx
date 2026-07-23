@@ -18,7 +18,7 @@ export default function Newsletter() {
           className="pointer-events-none absolute -bottom-24 right-16 -z-10 h-64 w-64 rounded-full bg-[#163300]/15 blur-3xl"
         />
         <h2 className="mx-auto max-w-xl text-2xl font-bold md:text-3xl">
-          Get a free moving quote in 60 seconds
+          Start your free moving quote
         </h2>
         <p className="mx-auto mt-3 max-w-lg text-sm text-ink/70">
           Enter your email and our friendly team will send a tailored,

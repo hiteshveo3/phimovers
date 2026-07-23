@@ -1,12 +1,12 @@
 import Image from "next/image";
-import type { Product } from "@/lib/data";
+import { priceLabel, type Product } from "@/lib/data";
 
 export default function ProductCard({ product }: { product: Product }) {
   const isFree = product.price.toLowerCase() === "free";
   return (
     <a
       href="#"
-      className="group flex flex-col overflow-hidden rounded-card border border-line bg-surface transition-colors duration-200 hover:border-[#163300]/40"
+      className="group flex flex-col overflow-hidden rounded-card border border-line bg-surface transition-colors hover:bg-cream"
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-cream">
         <Image
@@ -27,7 +27,7 @@ export default function ProductCard({ product }: { product: Product }) {
                 : "shrink-0 text-xs font-bold text-content"
             }
           >
-            {product.price}
+            {priceLabel(product.price)}
           </span>
         </div>
         <p className="mt-2 text-xs text-muted">

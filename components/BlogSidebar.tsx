@@ -1,19 +1,26 @@
 import Link from "next/link";
 import { Icon } from "./icons";
+import { posts as allPosts } from "@/lib/blog";
 
-type Post = { title: string; meta: string; icon: string };
+const catIcon: Record<string, string> = {
+  Packing: "box",
+  London: "mapPin",
+  "Man & Van": "truck",
+  Storage: "cube",
+  "Moving tips": "home",
+};
 
-const posts: Post[] = [
-  { title: "How to pack a kitchen like a pro", meta: "Packing · 5 min", icon: "box" },
-  { title: "Moving in London: parking & permits", meta: "London · 4 min", icon: "mapPin" },
-  { title: "Studio flat move checklist", meta: "Home Removals · 6 min", icon: "home" },
-  { title: "Man & van vs full removal", meta: "Man & Van · 3 min", icon: "truck" },
-];
+const popular = allPosts.slice(0, 4).map((p) => ({
+  title: p.title,
+  meta: `${p.category} · ${p.readMins} min`,
+  icon: catIcon[p.category] ?? "box",
+  href: `/blog/${p.slug}`,
+}));
 
 const cats: [string, number][] = [
-  ["Home Removals", 12],
-  ["Packing Tips", 8],
-  ["London Areas", 15],
+  ["Moving tips", 12],
+  ["Packing", 8],
+  ["London", 15],
   ["Man & Van", 6],
   ["Storage", 4],
 ];
@@ -23,56 +30,64 @@ export default function BlogSidebar({ sticky = false }: { sticky?: boolean }) {
 
   return (
     <aside className={wrap}>
-      {/* Search */}
-      <div className="flex h-11 items-center gap-2.5 rounded-pill bg-[#9fe870]/25 px-4 text-sm text-[#163300]">
+      {/* Search (desktop only — mobile uses nav / listing search) */}
+      <Link
+        href="/blog"
+        className="hidden h-11 items-center gap-2.5 rounded-pill bg-[#9fe870]/25 px-4 text-sm text-[#163300] transition-colors hover:bg-[#9fe870]/40 lg:flex"
+      >
         <Icon name="search" className="h-4 w-4 shrink-0" />
         <span className="flex-1 truncate">Search the blog…</span>
-      </div>
+      </Link>
 
       {/* Popular posts */}
-      <div className="rounded-2xl bg-cream p-5">
+      <div className="rounded-2xl bg-white p-5">
         <h3 className="mb-4 text-sm font-bold text-content">Popular posts</h3>
-        <ul className="space-y-4">
-          {posts.map((p) => (
-            <li key={p.title} className="flex items-start gap-3">
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-[#9fe870] text-[#163300]">
-                <Icon name={p.icon} className="h-5 w-5" />
-              </span>
-              <a href="#" className="group">
-                <span className="block text-sm font-semibold leading-snug text-content group-hover:text-[#163300]">
-                  {p.title}
+        <ul className="space-y-2">
+          {popular.map((p) => (
+            <li key={p.title}>
+              <Link
+                href={p.href}
+                className="group -mx-2 flex items-start gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-[#9fe870]/25"
+              >
+                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-[#9fe870] text-[#163300]">
+                  <Icon name={p.icon} className="h-5 w-5" />
                 </span>
-                <span className="mt-0.5 block text-xs text-muted">{p.meta}</span>
-              </a>
+                <span>
+                  <span className="block text-sm font-semibold leading-snug text-content group-hover:text-[#163300]">
+                    {p.title}
+                  </span>
+                  <span className="mt-0.5 block text-xs text-muted">{p.meta}</span>
+                </span>
+              </Link>
             </li>
           ))}
         </ul>
       </div>
 
-      {/* Categories */}
-      <div className="rounded-2xl bg-cream p-5">
+      {/* Categories (desktop only) */}
+      <div className="hidden rounded-2xl bg-white p-5 lg:block">
         <h3 className="mb-4 text-sm font-bold text-content">Categories</h3>
         <ul className="space-y-2">
           {cats.map(([c, n]) => (
             <li key={c}>
-              <a
-                href="#"
-                className="flex items-center justify-between rounded-lg px-2 py-1.5 text-sm text-content hover:bg-[#9fe870]/25"
+              <Link
+                href="/blog"
+                className="flex items-center justify-between rounded-lg px-2 py-1.5 text-sm text-content transition-colors hover:bg-[#9fe870]/25 hover:text-[#163300]"
               >
                 <span>{c}</span>
-                <span className="rounded-pill bg-surface px-2 text-xs text-muted">
+                <span className="rounded-pill bg-[#9fe870]/25 px-2 text-xs font-semibold text-[#163300]">
                   {n}
                 </span>
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
       </div>
 
-      {/* Quote CTA */}
-      <div className="rounded-2xl bg-[#9fe870] p-5 text-[#163300]">
-        <p className="text-base font-extrabold leading-snug text-[#163300]">
-          Moving soon? Get a free quote in 60 seconds.
+      {/* Quote CTA — bright green card */}
+      <div className="rounded-2xl bg-[#9fe870] p-5">
+        <p className="text-base font-extrabold leading-snug text-black">
+          Moving soon? Start your free quote in under a minute.
         </p>
         <p className="mt-1.5 text-xs text-[#163300]/70">
           Fixed prices · All 32 London boroughs

@@ -9,7 +9,7 @@ export default function FeatureGrid() {
           {features.map((f) => (
             <div
               key={f.title}
-              className="flex flex-col rounded-card border border-line bg-surface p-6 transition-colors duration-200 hover:border-[#163300]/40"
+              className="flex flex-col rounded-card border border-line bg-surface p-6 transition-shadow duration-200 hover:shadow-soft"
             >
               <h3 className="text-lg font-bold">{f.title}</h3>
               <p className="mt-2 flex-1 text-sm text-muted">{f.body}</p>

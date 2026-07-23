@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Icon } from "./icons";
+import { CALL_HREF, CALL_LABEL, WHATSAPP_HREF } from "@/lib/contact";
 
 export const ctaLabels: Record<number, string> = {
   1: "Forest panel",
@@ -16,9 +17,8 @@ export const ctaLabels: Record<number, string> = {
 
 const TITLE = "Ready to book your stress-free move?";
 const SUB =
-  "Get a fixed-price quote in 60 seconds — no obligation, no hidden fees. Our expert crew handles the rest.";
-const PHONE = "+442079460134";
-const PHONE_LABEL = "+44 20 7946 0134";
+  "Start your free quote in under a minute — we usually reply within about one working hour. No obligation, no hidden fees.";
+const PHONE_LABEL = CALL_LABEL;
 
 // Button colour schemes for the bright-green panel (variant 2)
 export const ctaButtonLabels: Record<number, string> = {
@@ -82,7 +82,7 @@ export function ctaButtons(n: number): { primary: string; secondary: string } {
         primary:
           "bg-gradient-to-r from-[#163300] to-[#1e4600] text-[#9fe870] hover:opacity-90",
         secondary:
-          "border border-white/70 bg-white/20 text-[#163300] hover:bg-white/40",
+          "bg-white/20 text-[#163300] backdrop-blur-sm hover:bg-white/40",
       };
     case 1:
     default:
@@ -108,12 +108,20 @@ function Cta({ variant = 1, btn = 1 }: { variant?: number; btn?: number }) {
             <p className="mx-auto mt-4 max-w-xl text-sm text-[#163300]/80">
               {SUB}
             </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Link href="#quote" className={"btn px-6 " + b.primary}>
-                Get my free quote
-                <Icon name="arrowRight" className="h-4 w-4" />
-              </Link>
-              <a href={`tel:${PHONE}`} className={"btn px-6 " + b.secondary}>
+            <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+              <a
+                href={WHATSAPP_HREF}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={"btn w-full px-6 sm:w-auto " + b.primary}
+              >
+                <Icon name="whatsapp" className="h-4 w-4" />
+                WhatsApp
+              </a>
+              <a
+                href={CALL_HREF}
+                className={"btn w-full px-6 sm:w-auto " + b.secondary}
+              >
                 <Icon name="phone" className="h-4 w-4" />
                 {PHONE_LABEL}
               </a>
@@ -135,15 +143,15 @@ function Cta({ variant = 1, btn = 1 }: { variant?: number; btn?: number }) {
             </div>
             <div className="rounded-2xl bg-white/5 p-6 ring-1 ring-white/10">
               <p className="text-sm font-semibold text-[#9fe870]">
-                Start in 60 seconds
+                Start in under a minute
               </p>
               <div className="mt-4 flex flex-col gap-3">
-                <Link href="#quote" className="btn-accent w-full px-6">
+                <Link href={WHATSAPP_HREF} className="btn-accent w-full px-6">
                   Get my free quote
                   <Icon name="arrowRight" className="h-4 w-4" />
                 </Link>
                 <a
-                  href={`tel:${PHONE}`}
+                  href={CALL_HREF}
                   className="btn w-full border border-white/20 px-6 text-white hover:bg-white/10"
                 >
                   <Icon name="phone" className="h-4 w-4" />
@@ -168,7 +176,7 @@ function Cta({ variant = 1, btn = 1 }: { variant?: number; btn?: number }) {
               {SUB}
             </p>
             <Link
-              href="#quote"
+              href={WHATSAPP_HREF}
               className="btn-accent mx-auto mt-8 px-8 py-4 text-base"
             >
               Get my free quote
@@ -191,11 +199,11 @@ function Cta({ variant = 1, btn = 1 }: { variant?: number; btn?: number }) {
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-sm text-muted">{SUB}</p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Link href="#quote" className="btn-accent px-6">
+              <Link href={WHATSAPP_HREF} className="btn-accent px-6">
                 Get my free quote
                 <Icon name="arrowRight" className="h-4 w-4" />
               </Link>
-              <a href={`tel:${PHONE}`} className="btn-light px-6">
+              <a href={CALL_HREF} className="btn-light px-6">
                 <Icon name="phone" className="h-4 w-4" />
                 {PHONE_LABEL}
               </a>
@@ -218,7 +226,7 @@ function Cta({ variant = 1, btn = 1 }: { variant?: number; btn?: number }) {
               </h2>
             </div>
             <a
-              href={`tel:${PHONE}`}
+              href={CALL_HREF}
               className="group flex items-center gap-4 rounded-2xl bg-[#9fe870] px-7 py-5 text-[#163300] transition-transform hover:scale-[1.02]"
             >
               <span className="grid h-12 w-12 place-items-center rounded-full bg-[#163300] text-[#9fe870]">
@@ -255,12 +263,12 @@ function Cta({ variant = 1, btn = 1 }: { variant?: number; btn?: number }) {
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-sm text-white/70">{SUB}</p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Link href="#quote" className="btn-accent px-6">
+              <Link href={WHATSAPP_HREF} className="btn-accent px-6">
                 Get my free quote
                 <Icon name="arrowRight" className="h-4 w-4" />
               </Link>
               <a
-                href={`tel:${PHONE}`}
+                href={CALL_HREF}
                 className="btn border border-white/20 px-6 text-white hover:bg-white/10"
               >
                 <Icon name="phone" className="h-4 w-4" />
@@ -282,7 +290,7 @@ function Cta({ variant = 1, btn = 1 }: { variant?: number; btn?: number }) {
               </h2>
               <p className="mt-4 max-w-md text-sm text-[#163300]/80">{SUB}</p>
               <Link
-                href="#quote"
+                href={WHATSAPP_HREF}
                 className="btn mt-7 bg-[#163300] px-6 text-[#9fe870] hover:bg-[#0e2400]"
               >
                 Get my free quote
@@ -320,11 +328,11 @@ function Cta({ variant = 1, btn = 1 }: { variant?: number; btn?: number }) {
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-sm text-muted">{SUB}</p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Link href="#quote" className="btn-accent px-6">
+              <Link href={WHATSAPP_HREF} className="btn-accent px-6">
                 Get my free quote
                 <Icon name="arrowRight" className="h-4 w-4" />
               </Link>
-              <a href={`tel:${PHONE}`} className="btn-light px-6">
+              <a href={CALL_HREF} className="btn-light px-6">
                 <Icon name="phone" className="h-4 w-4" />
                 {PHONE_LABEL}
               </a>
@@ -357,7 +365,7 @@ function Cta({ variant = 1, btn = 1 }: { variant?: number; btn?: number }) {
               {SUB}
             </p>
             <Link
-              href="#quote"
+              href={WHATSAPP_HREF}
               className="btn mx-auto mt-8 bg-[#163300] px-8 py-4 text-base text-[#9fe870] hover:bg-[#0e2400]"
             >
               Get my free quote
@@ -378,12 +386,12 @@ function Cta({ variant = 1, btn = 1 }: { variant?: number; btn?: number }) {
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-sm text-white/70">{SUB}</p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Link href="#quote" className="btn-accent px-6">
+              <Link href={WHATSAPP_HREF} className="btn-accent px-6">
                 Get my free quote
                 <Icon name="arrowRight" className="h-4 w-4" />
               </Link>
               <a
-                href={`tel:${PHONE}`}
+                href={CALL_HREF}
                 className="btn border border-white/20 px-6 text-white hover:bg-white/10"
               >
                 <Icon name="phone" className="h-4 w-4" />

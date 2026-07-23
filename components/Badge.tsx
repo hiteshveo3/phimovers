@@ -113,7 +113,7 @@ export default function Badge({
     case 10:
       return (
         <span
-          className={`inline-flex items-center gap-1.5 rounded-pill border border-white/60 bg-white/30 px-3 py-1 text-[#163300] backdrop-blur ${base}`}
+          className={`inline-flex items-center gap-1.5 rounded-pill bg-white/30 px-3 py-1 text-[#163300] backdrop-blur ${base}`}
         >
           <Icon name={icon} className="h-3.5 w-3.5" />
           {label}

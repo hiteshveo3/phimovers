@@ -6,7 +6,11 @@ export default function CategoryGrid() {
   return (
     <section id="services" className="section">
       <div className="container-page">
-        <SectionHeader title="Our services" moreLabel="See all services" />
+        <SectionHeader
+          title="Our services"
+          moreLabel="See all services"
+          moreHref="/services"
+        />
 
         {/* Cards rest aligned with the page content (px gutter) and bleed to
             the edges as you scroll. */}

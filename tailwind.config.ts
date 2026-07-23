@@ -43,6 +43,13 @@ const config: Config = {
           "Roboto",
           "sans-serif",
         ],
+        serif: [
+          "var(--font-serif)",
+          "Georgia",
+          "Cambria",
+          "Times New Roman",
+          "serif",
+        ],
       },
       maxWidth: {
         container: "1200px",

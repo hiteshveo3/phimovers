@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Icon } from "./icons";
+import { WHATSAPP_HREF } from "@/lib/contact";
 
 export type CalcData = {
   total: number;
@@ -28,12 +29,26 @@ export const gbp = (n: number) =>
 const STICKY = "md:sticky md:top-[61px]";
 
 function Book({
-  href = "/#quote",
+  href = WHATSAPP_HREF,
   className,
 }: {
   href?: string;
   className: string;
 }) {
+  const external = href.startsWith("http");
+  if (external) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={"btn w-full px-6 " + className}
+      >
+        Book this move
+        <Icon name="arrowRight" className="h-4 w-4" />
+      </a>
+    );
+  }
   return (
     <Link href={href} className={"btn w-full px-6 " + className}>
       Book this move
@@ -66,7 +81,7 @@ function Lines({
 export default function CalcSidebar({
   variant = 1,
   data,
-  bookHref = "/#quote",
+  bookHref = WHATSAPP_HREF,
   sticky = true,
 }: {
   variant?: number;
@@ -285,7 +300,7 @@ export default function CalcSidebar({
             aria-hidden
             className="absolute inset-0 -z-10 bg-gradient-to-br from-[#9fe870] to-[#163300]"
           />
-          <div className="rounded-2xl border border-white/40 bg-white/20 p-6 text-[#163300] shadow-soft backdrop-blur-md">
+          <div className="rounded-2xl bg-white/20 p-6 text-[#163300] shadow-soft backdrop-blur-md">
             <p className="text-sm font-bold">Your estimate</p>
             <div className="mt-3 text-5xl font-extrabold tracking-tight">
               {gbp(total)}
@@ -301,7 +316,7 @@ export default function CalcSidebar({
           </div>
           <Book
             href={bookHref}
-            className="mt-4 border border-white/50 bg-white/25 text-[#163300] backdrop-blur-md hover:bg-white/40"
+            className="mt-4 bg-white/25 text-[#163300] backdrop-blur-md hover:bg-white/40"
           />
         </div>
       );
@@ -338,12 +353,7 @@ export default function CalcSidebar({
     default:
       return (
         <div className={"rounded-[24px] bg-[#9fe870] p-6 text-[#163300] md:p-7 " + s}>
-          <div className="flex items-center gap-2.5">
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#163300] text-[#9fe870]">
-              <Icon name="truck" className="h-5 w-5" />
-            </span>
-            <p className="text-sm font-bold">Your estimate</p>
-          </div>
+          <p className="text-sm font-bold">Your estimate</p>
           <div className="mt-5 flex items-end gap-2">
             <span className="text-5xl font-extrabold tracking-tight">
               {gbp(total)}

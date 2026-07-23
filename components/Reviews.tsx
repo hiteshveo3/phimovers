@@ -1,29 +1,9 @@
-import ReviewCard, { type Review } from "./ReviewCard";
+import ReviewCard from "./ReviewCard";
+import Link from "next/link";
 import { Icon } from "./icons";
+import { siteReviews } from "@/lib/reviews";
 
-const reviews: Review[] = [
-  {
-    name: "Sarah Thompson",
-    location: "Islington, London",
-    rating: 5,
-    text: "The crew arrived on time, wrapped everything with care and had us fully moved in before lunch. Fixed price with no surprises — the most stress-free move we've ever had.",
-    avatar: "https://i.pravatar.cc/160?img=45",
-  },
-  {
-    name: "James Carter",
-    location: "Hackney, London",
-    rating: 5,
-    text: "Booked a last-minute man & van and they still turned up early. Polite, quick and genuinely careful with every single box. Couldn't recommend them more.",
-    avatar: "https://i.pravatar.cc/160?img=12",
-  },
-  {
-    name: "Priya Patel",
-    location: "Croydon, London",
-    rating: 5,
-    text: "From the free survey to the final box, everything was smooth. The fixed quote didn't change by a single penny and the team was lovely throughout.",
-    avatar: "https://i.pravatar.cc/160?img=32",
-  },
-];
+const reviews = siteReviews.slice(0, 3);
 
 export default function Reviews() {
   return (
@@ -44,6 +24,16 @@ export default function Reviews() {
           {reviews.map((r) => (
             <ReviewCard key={r.name} review={r} variant={3} />
           ))}
+        </div>
+
+        <div className="mt-8 text-center">
+          <Link
+            href="/reviews"
+            className="inline-flex items-center gap-1 text-sm font-semibold text-[#163300] hover:underline"
+          >
+            Read all reviews
+            <Icon name="arrowRight" className="h-4 w-4" />
+          </Link>
         </div>
       </div>
     </section>

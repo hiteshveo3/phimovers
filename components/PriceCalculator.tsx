@@ -176,24 +176,6 @@ export default function PriceCalculator() {
     <div className="grid gap-6 md:grid-cols-[1.35fr_1fr] md:items-start">
       {/* Inputs */}
       <div className="space-y-8 rounded-[24px] bg-cream p-6 md:p-8">
-        {/* Included banner */}
-        <div className="flex flex-wrap gap-2">
-          {[
-            "2-hour minimum",
-            "Loading & unloading included",
-            "First 10 miles free",
-            "Billed in 30-min blocks",
-          ].map((t) => (
-            <span
-              key={t}
-              className="inline-flex items-center gap-1.5 rounded-pill bg-[#9fe870]/40 px-3 py-1 text-[11px] font-semibold text-[#163300]"
-            >
-              <Icon name="check" className="h-3.5 w-3.5" size={12} strokeWidth={2.6} />
-              {t}
-            </span>
-          ))}
-        </div>
-
         <Field label="Choose your van">
           <div className="grid gap-2 sm:grid-cols-3">
             {VANS.map((v) => {

@@ -61,6 +61,16 @@ const CANDIDATES: Record<string, string[]> = {
   chevronDown: ["ArrowDown01Icon", "ArrowDown02Icon", "ChevronDownIcon"],
   arrowLeft: ["ArrowLeft01Icon", "ArrowLeft02Icon"],
   arrowRight: ["ArrowRight01Icon", "ArrowRight02Icon"],
+  arrowUp: ["ArrowUp01Icon", "ArrowUp02Icon", "ChevronUpIcon", "ArrowUpDouble01Icon"],
+  quote: ["QuoteDownIcon", "QuoteUpIcon", "QuoteDown01Icon", "LeftToRightBlockQuoteIcon"],
+  link: ["Link01Icon", "Link02Icon", "LinkSquare01Icon", "Hyperlink01Icon"],
+  copy: ["Copy01Icon", "Copy02Icon", "CopyIcon"],
+  share: ["Share01Icon", "Share02Icon", "Share03Icon", "ShareLocation01Icon"],
+  twitter: ["NewTwitterIcon", "TwitterIcon", "NewTwitterRectangleIcon"],
+  facebook: ["Facebook01Icon", "Facebook02Icon", "FacebookIcon"],
+  linkedin: ["Linkedin01Icon", "Linkedin02Icon", "LinkedinIcon"],
+  whatsapp: ["WhatsappBusinessIcon", "WhatsappIcon", "Whatsapp02Icon"],
+  check2: ["CheckmarkCircle02Icon", "Tick02Icon"],
   phone: ["Call02Icon", "CallIcon", "Call01Icon", "TelephoneIcon"],
   menu: ["Menu01Icon", "Menu02Icon", "MenuIcon", "Menu03Icon"],
   dashboard: [
@@ -75,6 +85,15 @@ const CANDIDATES: Record<string, string[]> = {
   check: ["Tick02Icon", "CheckmarkCircle02Icon", "Tick01Icon", "CheckmarkSquare01Icon"],
   plus: ["Add01Icon", "PlusSignIcon", "AddIcon", "PlusSignSquareIcon"],
   minus: ["MinusSignIcon", "Remove01Icon", "SubtractIcon", "MinusSignSquareIcon"],
+  mail: ["Mail01Icon", "MailIcon", "Mail02Icon", "MailAtSign01Icon"],
+  lock: ["SquareLock01Icon", "LockIcon", "SquareLockPasswordIcon", "Shield01Icon"],
+  doc: ["DocumentText01Icon", "LegalDocument01Icon", "File01Icon", "DocumentTextIcon"],
+  scale: ["JusticeScale01Icon", "JusticeScale02Icon", "LegalDocument01Icon", "Shield01Icon"],
+  accessibility: ["AccessibilityIcon", "HumanAccessibilityIcon", "UserIcon"],
+  cookie: ["Cookie02Icon", "CookieIcon", "PackageIcon"],
+  info: ["InformationCircleIcon", "InformationSquareIcon", "Alert01Icon", "HelpCircleIcon"],
+  alert: ["Alert01Icon", "AlertCircleIcon", "AlertDiamondIcon", "InformationCircleIcon"],
+  edit: ["Edit02Icon", "PencilEdit01Icon", "Edit01Icon", "PencilIcon"],
 };
 
 const cache: Record<string, unknown> = {};

@@ -1,14 +1,14 @@
 const brands = [
   "Checkatrade",
   "Trustpilot",
-  "Which? Trusted Traders",
-  "BAR Member",
   "Google Reviews",
   "TrustMark",
   "Yell",
   "AnyVan",
   "Ombudsman",
   "FSB",
+  "Fully insured",
+  "Fixed quotes",
 ];
 
 function Row() {

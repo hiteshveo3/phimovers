@@ -1,39 +1,44 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { navLinks } from "@/lib/data";
+import { CALL_HREF, CALL_LABEL, WHATSAPP_HREF } from "@/lib/contact";
 import MegaMenu from "./MegaMenu";
+import AreasMegaMenu from "./AreasMegaMenu";
 import SearchModal, { SearchTrigger } from "./SearchModal";
-import ThemeToggle from "./ThemeToggle";
 import { Icon } from "./icons";
+
+type OpenMenu = "services" | "areas" | null;
 
 function Logo() {
   return (
-    <a href="#" className="flex shrink-0 items-center gap-2">
-      <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#9fe870]">
-        <svg
-          viewBox="0 0 24 24"
-          className="h-5 w-5"
-          fill="none"
-          stroke="#163300"
-          strokeWidth={2}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <line x1="12" y1="3" x2="12" y2="21" />
-          <ellipse cx="12" cy="12" rx="6.5" ry="5" />
-        </svg>
-      </span>
+    <Link href="/" className="flex shrink-0 items-center gap-2">
+      <img
+        src="/logo.png"
+        alt="Phi Movers"
+        className="h-6 w-6 rounded-md object-cover ring-1 ring-black/5"
+      />
       <span className="text-lg font-extrabold tracking-tight text-content">
         Phi Movers
       </span>
-    </a>
+    </Link>
   );
 }
 
 export default function Navbar() {
-  const [servicesOpen, setServicesOpen] = useState(false);
+  const [openMenu, setOpenMenu] = useState<OpenMenu>(null);
   const [scrolled, setScrolled] = useState(false);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const open = (menu: OpenMenu) => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setOpenMenu(menu);
+  };
+  const close = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    closeTimer.current = setTimeout(() => setOpenMenu(null), 120);
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -41,6 +46,12 @@ export default function Navbar() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const megaLinkClass = (active: boolean) =>
+    "flex items-center gap-1 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-colors " +
+    (active
+      ? "bg-[#9fe870]/25 text-content"
+      : "text-content/75 hover:bg-[#9fe870]/20 hover:text-content");
 
   return (
     <header className="sticky top-0 z-50 bg-surface">
@@ -52,89 +63,108 @@ export default function Navbar() {
       >
         <div
           className={
-            "container-page flex items-center gap-4 transition-all duration-200 " +
+            "container-page relative flex items-center gap-4 transition-all duration-200 " +
             (scrolled ? "h-14" : "h-16")
           }
         >
           <Logo />
 
-          {/* Primary nav */}
-          <nav className="hidden items-center gap-6 lg:flex">
-            {navLinks.map((l) =>
-              l.label === "Services" ? (
-                <div
-                  key={l.label}
-                  className="relative"
-                  onMouseEnter={() => setServicesOpen(true)}
-                  onMouseLeave={() => setServicesOpen(false)}
-                >
-                  <button
-                    className={
-                      "flex items-center gap-1 py-5 text-sm font-medium transition-colors " +
-                      (servicesOpen
-                        ? "text-content"
-                        : "text-content/75 hover:text-content")
-                    }
+          <nav className="hidden items-center gap-1 lg:flex">
+            {navLinks.map((l) => {
+              if (l.label === "Services") {
+                return (
+                  <div
+                    key={l.label}
+                    onMouseEnter={() => open("services")}
+                    onMouseLeave={close}
                   >
-                    {l.label}
-                    <Icon
-                      name="chevronDown"
-                      className={
-                        "h-4 w-4 transition-transform " +
-                        (servicesOpen ? "rotate-180" : "")
-                      }
-                    />
-                  </button>
-                  {servicesOpen && (
-                    <div className="absolute left-0 top-full z-50 pt-2">
-                      <MegaMenu />
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <a
+                    <Link href={l.href} className={megaLinkClass(openMenu === "services")}>
+                      {l.label}
+                      <Icon
+                        name="chevronDown"
+                        className={
+                          "h-4 w-4 transition-transform " +
+                          (openMenu === "services" ? "rotate-180" : "")
+                        }
+                      />
+                    </Link>
+                  </div>
+                );
+              }
+              if (l.label === "Areas") {
+                return (
+                  <div
+                    key={l.label}
+                    onMouseEnter={() => open("areas")}
+                    onMouseLeave={close}
+                  >
+                    <Link href={l.href} className={megaLinkClass(openMenu === "areas")}>
+                      {l.label}
+                      <Icon
+                        name="chevronDown"
+                        className={
+                          "h-4 w-4 transition-transform " +
+                          (openMenu === "areas" ? "rotate-180" : "")
+                        }
+                      />
+                    </Link>
+                  </div>
+                );
+              }
+              return (
+                <Link
                   key={l.label}
                   href={l.href}
-                  className="py-5 text-sm font-medium text-content/75 transition-colors hover:text-content"
+                  className="whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium text-content/75 transition-colors hover:bg-[#9fe870]/20 hover:text-content"
                 >
                   {l.label}
-                </a>
-              )
-            )}
+                </Link>
+              );
+            })}
           </nav>
 
-          {/* Search (desktop only — mobile uses bottom nav) */}
           <div className="hidden flex-1 lg:block">
             <SearchTrigger />
           </div>
 
-          {/* Right actions */}
           <div className="hidden shrink-0 items-center gap-3 lg:flex">
             <a
-              href="tel:+442079460134"
+              href={CALL_HREF}
               className="flex items-center gap-1.5 text-sm font-semibold text-content/80 hover:text-content"
             >
               <Icon name="phone" className="h-4 w-4" />
-              +44 20 7946 0134
+              {CALL_LABEL}
             </a>
             <a
-              href="#pricing"
+              href={WHATSAPP_HREF}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 rounded-pill bg-[#9fe870] px-4 py-2.5 text-sm font-bold text-[#163300] transition-colors hover:bg-[#86d957]"
             >
-              <Icon name="truck" className="h-4 w-4" />
+              <Icon name="whatsapp" className="h-4 w-4" />
               Get a Quote
             </a>
-            <ThemeToggle />
           </div>
 
-          {/* Mobile CTA (replaces hamburger) */}
           <a
-            href="#pricing"
+            href={WHATSAPP_HREF}
+            target="_blank"
+            rel="noopener noreferrer"
             className="ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-pill bg-[#9fe870] px-4 py-2 text-sm font-bold text-[#163300] transition-colors hover:bg-[#86d957] lg:hidden"
           >
-            <Icon name="truck" className="h-4 w-4" />
+            <Icon name="whatsapp" className="h-4 w-4" />
             Get a Quote
           </a>
+
+          {openMenu && (
+            <div
+              onMouseEnter={() => open(openMenu)}
+              onMouseLeave={close}
+              className="absolute inset-x-0 top-full z-50 hidden pt-2 lg:block"
+            >
+              {openMenu === "services" ? <MegaMenu /> : <AreasMegaMenu />}
+            </div>
+          )}
         </div>
       </div>
 
