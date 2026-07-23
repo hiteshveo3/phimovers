@@ -28,14 +28,14 @@ export type LegalDoc = {
 };
 
 /* ---------------------------------------------------------------------------
- * Company details — UPDATE these with your real registered details before
- * going live (company number, VAT number, registered office and ICO ref).
+ * Company details — set companyNo / vatNo / icoRef to real values before
+ * launch. Empty strings are omitted from public legal copy (no placeholders).
  * ------------------------------------------------------------------------ */
 export const COMPANY = {
   legalName: COMPANY_LEGAL_NAME,
   tradingName: "Phi Movers",
-  companyNo: "12345678",
-  vatNo: "GB 123 4567 89",
+  companyNo: "",
+  vatNo: "",
   address:
     "Phi Movers Ltd, 71–75 Shelton Street, Covent Garden, London, WC2H 9JQ, United Kingdom",
   emailGeneral: EMAIL,
@@ -43,7 +43,7 @@ export const COMPANY = {
   phoneDisplay: PHONE_DISPLAY,
   phoneHref: PHONE_HREF,
   site: SITE_URL,
-  icoRef: "ZB123456",
+  icoRef: "",
 };
 
 export const UPDATED = "1 July 2026";
@@ -86,9 +86,13 @@ const privacy: LegalDoc = {
         {
           type: "ul",
           items: [
-            `<strong>Registered company:</strong> ${COMPANY.legalName} (Company No. ${COMPANY.companyNo})`,
+            `<strong>Registered company:</strong> ${COMPANY.legalName}${
+              COMPANY.companyNo ? ` (Company No. ${COMPANY.companyNo})` : ""
+            }`,
             `<strong>Registered office:</strong> ${COMPANY.address}`,
-            `<strong>ICO registration:</strong> ${COMPANY.icoRef}`,
+            ...(COMPANY.icoRef
+              ? [`<strong>ICO registration:</strong> ${COMPANY.icoRef}`]
+              : []),
             `<strong>Data protection contact:</strong> ${MAILTO_PRIVACY}`,
           ],
         },
@@ -155,7 +159,7 @@ const privacy: LegalDoc = {
         {
           type: "ul",
           items: [
-            "Our moving crews and vetted subcontractors who carry out your move.",
+            "Our moving crews and any subcontractors who carry out your move.",
             "Payment processors to take secure payments.",
             "IT, hosting, analytics and communication providers who operate our systems.",
             "Insurers and professional advisers where required.",

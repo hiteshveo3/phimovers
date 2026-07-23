@@ -108,6 +108,83 @@ const copy: Record<string, Partial<ServiceCopy>> = {
       },
     ],
   },
+
+  "flat-removals": {
+    intro: [
+      "Flat removals in London mean stairs, lifts, tight landings and permit streets — not just a big van. Phi Movers prices your flat move as a clear fixed quote from inventory and access at both ends, so you’re not guessing how many hours a walk-up will take.",
+      "Guides start from around £249 for smaller flats; your final price depends on volume, floors and distance. Loading, unloading and basic protection are included. Hourly man-and-van (from £50/hour, two-hour minimum) is better for tiny loads — full flat moves get a fixed quotation.",
+      "We move studios through multi-bed apartments across all 32 boroughs. Send photos or book a free survey for awkward access and we’ll confirm crew size before moving day.",
+    ],
+    included: [
+      "Fixed quote based on inventory and access",
+      "Two-person crew as standard (more if needed)",
+      "Stairs, lifts and tight hallway handling",
+      "Blankets, straps, trolleys and floor protection",
+      "Basic bed dismantling and reassembly",
+      "Goods-in-transit and public liability cover",
+    ],
+    idealFor: [
+      "Walk-ups and mansion-block flats",
+      "One and two-bed apartment moves",
+      "Moves with parking and porter rules",
+      "Anyone who wants a fixed flat-move price",
+    ],
+    faqs: [
+      {
+        q: "How much does a flat removal cost in London?",
+        a: "Smaller flats guide from around £249 as a fixed quote once we know rooms, floors and distance. Larger or high-floor flats cost more. Hourly man-and-van from £50/hour (two-hour minimum) suits very small loads — we’ll say which pricing fits.",
+      },
+      {
+        q: "Do you handle flats with no lift?",
+        a: "Yes — walk-ups are normal London work. Tell us how many floors and whether there’s a lift booking needed. Photos of the stairwell help us plan the right crew.",
+      },
+      {
+        q: "Will you dismantle beds and wardrobes?",
+        a: "Basic bed frames and simple flat-pack are included. Complex wardrobes or full assembly can be added — tell us when you enquire.",
+      },
+      {
+        q: "Do I need a deposit for a quote?",
+        a: "No. Quotes are free with no card details required. A small deposit only applies when you confirm a booking.",
+      },
+    ],
+  },
+
+  "studio-moves": {
+    intro: [
+      "Studio moves should be quick, affordable and booked around key-exchange — not treated like a four-bed house job. Phi Movers runs dedicated studio moves across London with a fixed quote for typical loads, or hourly man-and-van when that suits better.",
+      "Guides start from around £199 depending on volume, floors and distance. You get a clean van, a capable crew and careful handling of sofas, beds and boxes through tight studio doors and shared corridors.",
+      "Ideal for first flats, downsizing and student-to-studio jumps. WhatsApp your addresses and a couple of photos for a clear price within about one working hour.",
+    ],
+    included: [
+      "Van and crew sized for a studio load",
+      "Loading and unloading help included",
+      "Protection for furniture and flooring",
+      "Help with stairs and shared access",
+      "First 10 journey miles in your quote",
+      "Goods-in-transit and public liability cover",
+    ],
+    idealFor: [
+      "Studio and micro-flat moves",
+      "First-time renters changing flats",
+      "Downsizing from a larger place",
+      "Short-notice studio key exchanges",
+    ],
+    faqs: [
+      {
+        q: "How much does a studio move cost?",
+        a: "Studio moves guide from around £199 as a fixed job once we know floors and distance. Very light loads can use hourly man-and-van from £50/hour with a two-hour minimum — we’ll recommend the better option.",
+      },
+      {
+        q: "Can you move a studio sofa up stairs?",
+        a: "Yes. Sofas and mattresses through tight studio access are everyday work. Photos help if the landing is particularly narrow.",
+      },
+      {
+        q: "How far ahead should I book?",
+        a: "Weekends and month-end fill fastest — a few days’ notice helps. Same-day and last-minute slots are often available mid-week subject to crew.",
+      },
+    ],
+  },
+
   "man-and-van": {
     intro: [
       "Our man & van service is the flexible, budget-friendly way to move smaller loads across London. Charged by the hour with a simple two-hour minimum, it’s perfect for single items, studio moves, marketplace purchases and those jobs that are too big for a taxi but don’t need a full removals crew.",
@@ -237,7 +314,7 @@ const copy: Record<string, Partial<ServiceCopy>> = {
     faqs: [
       {
         q: "How much does a student move cost?",
-        a: "Student moves start from £45 per hour with a two-hour minimum. Most room moves finish inside that window; larger flat shares may need a little longer or an extra helper.",
+        a: "Student moves start from £50 per hour with a two-hour minimum. Most room moves finish inside that window; larger flat shares may need a little longer or an extra helper.",
       },
       {
         q: "Can you move on key-exchange day?",
@@ -354,6 +431,42 @@ const copy: Record<string, Partial<ServiceCopy>> = {
       {
         q: "How do you price a shop move?",
         a: "Retail moves are quoted individually after a short walkthrough or video survey, covering crew, vehicles, timing and any fixture work.",
+      },
+    ],
+  },
+
+  "warehouse-removals": {
+    intro: [
+      "Warehouse removals need the right vans, the right crew count and a plan for racking, pallets and stock flow — not a house-move approach with bigger boxes. Phi Movers relocates warehouse and light-industrial loads across London with commercial timing and a clear written quote.",
+      "We handle stock, racking (when dismantled/reassembled as agreed), packing stations and office corners of the unit. Jobs are priced from volume, access, loading bays and whether you need evenings or a weekend cutover.",
+      "One project contact, insured transit and crews used to loading-bay rules and tight yard turns.",
+    ],
+    included: [
+      "Survey or video assessment of volume and access",
+      "Crew and vans sized to the warehouse load",
+      "Stock, pallet and racking handling as agreed",
+      "Labelling and staged loading where needed",
+      "Evening or weekend cutovers on request",
+      "Commercial goods-in-transit cover",
+    ],
+    idealFor: [
+      "Unit-to-unit warehouse relocations",
+      "Stock moves between London sites",
+      "Racking and packing-station shifts",
+      "Businesses that need a planned cutover weekend",
+    ],
+    faqs: [
+      {
+        q: "How much does a warehouse removal cost?",
+        a: "Warehouse moves are custom-quoted from volume, access, crew size and timing. After a short survey you’ll get a fixed written price — not an open-ended hourly guess for a large stock move.",
+      },
+      {
+        q: "Do you dismantle and rebuild racking?",
+        a: "Yes when booked. Simple bolt-together racking is straightforward; specialist systems may need your supplier — we’ll flag that early.",
+      },
+      {
+        q: "Can you work around live operations?",
+        a: "Often yes — we stage zones, use evenings/weekends, or move bay-by-bay so part of the site stays productive.",
       },
     ],
   },
@@ -612,6 +725,114 @@ const copy: Record<string, Partial<ServiceCopy>> = {
     ],
   },
 
+  "bed-and-mattress-delivery": {
+    intro: [
+      "Bought a new bed or mattress and need it home without dragging it through the tube? Our bed and mattress delivery service collects from store, warehouse or seller and places everything in the right room — stairs and tight turns included.",
+      "Jobs start from around £50 depending on size, floors and distance. We can dismantle an old bed frame for removal when booked, and reassemble a new frame so you’re not left with a bag of bolts at midnight.",
+      "Mattresses stay wrapped and protected in transit. One clear fixed quote before we set off; no card details needed just to enquire.",
+    ],
+    included: [
+      "Collection from store, warehouse or private seller",
+      "Protected mattress and frame transport",
+      "Carry-in to the agreed bedroom",
+      "Optional dismantle of old bed / basic new-frame assembly",
+      "Stairs and tight access handling",
+      "Insured delivery as standard",
+    ],
+    idealFor: [
+      "New bed and mattress drop-offs",
+      "Marketplace bed collections",
+      "Flat moves where only the bed is changing",
+      "High-floor deliveries without a lift",
+    ],
+    faqs: [
+      {
+        q: "How much does bed and mattress delivery cost?",
+        a: "From around £50 for a straightforward run. King sizes, high floors or long carries are quoted from access and distance. You’ll get a fixed price before booking.",
+      },
+      {
+        q: "Will you assemble the bed frame?",
+        a: "Basic frame assembly can be included when booked. Complex storage beds or missing parts may need extra time — tell us the make if you can.",
+      },
+      {
+        q: "Can you take the old mattress away?",
+        a: "Often yes when disposal is practical — ask when you enquire so we plan van space and any disposal fee.",
+      },
+    ],
+  },
+
+  "appliance-delivery": {
+    intro: [
+      "Fridges, washers, dryers and dishwashers need careful handling — tipping a fridge the wrong way or scratching a kitchen can ruin the day. Our appliance delivery service moves white goods across London and positions them where you need them.",
+      "Deliveries start from around £50 depending on the appliance, floors and distance. We protect floors and doorways, use the right straps and trolleys, and can help with disconnect/reconnect of simple plug-in units when agreed (plumbing and gas stay with a qualified tradesperson).",
+      "Ideal for store collections, marketplace finds and swapping out a broken machine the same week.",
+    ],
+    included: [
+      "Collection and protected transport of white goods",
+      "Trolleys, straps and floor protection",
+      "Carry up or down stairs as assessed",
+      "Placement in the agreed spot",
+      "Clear fixed quote before we leave",
+      "Goods-in-transit and public liability cover",
+    ],
+    idealFor: [
+      "Fridge, freezer and washer deliveries",
+      "Dryer and dishwasher moves",
+      "Marketplace appliance collections",
+      "Kitchen swap-outs with tight access",
+    ],
+    faqs: [
+      {
+        q: "How much does appliance delivery cost?",
+        a: "From around £50 for a typical single appliance run. Heavy American-style fridges or high floors may need two people — we’ll quote clearly first.",
+      },
+      {
+        q: "Do you plumb in washers or gas cookers?",
+        a: "We position appliances and can help with simple plug-in disconnect/reconnect when agreed. Water, waste and gas connections need a qualified plumber or Gas Safe engineer.",
+      },
+      {
+        q: "Should I empty the fridge first?",
+        a: "Yes — empty and defrost fridges/freezers before collection so they’re lighter, safer and don’t leak in the van.",
+      },
+    ],
+  },
+
+  "single-item-delivery": {
+    intro: [
+      "One item, one clear job. Our single item delivery service is built for marketplace buys, store collections and “too big for an Uber” pieces — desks, TVs, bikes, gym kit and similar.",
+      "Prices start from around £50 depending on size, stairs and distance. You get a fixed quote, a protected carry and placement where you want it — without paying for a full house-move crew.",
+      "If the load grows into several items, we may suggest hourly man-and-van instead. We’ll tell you which is cheaper before you book.",
+    ],
+    included: [
+      "Collection from seller, store or home",
+      "Blankets and straps for protection",
+      "Carry-in to the agreed room",
+      "Help with stairs and doorways",
+      "Fixed quote for the single-item run",
+      "Insured delivery as standard",
+    ],
+    idealFor: [
+      "Gumtree and Facebook Marketplace finds",
+      "One-off store or warehouse pickups",
+      "Desks, TVs, bikes and gym equipment",
+      "Anyone who doesn’t need a full van load",
+    ],
+    faqs: [
+      {
+        q: "How much does single item delivery cost?",
+        a: "From around £50 for a light, straightforward item. Heavy, bulky or high-floor pieces cost more. Multi-item loads may be better on hourly man-and-van from £50/hour (two-hour minimum).",
+      },
+      {
+        q: "What counts as a single item?",
+        a: "One main piece — for example a desk, TV or bike. A small bag of accessories that travels with it is fine. Extra furniture usually means a different quote.",
+      },
+      {
+        q: "Do I pay a deposit to get a quote?",
+        a: "No — quotes are free. A small deposit only applies when you confirm the booking.",
+      },
+    ],
+  },
+
   "furniture-delivery": {
     intro: [
       "Bought a sofa, bed or flat-pack online and need it home without the hassle? Our furniture delivery service collects single items and small loads across London and places them where you want them — stairs and awkward doorways included.",
@@ -688,6 +909,42 @@ const copy: Record<string, Partial<ServiceCopy>> = {
     ],
   },
 
+  "motorbike-transport": {
+    intro: [
+      "Moving a bike shouldn’t mean risking it in the rain on a mate’s trailer. Our motorbike transport service relocates scooters and motorcycles across London with proper strapping, wheel chocks and a crew who move bikes regularly.",
+      "Jobs start from around £80 depending on bike size, distance and whether it runs. Non-runners and low bikes need the right loading method — tell us upfront so we send suitable kit.",
+      "Ideal for auction collections, dealer transfers, house moves where the bike is part of the load, and seasonal storage runs.",
+    ],
+    included: [
+      "Secure loading with straps and wheel support",
+      "Suitable van or transporter for the bike",
+      "Agreed collection and delivery windows",
+      "Care for fairings, mirrors and soft luggage when fitted",
+      "Cover appropriate to the job",
+      "ETA updates while in transit",
+    ],
+    idealFor: [
+      "Scooter and motorcycle relocations",
+      "Auction and dealer collections",
+      "Non-running bikes that need winching",
+      "Bikes moving with a house or flat removal",
+    ],
+    faqs: [
+      {
+        q: "How much does motorbike transport cost?",
+        a: "From around £80 for a straightforward London run. Distance, bike size and whether it starts affect the fixed quote.",
+      },
+      {
+        q: "Can you move a non-running motorcycle?",
+        a: "Often yes, with winch or ramp assistance. Tell us if the brakes are seized or the bike is particularly low.",
+      },
+      {
+        q: "Do I need to drain fuel?",
+        a: "A small amount of fuel is usually fine. For longer storage or shipping we’ll advise if draining is safer — ask when you book.",
+      },
+    ],
+  },
+
   "same-day-move": {
     intro: [
       "Plans change. Keys appear early, a seller pushes completion, or a marketplace sofa won’t wait until next week. Our same-day move option adds urgent capacity when you need a van and crew today — not next Tuesday.",
@@ -724,6 +981,78 @@ const copy: Record<string, Partial<ServiceCopy>> = {
     ],
   },
 
+  "last-minute-removals": {
+    intro: [
+      "Completion moved, landlord changed the date, or you only found out you need a van tomorrow — our last minute removals service is built for short-notice London moves when the calendar won’t wait.",
+      "Subject to crew availability, we confirm a fixed price fast and turn up with the right van and people. You still get loading help, protection materials and standard insurance — just with less lead time than a planned booking.",
+      "Contact us as soon as you know the date. Mid-week is usually easier than peak Saturday; we’ll be honest if we’re full and offer the soonest alternative.",
+    ],
+    included: [
+      "Short-notice booking when capacity allows",
+      "Fixed price confirmed before dispatch",
+      "Van and crew matched to your load",
+      "Loading help and basic protection materials",
+      "Goods-in-transit and public liability cover",
+      "WhatsApp updates on the day",
+    ],
+    idealFor: [
+      "Sudden key-exchange changes",
+      "Emergency flat and studio moves",
+      "Jobs that can’t wait a week",
+      "Customers comparing last-minute options",
+    ],
+    faqs: [
+      {
+        q: "How last-minute can you take a booking?",
+        a: "Same-day and next-day are often possible mid-week. Weekends and month-end need earlier notice. Message us with addresses and volume and we’ll confirm within minutes if we can help.",
+      },
+      {
+        q: "Is last-minute more expensive?",
+        a: "Short-notice slots can add from around £15–£25 depending on demand. The full fixed price is always shown before you confirm — no surprise uplift on the doorstep.",
+      },
+      {
+        q: "What’s the difference vs same-day move?",
+        a: "Same-day is specifically “today”. Last-minute covers urgent bookings in the next day or two when plans suddenly change. Overlap is fine — we’ll pick the label that matches your timing.",
+      },
+    ],
+  },
+
+  "evening-and-weekend-moves": {
+    intro: [
+      "Not everyone can move at 10am on a Tuesday. Our evening and weekend moves service runs out-of-hours slots so you can finish work, collect keys, or keep the shop open while we handle the heavy lifting.",
+      "Hourly man-and-van starts from £60/hour for evening and weekend timing (still with a clear minimum), and larger jobs get a fixed out-of-hours quotation. You’ll know the price before we arrive.",
+      "Popular for office cutovers, retail overnight moves and residential key exchanges that only land on Saturdays.",
+    ],
+    included: [
+      "Evening and weekend booking windows",
+      "Crew scheduled around your keys or trading hours",
+      "Same care and insurance as daytime moves",
+      "Loading and unloading help included",
+      "Clear pricing for out-of-hours timing",
+      "Quiet, professional arrival at residential buildings",
+    ],
+    idealFor: [
+      "Saturday key exchanges",
+      "After-work flat and house moves",
+      "Office and shop out-of-hours cutovers",
+      "Anyone who can’t take weekday leave",
+    ],
+    faqs: [
+      {
+        q: "How much do evening and weekend moves cost?",
+        a: "Out-of-hours man-and-van guides from £60/hour with a clear minimum. Full house or office moves get a fixed quote that includes the evening/weekend timing. Daytime rates may be lower if your diary allows.",
+      },
+      {
+        q: "How late can you work?",
+        a: "Many residential jobs run into the evening; buildings with quiet hours may need an earlier finish. Tell us any porter or neighbour rules when you book.",
+      },
+      {
+        q: "Are Sundays available?",
+        a: "Often yes, subject to crew. Sunday and bank-holiday demand is high — book ahead when you can.",
+      },
+    ],
+  },
+
   "international-moves": {
     intro: [
       "Moving abroad takes more than a big van — it takes packing standards, paperwork awareness and partners you can trust at the other end. Our international moves service covers door-to-door relocations across Europe and beyond, coordinated from London.",
@@ -756,6 +1085,42 @@ const copy: Record<string, Partial<ServiceCopy>> = {
       {
         q: "Can you store my things before shipping?",
         a: "Yes — secure storage in the UK is available if your flight or completion date doesn’t line up with the container or truck departure.",
+      },
+    ],
+  },
+
+  "european-moves": {
+    intro: [
+      "Moving to or from Europe by road is often faster and simpler than sea freight for a household load. Our European moves service covers door-to-door road relocations between London and destinations across the continent — packed properly, documented clearly and tracked by one UK contact.",
+      "We start with a survey and inventory, agree part-load or dedicated vehicle options, and pack to the standard your route needs. Export paperwork guidance is part of the conversation so you’re not googling customs rules the night before collection.",
+      "Ideal for expats, remote workers and families relocating within the EU and nearby countries who want a calm London collection and a reliable handover abroad.",
+    ],
+    included: [
+      "Survey and European road-move inventory",
+      "Export-aware packing where required",
+      "Part-load or dedicated vehicle options",
+      "London collection and destination liaison",
+      "Guidance on documents you typically need",
+      "Insured transit for the agreed route",
+    ],
+    idealFor: [
+      "Relocations to France, Spain, Germany and beyond",
+      "EU and nearby country household moves",
+      "Part-load shipments that don’t fill a lorry",
+      "Moves where road transit beats sea timing",
+    ],
+    faqs: [
+      {
+        q: "How is a European move different from international?",
+        a: "European moves focus on road routes across the continent. Broader international covers sea/air and longer-haul destinations too. If you’re unsure, tell us the country and we’ll recommend the right product.",
+      },
+      {
+        q: "How long does a European road move take?",
+        a: "Often several days depending on country, part-load schedules and border timing. We’ll give a realistic window with your quote — not a vague “soon”.",
+      },
+      {
+        q: "Do you help with customs after Brexit?",
+        a: "We guide you on common personal-effects requirements and work with destination partners. Final declarations remain your responsibility; we won’t leave you without a checklist.",
       },
     ],
   },

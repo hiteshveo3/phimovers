@@ -52,7 +52,7 @@ export default function QuoteForm({
   return (
     <div
       id="quote"
-      className="scroll-mt-24 rounded-2xl border border-line bg-surface p-5 shadow-sm md:p-6"
+      className="scroll-mt-24 rounded-2xl border border-line bg-surface p-5 md:p-6"
     >
       <p className="text-lg font-extrabold text-content">Get my free fixed quote</p>
       <p className="mt-1 text-sm text-muted">
@@ -117,7 +117,7 @@ export default function QuoteForm({
             type="button"
             disabled={!canContinue}
             onClick={() => setStep(2)}
-            className="btn col-span-full mt-1 w-full justify-center bg-[#163300] px-5 text-[#9fe870] hover:bg-[#0e2400] disabled:cursor-not-allowed disabled:opacity-50 sm:col-span-2"
+            className="btn col-span-full mt-1 w-full justify-center bg-[#9fe870] px-5 text-[#163300] hover:bg-[#86d957] disabled:cursor-not-allowed disabled:opacity-50 sm:col-span-2"
           >
             Continue
             <Icon name="arrowRight" className="h-4 w-4" />
@@ -166,7 +166,7 @@ export default function QuoteForm({
               type="button"
               disabled={!name.trim() || !phone.trim()}
               onClick={openWhatsApp}
-              className="btn w-full flex-1 justify-center bg-[#163300] px-5 text-[#9fe870] hover:bg-[#0e2400] disabled:cursor-not-allowed disabled:opacity-50"
+              className="btn w-full flex-1 justify-center bg-[#9fe870] px-5 text-[#163300] hover:bg-[#86d957] disabled:cursor-not-allowed disabled:opacity-50"
             >
               <Icon name="whatsapp" className="h-4 w-4" />
               Send quote request

@@ -1,11 +1,66 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { allProducts, priceLabel } from "@/lib/data";
+import Link from "next/link";
+import { allServices, priceLabel } from "@/lib/data";
+import { areas } from "@/lib/areas";
+import { posts } from "@/lib/blog";
+import {
+  PRIORITY_BOROUGHS,
+  PRIORITY_SERVICES,
+} from "@/lib/combos";
 import { WHATSAPP_HREF } from "@/lib/contact";
 import { Icon } from "./icons";
 
-const OPEN_EVENT = "swiftmove:open-search";
+const OPEN_EVENT = "phimovers:open-search";
+
+type SearchHit = {
+  href: string;
+  title: string;
+  meta: string;
+  kind: "service" | "area" | "blog" | "combo";
+};
+
+const serviceBySlug = Object.fromEntries(allServices.map((s) => [s.slug, s]));
+const areaBySlug = Object.fromEntries(areas.map((a) => [a.slug, a]));
+
+const priorityCombos: SearchHit[] = PRIORITY_BOROUGHS.flatMap((borough) =>
+  PRIORITY_SERVICES.flatMap((service) => {
+    const a = areaBySlug[borough];
+    const s = serviceBySlug[service];
+    if (!a || !s) return [];
+    return [
+      {
+        href: `/areas/${borough}/${service}`,
+        title: `${s.title} in ${a.name}`,
+        meta: `Local · ${priceLabel(s.price)}`,
+        kind: "combo" as const,
+      },
+    ];
+  }),
+);
+
+const index: SearchHit[] = [
+  ...allServices.map((s) => ({
+    href: s.href,
+    title: s.title,
+    meta: `Service · ${priceLabel(s.price)}`,
+    kind: "service" as const,
+  })),
+  ...areas.map((a) => ({
+    href: `/areas/${a.slug}`,
+    title: a.name,
+    meta: "London borough",
+    kind: "area" as const,
+  })),
+  ...posts.map((p) => ({
+    href: `/blog/${p.slug}`,
+    title: p.title,
+    meta: `Blog · ${p.category} · ${p.readMins} min`,
+    kind: "blog" as const,
+  })),
+  ...priorityCombos,
+];
 
 export function SearchTrigger({ className = "" }: { className?: string }) {
   return (
@@ -62,14 +117,14 @@ export default function SearchModal() {
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return [];
-    return allProducts
+    return index
       .filter(
-        (p) =>
-          p.title.toLowerCase().includes(q) ||
-          p.category.toLowerCase().includes(q) ||
-          p.author.toLowerCase().includes(q)
+        (h) =>
+          h.title.toLowerCase().includes(q) ||
+          h.meta.toLowerCase().includes(q) ||
+          h.href.toLowerCase().includes(q),
       )
-      .slice(0, 8);
+      .slice(0, 10);
   }, [query]);
 
   if (!open) return null;
@@ -81,14 +136,14 @@ export default function SearchModal() {
         className="absolute inset-0 bg-ink/50 backdrop-blur-sm"
       />
       <div className="absolute left-1/2 top-[12vh] w-[92vw] max-w-xl -translate-x-1/2">
-        <div className="overflow-hidden rounded-2xl border border-line bg-surface shadow-soft">
+        <div className="overflow-hidden rounded-2xl border border-line bg-surface">
           <div className="flex items-center gap-3 border-b border-line px-4">
             <Icon name="search" className="h-5 w-5 text-muted" />
             <input
               ref={inputRef}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search services, packages or areas…"
+              placeholder="Search services, boroughs or guides…"
               className="h-14 w-full bg-transparent text-base text-content outline-none placeholder:text-muted"
             />
             <button
@@ -103,7 +158,7 @@ export default function SearchModal() {
           <div className="max-h-[52vh] overflow-y-auto p-2">
             {!query.trim() ? (
               <p className="px-3 py-8 text-center text-sm text-muted">
-                Try “home removals”, “storage”, “man &amp; van” or a city.
+                Try “house removals”, “Camden”, “sofa” or “permits”.
               </p>
             ) : results.length === 0 ? (
               <p className="px-3 py-8 text-center text-sm text-muted">
@@ -111,25 +166,26 @@ export default function SearchModal() {
               </p>
             ) : (
               <ul>
-                {results.map((p) => (
-                  <li key={p.title}>
-                    <a
-                      href="#"
+                {results.map((h) => (
+                  <li key={h.href}>
+                    <Link
+                      href={h.href}
                       onClick={() => setOpen(false)}
                       className="flex items-center justify-between gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-cream"
                     >
                       <span className="min-w-0">
                         <span className="block truncate text-sm font-semibold text-content">
-                          {p.title}
+                          {h.title}
                         </span>
                         <span className="block truncate text-xs text-muted">
-                          {p.author} · {p.category}
+                          {h.meta}
                         </span>
                       </span>
-                      <span className="shrink-0 text-sm font-bold text-content">
-                        {priceLabel(p.price)}
-                      </span>
-                    </a>
+                      <Icon
+                        name="arrowRight"
+                        className="h-4 w-4 shrink-0 text-[#163300]"
+                      />
+                    </Link>
                   </li>
                 ))}
               </ul>

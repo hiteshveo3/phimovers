@@ -43,9 +43,10 @@ export type Category = {
 export const navLinks: { label: string; href: string }[] = [
   { label: "Services", href: "/services" },
   { label: "Pricing", href: "/pricing" },
-  { label: "Blog", href: "/blog" },
   { label: "Areas", href: "/areas" },
   { label: "Reviews", href: "/reviews" },
+  { label: "Blog", href: "/blog" },
+  { label: "Contact", href: "/contact" },
 ];
 
 // ---- Services mega menu ----
@@ -153,7 +154,7 @@ const svc = (
     desc,
     price,
     icon,
-    image: image ?? img(seed, 640, 400),
+    image: image ?? `/services/${slug}.jpg`,
     href: `/services/${slug}`,
     slug,
   };
@@ -166,11 +167,11 @@ export const serviceCategories: ServiceCategory[] = [
     intro:
       "From a studio to a family house — fully insured, fixed-price moves across every London borough.",
     items: [
-      svc("House Removals", "House moves of any size, packed and protected door to door.", "Fixed quote", "home", "svc-house-removals", "/services/house-removal.jpg"),
+      svc("House Removals", "House moves of any size, packed and protected door to door.", "Fixed quote", "home", "svc-house-removals", "/services/house-removals.jpg"),
       svc("Flat Removals", "Flat and apartment moves with stairs, lifts and tight access handled.", "from £249", "home", "svc-flat-removals"),
       svc("Studio Moves", "Fast, affordable studio flat moves across London.", "from £199", "home", "svc-studio-moves"),
       svc("Man & Van", "Small moves and single items, charged by the hour.", "from £50/hr", "truck", "svc-man-van"),
-      svc("Student Moves", "Budget-friendly moves for halls, flats and shared houses.", "from £45/hr", "user", "svc-student"),
+      svc("Student Moves", "Budget-friendly moves for halls, flats and shared houses.", "from £50/hr", "user", "svc-student"),
       svc("House Clearance", "Clear and dispose of unwanted items responsibly.", "from £120", "cart", "svc-clearance"),
     ],
   },
@@ -181,10 +182,10 @@ export const serviceCategories: ServiceCategory[] = [
       "Sofas, beds, appliances and one-off deliveries — carefully carried and placed where you want them.",
     items: [
       svc("Sofa Delivery", "Sofa collection and delivery with stairs and tight access covered.", "from £55", "sofa", "svc-sofa"),
-      svc("Bed & Mattress Delivery", "Beds and mattresses collected, protected and placed in-room.", "from £49", "sofa", "svc-bed-mattress"),
-      svc("Appliance Delivery", "Fridges, washers and white goods delivered and positioned.", "from £45", "cube", "svc-appliance"),
-      svc("Single Item Delivery", "One item, one van — marketplace and store collections.", "from £39", "box", "svc-single-item"),
-      svc("Furniture Delivery", "Furniture and flat-pack delivery across London.", "from £45", "sofa", "svc-furniture"),
+      svc("Bed & Mattress Delivery", "Beds and mattresses collected, protected and placed in-room.", "from £50", "sofa", "svc-bed-mattress"),
+      svc("Appliance Delivery", "Fridges, washers and white goods delivered and positioned.", "from £50", "cube", "svc-appliance"),
+      svc("Single Item Delivery", "One item, one van — marketplace and store collections.", "from £50", "box", "svc-single-item"),
+      svc("Furniture Delivery", "Furniture and flat-pack delivery across London.", "from £50", "sofa", "svc-furniture"),
       svc("Furniture Assembly", "Dismantle and reassemble beds, wardrobes and more.", "from £60", "wrench", "svc-assembly"),
     ],
   },
@@ -208,7 +209,7 @@ export const serviceCategories: ServiceCategory[] = [
     items: [
       svc("Full Packing Service", "Our team packs everything with quality materials.", "from £150", "box", "svc-packing-full"),
       svc("Fragile-only Packing", "Expert wrapping for kitchens, glass and valuables.", "from £80", "shield", "svc-packing-fragile"),
-      svc("Packing Materials", "Boxes, tape and wrapping kits delivered to you.", "from £35", "cube", "svc-materials"),
+      svc("Packing Materials", "Boxes, tape and wrapping kits delivered to you.", "from £50", "cube", "svc-materials"),
       svc("Secure Storage", "Short and long-term units, 24/7 CCTV monitored.", "from £15/wk", "cube", "svc-storage"),
     ],
   },
@@ -307,7 +308,7 @@ export const packages: Product[] = [
   { title: "2-Bed House Move", price: "from £499", author: "3 movers · 1 van", category: "House Removals", image: img("move-2bed") },
   { title: "3-Bed House Move", price: "from £749", author: "4 movers · 2 vans", category: "House Removals", image: img("move-3bed") },
   { title: "4-Bed+ House Move", price: "from £999", author: "5 movers · 2 vans", category: "House Removals", image: img("move-4bed") },
-  { title: "Man & Van", price: "from £45/hr", author: "1 mover · 1 van", category: "Man & Van", image: img("move-manvan") },
+  { title: "Man & Van", price: "from £50/hr", author: "1 mover · 1 van", category: "Man & Van", image: img("move-manvan") },
   { title: "Office Move", price: "Custom quote", author: "Dedicated project manager", category: "Office Removals", image: img("move-office") },
 ];
 
@@ -338,16 +339,16 @@ export const officeMoves: Product[] = [
 export const packingStorage: Product[] = [
   { title: "Full Packing Service", price: "from £150", author: "Materials included", category: "Packing", image: img("pack-full") },
   { title: "Fragile-only Packing", price: "from £80", author: "Kitchen & valuables", category: "Packing", image: img("pack-fragile") },
-  { title: "Packing Materials Kit", price: "from £35", author: "Boxes, tape & wrap", category: "Packing", image: img("pack-kit") },
+  { title: "Packing Materials Kit", price: "from £50", author: "Boxes, tape & wrap", category: "Packing", image: img("pack-kit") },
   { title: "Storage — per week", price: "from £15/wk", author: "Secure, dry unit", category: "Storage", image: img("store-week") },
   { title: "Storage — per month", price: "from £55/mo", author: "24/7 access", category: "Storage", image: img("store-month") },
 ];
 
 export const manVanOptions: Product[] = [
-  { title: "Man & Van — 1 Hour", price: "from £45", author: "1 mover · van", category: "Man & Van", image: img("mv-hour") },
+  { title: "Man & Van — 1 Hour", price: "from £50", author: "1 mover · van", category: "Man & Van", image: img("mv-hour") },
   { title: "Half Day (4 hrs)", price: "from £160", author: "2 movers · van", category: "Man & Van", image: img("mv-half") },
   { title: "Full Day (8 hrs)", price: "from £299", author: "2 movers · van", category: "Man & Van", image: img("mv-full") },
-  { title: "Single Item Delivery", price: "from £39", author: "1 mover · van", category: "Man & Van", image: img("mv-single") },
+  { title: "Single Item Delivery", price: "from £50", author: "1 mover · van", category: "Man & Van", image: img("mv-single") },
   { title: "Student Move", price: "from £59", author: "Budget-friendly", category: "Man & Van", image: img("mv-student") },
 ];
 
@@ -356,7 +357,7 @@ export type Feature = { title: string; body: string; cta: string };
 export const features: Feature[] = [
   { title: "Fully Insured", body: "Goods-in-transit and public liability cover on every single move, for total peace of mind.", cta: "Our cover" },
   { title: "Fixed-Price Quotes", body: "No hidden fees or surprises. The price we quote is the price you pay on moving day.", cta: "Get a Quote" },
-  { title: "Trained, Vetted Movers", body: "Professional, background-checked crews who treat your belongings like their own.", cta: "Meet the team" },
+  { title: "Experienced London movers", body: "Uniformed crews who treat your belongings and home with care on every job.", cta: "Meet the team" },
   { title: "Packing & Materials", body: "Optional full packing service with strong boxes, wrap and blankets to protect everything.", cta: "Explore packing" },
   { title: "Flexible Scheduling", body: "Evening and weekend slots available to fit around your busy life and completion dates.", cta: "Check availability" },
   { title: "London Specialists", body: "We cover all 32 London boroughs and know the parking, permits and congestion zones inside out.", cta: "Areas we cover" },
@@ -375,7 +376,7 @@ export type ProTier = {
 };
 
 export const proTiers: ProTier[] = [
-  { key: "monthly", label: "Man & Van", price: "£45", period: "/hour", sub: "1 mover + van · 2-hour minimum" },
+  { key: "monthly", label: "Man & Van", price: "£50", period: "/hour", sub: "1 mover + van · 2-hour minimum" },
   { key: "yearly", label: "Home Move", price: "£499", period: "fixed price", sub: "3 movers + van · up to 2-bed", badge: "Most popular" },
   { key: "lifetime", label: "Large Move", price: "£749", period: "fixed price", sub: "4 movers + 2 vans · 3–4 bed" },
 ];

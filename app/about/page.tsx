@@ -31,7 +31,7 @@ const values = [
     text: "We know the boroughs, permits, stairs and loading bays — we don’t stretch outside the capital.",
   },
   {
-    title: "Friendly, vetted crews",
+    title: "Friendly, experienced crews",
     text: "Uniformed movers who protect floors, doors and furniture, then leave your new place ready to live in.",
   },
 ];

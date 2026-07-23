@@ -5,6 +5,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HeroBg from "@/components/HeroBg";
 import BackToTop from "@/components/blog/BackToTop";
+import ServiceFaq from "@/components/ServiceFaq";
+import SoftImage from "@/components/SoftImage";
 import { Icon } from "@/components/icons";
 import {
   areas,
@@ -37,7 +39,7 @@ export function generateMetadata({
   const url = `${SITE}/areas/${area.slug}`;
   return {
     title: `Removals in ${area.name} — Phi Movers`,
-    description: `House removals, sofa delivery, man & van and more in ${area.name}. Fixed-price, fully insured Phi Movers across ${area.name} and all London boroughs.`,
+    description: `${area.blurb} Fixed-price house removals, sofa delivery, man & van and more in ${area.name}.`,
     alternates: { canonical: url },
     openGraph: {
       title: `Removals in ${area.name} — Phi Movers`,
@@ -70,6 +72,16 @@ export default function AreaPage({ params }: { params: { borough: string } }) {
     url,
   };
 
+  const faqLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: area.faqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
+
   const breadcrumbLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -92,6 +104,10 @@ export default function AreaPage({ params }: { params: { borough: string } }) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
       />
       <script
         type="application/ld+json"
@@ -128,8 +144,8 @@ export default function AreaPage({ params }: { params: { borough: string } }) {
             Removals in {area.name}
           </h1>
           <p className="mt-4 max-w-2xl text-base text-muted md:text-lg">
-            {area.blurb} Fixed-price quotes, WhatsApp booking and fully insured
-            crews for house removals, sofas, office moves and more.
+            {area.blurb} Fixed-price quotes, WhatsApp booking and insured crews
+            for house removals, sofas, office moves and more.
           </p>
 
           <div className="mt-6 flex flex-wrap gap-3">
@@ -152,7 +168,26 @@ export default function AreaPage({ params }: { params: { borough: string } }) {
 
       <div className="bg-[#f4f5f2]">
         <div className="container-page py-10 md:py-14">
-          <div className="mb-6 flex items-end justify-between gap-4">
+          <section className="grid gap-6 md:grid-cols-2">
+            <div className="rounded-2xl border border-line bg-surface p-6">
+              <h2 className="text-lg font-bold tracking-tight text-content">
+                Housing we move in {area.name}
+              </h2>
+              <p className="mt-3 text-[15px] leading-relaxed text-content/80">
+                {area.housing}
+              </p>
+            </div>
+            <div className="rounded-2xl border border-line bg-surface p-6">
+              <h2 className="text-lg font-bold tracking-tight text-content">
+                Access, parking &amp; permits
+              </h2>
+              <p className="mt-3 text-[15px] leading-relaxed text-content/80">
+                {area.access}
+              </p>
+            </div>
+          </section>
+
+          <div className="mb-6 mt-14 flex items-end justify-between gap-4">
             <div>
               <h2 className="text-2xl font-bold tracking-tight text-content">
                 Services in {area.name}
@@ -176,13 +211,14 @@ export default function AreaPage({ params }: { params: { borough: string } }) {
               <Link
                 key={s.slug}
                 href={comboHref(area.slug, s.slug)}
-                className="group overflow-hidden rounded-2xl border border-line bg-surface transition-shadow hover:shadow-soft"
+                className="group overflow-hidden rounded-2xl border border-line bg-surface transition-colors hover:border-[#9fe870]"
               >
-                <img
+                <SoftImage
                   src={s.image}
                   alt={s.title}
-                  loading="lazy"
-                  className="aspect-[16/9] w-full object-cover"
+                  icon={s.icon}
+                  className="aspect-[16/9] w-full"
+                  imgClassName="aspect-[16/9] w-full object-cover"
                 />
                 <div className="p-5">
                   <span className="inline-flex rounded-pill bg-[#9fe870]/25 px-2.5 py-0.5 text-xs font-semibold text-[#163300]">
@@ -202,6 +238,17 @@ export default function AreaPage({ params }: { params: { borough: string } }) {
               </Link>
             ))}
           </div>
+
+          <section className="mt-14">
+            <h2 className="text-2xl font-bold tracking-tight text-content">
+              {area.name} removals FAQs
+            </h2>
+            <p className="mt-1 text-sm text-muted">
+              Local answers for parking, timing and the jobs we run most in{" "}
+              {area.name}.
+            </p>
+            <ServiceFaq faqs={area.faqs} />
+          </section>
 
           <section className="mt-14">
             <h2 className="text-2xl font-bold tracking-tight text-content">

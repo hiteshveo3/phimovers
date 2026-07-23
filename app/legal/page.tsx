@@ -77,9 +77,16 @@ export default function LegalHub() {
           <div className="mt-10 rounded-[24px] border border-line bg-surface p-6 text-sm text-muted md:p-8">
             <p className="font-bold text-content">{COMPANY.legalName}</p>
             <p className="mt-2">{COMPANY.address}</p>
-            <p className="mt-1">
-              Company No. {COMPANY.companyNo} · VAT {COMPANY.vatNo}
-            </p>
+            {(COMPANY.companyNo || COMPANY.vatNo) && (
+              <p className="mt-1">
+                {[
+                  COMPANY.companyNo ? `Company No. ${COMPANY.companyNo}` : null,
+                  COMPANY.vatNo ? `VAT ${COMPANY.vatNo}` : null,
+                ]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </p>
+            )}
             <p className="mt-1">
               <a
                 href={`mailto:${COMPANY.emailGeneral}`}

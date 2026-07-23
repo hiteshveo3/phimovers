@@ -6,6 +6,7 @@ import Cta from "@/components/Cta";
 import HeroBg from "@/components/HeroBg";
 import ServicesNav from "@/components/ServicesNav";
 import { Icon } from "@/components/icons";
+import SoftImage from "@/components/SoftImage";
 import { serviceCategories, type ServiceItem } from "@/lib/data";
 
 export const metadata: Metadata = {
@@ -22,13 +23,14 @@ function ServiceItemCard({ s }: { s: ServiceItem }) {
       className="group flex flex-col overflow-hidden rounded-2xl border border-line bg-surface transition-colors hover:bg-cream"
     >
       <div className="relative">
-        <img
+        <SoftImage
           src={s.image}
           alt={s.title}
-          loading="lazy"
-          className="aspect-[16/10] w-full object-cover"
+          icon={s.icon}
+          className="aspect-[16/10] w-full"
+          imgClassName="aspect-[16/10] w-full object-cover"
         />
-        <span className="absolute left-3 top-3 grid h-10 w-10 place-items-center rounded-xl bg-[#9fe870] text-[#163300] shadow-soft">
+        <span className="absolute left-3 top-3 grid h-10 w-10 place-items-center rounded-xl bg-[#9fe870] text-[#163300]">
           <Icon name={s.icon} className="h-5 w-5" />
         </span>
       </div>

@@ -6,7 +6,8 @@ export type BlogPost = {
   readMins: number;
   date: string; // ISO
   dateLabel: string;
-  coverSeed: string;
+  /** Filename stem under /public/blog/{cover}.jpg */
+  cover: string;
   featured?: boolean;
 };
 
@@ -17,7 +18,12 @@ export const blogCategories = [
   "London",
   "Man & Van",
   "Storage",
+  "Sofa & furniture",
 ];
+
+export function blogCover(post: BlogPost, _w = 800, _h = 520) {
+  return `/blog/${post.cover}.jpg`;
+}
 
 export const posts: BlogPost[] = [
   {
@@ -29,8 +35,19 @@ export const posts: BlogPost[] = [
     readMins: 8,
     date: "2026-07-20",
     dateLabel: "20 July 2026",
-    coverSeed: "london-move-cover",
+    cover: "complete-guide-to-moving-home-in-london",
     featured: true,
+  },
+  {
+    slug: "sofa-delivery-narrow-stairs-london",
+    title: "Sofa delivery up narrow London stairs — what actually works",
+    excerpt:
+      "Measure turns, remove legs, and know when a fixed sofa run beats hourly man & van.",
+    category: "Sofa & furniture",
+    readMins: 5,
+    date: "2026-07-18",
+    dateLabel: "18 July 2026",
+    cover: "sofa-delivery-narrow-stairs-london",
   },
   {
     slug: "how-to-pack-a-kitchen-like-a-pro",
@@ -41,7 +58,18 @@ export const posts: BlogPost[] = [
     readMins: 5,
     date: "2026-07-14",
     dateLabel: "14 July 2026",
-    coverSeed: "kitchen-pack",
+    cover: "how-to-pack-a-kitchen-like-a-pro",
+  },
+  {
+    slug: "same-day-removals-london",
+    title: "Same-day removals in London: when it’s realistic",
+    excerpt:
+      "What we need from you, how pricing works, and honest limits on last-minute vans.",
+    category: "Moving tips",
+    readMins: 4,
+    date: "2026-07-11",
+    dateLabel: "11 July 2026",
+    cover: "same-day-removals-london",
   },
   {
     slug: "moving-in-london-parking-and-permits",
@@ -52,7 +80,18 @@ export const posts: BlogPost[] = [
     readMins: 4,
     date: "2026-07-08",
     dateLabel: "8 July 2026",
-    coverSeed: "london-permit",
+    cover: "moving-in-london-parking-and-permits",
+  },
+  {
+    slug: "evening-weekend-moves-london",
+    title: "Evening and weekend moves in London",
+    excerpt:
+      "Out-of-hours slots for key exchanges and office cutovers — costs, quiet hours and booking tips.",
+    category: "Moving tips",
+    readMins: 4,
+    date: "2026-07-04",
+    dateLabel: "4 July 2026",
+    cover: "evening-weekend-moves-london",
   },
   {
     slug: "man-and-van-vs-full-removal",
@@ -63,7 +102,18 @@ export const posts: BlogPost[] = [
     readMins: 3,
     date: "2026-06-30",
     dateLabel: "30 June 2026",
-    coverSeed: "man-van-compare",
+    cover: "man-and-van-vs-full-removal",
+  },
+  {
+    slug: "prepare-for-flat-move-london",
+    title: "How to prepare for a flat move in London",
+    excerpt:
+      "Access photos, inventory basics and building rules that keep your fixed quote accurate.",
+    category: "Moving tips",
+    readMins: 5,
+    date: "2026-06-26",
+    dateLabel: "26 June 2026",
+    cover: "prepare-for-flat-move-london",
   },
   {
     slug: "studio-flat-move-checklist",
@@ -74,7 +124,7 @@ export const posts: BlogPost[] = [
     readMins: 6,
     date: "2026-06-22",
     dateLabel: "22 June 2026",
-    coverSeed: "studio-move",
+    cover: "studio-flat-move-checklist",
   },
   {
     slug: "self-storage-guide-london",
@@ -85,7 +135,7 @@ export const posts: BlogPost[] = [
     readMins: 5,
     date: "2026-06-15",
     dateLabel: "15 June 2026",
-    coverSeed: "storage-unit",
+    cover: "self-storage-guide-london",
   },
 ];
 

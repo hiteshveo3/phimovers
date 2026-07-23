@@ -105,7 +105,7 @@ export default function ReviewCard({
             <Stars rating={review.rating} className="text-[#163300]" />
             <span className="inline-flex items-center gap-1.5 rounded-pill bg-white/25 px-3 py-1 text-[11px] font-bold text-[#163300] backdrop-blur-md">
               <Icon name="check" className="h-4 w-4" size={15} strokeWidth={2.2} />
-              Verified move
+              Customer review
             </span>
           </div>
           <blockquote className="mt-5 text-[16px] font-semibold leading-relaxed">
@@ -354,7 +354,7 @@ export default function ReviewCard({
             <Stars rating={review.rating} className="text-[#163300]" />
             <span className="inline-flex items-center gap-1 rounded-pill bg-[#9fe870]/25 px-2.5 py-1 text-[11px] font-bold text-[#163300]">
               <Icon name="check" className="h-3.5 w-3.5" />
-              Verified move
+              Customer review
             </span>
           </div>
           <blockquote className="relative mt-5 text-[16px] font-medium leading-relaxed text-content">

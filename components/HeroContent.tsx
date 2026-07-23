@@ -1,4 +1,3 @@
-import { WHATSAPP_HREF } from "@/lib/contact";
 import { Icon } from "./icons";
 import Highlight from "./Highlight";
 
@@ -32,12 +31,7 @@ export default function HeroContent() {
         </p>
 
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <a
-            href={WHATSAPP_HREF}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-accent"
-          >
+          <a href="#quote" className="btn-accent">
             Get a Free Quote
           </a>
           <a href="/services" className="btn-light">

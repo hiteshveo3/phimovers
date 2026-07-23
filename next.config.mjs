@@ -10,6 +10,16 @@ const nextConfig = {
       { protocol: "https", hostname: "**" },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.phimovers.co.uk" }],
+        destination: "https://phimovers.co.uk/:path*",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
