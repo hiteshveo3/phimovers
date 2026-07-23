@@ -10,16 +10,8 @@ const nextConfig = {
       { protocol: "https", hostname: "**" },
     ],
   },
-  async redirects() {
-    return [
-      {
-        source: "/:path*",
-        has: [{ type: "host", value: "www.phimovers.co.uk" }],
-        destination: "https://phimovers.co.uk/:path*",
-        permanent: true,
-      },
-    ];
-  },
+  // Host redirects are handled in Vercel (apex → www). Do not add www↔apex
+  // redirects here — they fight Vercel and can create a loop.
 };
 
 export default nextConfig;
