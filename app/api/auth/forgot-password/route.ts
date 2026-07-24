@@ -3,7 +3,6 @@ import {
   getAdminAuth,
   isAdminSdkConfigured,
 } from "@/lib/firebase/admin";
-import { SITE_URL } from "@/lib/contact";
 import { isMailConfigured, sendMail } from "@/lib/email/send";
 import { passwordResetHtml } from "@/lib/email/passwordResetTemplate";
 
@@ -74,10 +73,11 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const base = (process.env.NEXT_PUBLIC_SITE_URL || SITE_URL).replace(
-    /\/$/,
-    "",
-  );
+  // Prefer www — matches live alias + Firebase authorized domains
+  const base = (
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    "https://www.phimovers.co.uk"
+  ).replace(/\/$/, "");
   const continueUrl =
     audience === "staff" ? `${base}/admin/login` : `${base}/client/login`;
 
@@ -116,10 +116,14 @@ export async function POST(req: NextRequest) {
         "If an account exists for that email, a reset link is on its way.",
     });
   } catch (e) {
-    console.error(e);
-    return NextResponse.json(
-      { error: "Could not send reset email. Try again shortly." },
-      { status: 500 },
-    );
+    const msg = e instanceof Error ? e.message : String(e);
+    console.error("forgot-password failed:", msg);
+    // Safe, useful hint (no secrets)
+    const hint = /SMTP|ECONN|auth|Invalid login|535|534/i.test(msg)
+      ? "Mail server rejected the send. Check Zoho SMTP app password / host."
+      : /FIREBASE|credential|private_key/i.test(msg)
+        ? "Server Firebase credentials issue."
+        : "Could not send reset email. Try again shortly.";
+    return NextResponse.json({ error: hint }, { status: 500 });
   }
 }

@@ -1,4 +1,4 @@
-/** Send transactional email via Resend (preferred) or SMTP. */
+/** Send transactional email via Resend (preferred) or Zoho/SMTP. */
 
 export function isMailConfigured() {
   return Boolean(
@@ -52,14 +52,19 @@ export async function sendMail(input: {
     );
   }
 
-  // Dynamic import so build works without nodemailer until SMTP is used
-  const nodemailer = await import("nodemailer");
-  const port = Number(process.env.SMTP_PORT || "587");
+  const mod = await import("nodemailer");
+  const nodemailer = (mod as { default?: typeof import("nodemailer") }).default ??
+    (mod as typeof import("nodemailer"));
+  const port = Number(process.env.SMTP_PORT || "465");
   const transporter = nodemailer.createTransport({
     host,
     port,
     secure: port === 465,
+    requireTLS: port === 587,
     auth: { user, pass },
+    connectionTimeout: 20000,
+    greetingTimeout: 20000,
+    socketTimeout: 20000,
   });
 
   await transporter.sendMail({
