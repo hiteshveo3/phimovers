@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Icon } from "./icons";
 
 const OPEN_EVENT = "phimovers:open-search";
@@ -33,8 +34,11 @@ function BarItem({
 }
 
 export default function BottomNav() {
+  const pathname = usePathname();
   const [moreOpen, setMoreOpen] = useState(false);
   const openSearch = () => window.dispatchEvent(new Event(OPEN_EVENT));
+
+  if (pathname?.startsWith("/admin") || pathname?.startsWith("/track")) return null;
 
   return (
     <>

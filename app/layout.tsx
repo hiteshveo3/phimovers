@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Manrope, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
 import BottomNav from "@/components/BottomNav";
+import BodyPad from "@/components/BodyPad";
 import { DEFAULT_OG_IMAGE } from "@/lib/seo";
 
 const manrope = Manrope({
@@ -56,8 +57,8 @@ export default function RootLayout({
       className={`${manrope.variable} ${sourceSerif.variable}`}
       suppressHydrationWarning
     >
-      <body className="bg-base font-sans antialiased pb-16 lg:pb-0">
-        {children}
+      <body className="bg-base font-sans antialiased">
+        <BodyPad>{children}</BodyPad>
         <BottomNav />
       </body>
     </html>

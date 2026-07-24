@@ -40,6 +40,7 @@ const columns: { title: string; links: FooterLink[] }[] = [
       { label: "Reviews", href: "/reviews" },
       { label: "About", href: "/about" },
       { label: "Contact", href: "/contact" },
+      { label: "Track quote", href: "/track" },
       { label: "Get a quote", href: WHATSAPP_HREF },
     ],
   },
