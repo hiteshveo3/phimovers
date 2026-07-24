@@ -75,10 +75,10 @@ export default function HowItWorks() {
             <Icon name="arrowRight" className="h-4 w-4" />
           </a>
           <Link
-            href="/track"
+            href="/client"
             className="btn border border-line bg-surface px-5 text-content"
           >
-            Track a quote
+            Client login
           </Link>
         </div>
       </div>

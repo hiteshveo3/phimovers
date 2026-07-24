@@ -38,6 +38,8 @@ export type Lead = {
   assignedTo?: string;
   tags: string[];
   trackCode: string;
+  /** Linked client account (Flutter / web portal) */
+  ownerUid?: string;
   createdAt: string;
   updatedAt: string;
   notes: LeadNote[];
@@ -57,6 +59,7 @@ export type LeadInput = {
   service: string;
   source: string;
   priority?: LeadPriority;
+  ownerUid?: string;
 };
 
 export const LEAD_STATUSES: {
@@ -159,7 +162,6 @@ export function phonesMatch(a: string, b: string) {
 }
 
 export type PublicLeadView = {
-  trackCode: string;
   status: LeadStatus;
   service: string;
   from: string;

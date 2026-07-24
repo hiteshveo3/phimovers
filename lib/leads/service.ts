@@ -12,6 +12,7 @@ import {
   query,
   serverTimestamp,
   updateDoc,
+  where,
   writeBatch,
   type Unsubscribe,
 } from "firebase/firestore";
@@ -78,6 +79,7 @@ function mapLead(id: string, data: Record<string, unknown>): Lead {
     assignedTo: data.assignedTo ? String(data.assignedTo) : undefined,
     tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
     trackCode: String(data.trackCode ?? ""),
+    ownerUid: data.ownerUid ? String(data.ownerUid) : undefined,
     createdAt,
     updatedAt: ts(data.updatedAt, createdAt),
     notes,
@@ -122,6 +124,7 @@ export async function createLead(
     status: "new",
     priority,
     trackCode,
+    ownerUid: input.ownerUid || null,
     tags: [],
     notes: [],
     activity: [created],
@@ -141,6 +144,31 @@ export function subscribeLeads(
 ): Unsubscribe {
   const db = getFirebaseDb();
   const q = query(collection(db, COL), orderBy("createdAt", "desc"));
+  return onSnapshot(
+    q,
+    (snap) => {
+      onData(
+        snap.docs.map((d) =>
+          mapLead(d.id, d.data() as Record<string, unknown>),
+        ),
+      );
+    },
+    (err) => onError?.(err),
+  );
+}
+
+/** Client portal — only leads owned by this uid. Needs Firestore index. */
+export function subscribeClientLeads(
+  ownerUid: string,
+  onData: (leads: Lead[]) => void,
+  onError?: (err: Error) => void,
+): Unsubscribe {
+  const db = getFirebaseDb();
+  const q = query(
+    collection(db, COL),
+    where("ownerUid", "==", ownerUid),
+    orderBy("createdAt", "desc"),
+  );
   return onSnapshot(
     q,
     (snap) => {

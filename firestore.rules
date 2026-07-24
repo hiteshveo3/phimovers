@@ -9,8 +9,21 @@ service cloud.firestore {
         );
     }
 
+    function isOwner() {
+      return request.auth != null
+        && resource.data.ownerUid == request.auth.uid;
+    }
+
+    match /users/{uid} {
+      allow read: if request.auth != null
+        && (request.auth.uid == uid || isStaff());
+      allow create, update: if request.auth != null
+        && request.auth.uid == uid
+        && request.resource.data.role == 'client';
+      allow delete: if false;
+    }
+
     match /leads/{leadId} {
-      // Public quote form can create leads (extra fields like priority/tags OK)
       allow create: if request.resource.data.keys().hasAll([
           'name', 'phone', 'from', 'to', 'propertySize', 'service', 'source', 'status'
         ])
@@ -20,10 +33,15 @@ service cloud.firestore {
         && request.resource.data.name.size() > 1
         && request.resource.data.phone.size() > 5
         && (!('priority' in request.resource.data)
-            || request.resource.data.priority in ['normal', 'urgent']);
+            || request.resource.data.priority in ['normal', 'urgent'])
+        && (!('ownerUid' in request.resource.data)
+            || request.resource.data.ownerUid == null
+            || (request.auth != null
+                && request.resource.data.ownerUid == request.auth.uid));
 
-      // Staff only (custom claim or bootstrap email)
-      allow read, update, delete: if isStaff();
+      // Staff: full access. Clients: read own quotes only.
+      allow read: if isStaff() || isOwner();
+      allow update, delete: if isStaff();
     }
   }
 }

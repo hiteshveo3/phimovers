@@ -194,10 +194,10 @@ export default function AdminSettingsPage() {
             <span className="font-semibold">{appCheck ? "Set" : "Not set"}</span>
           </li>
           <li className="flex justify-between gap-3">
-            <span className="text-muted">Customer track</span>
+            <span className="text-muted">Client portal</span>
             <span className="font-semibold">
-              <a href="/track" className="underline underline-offset-2">
-                /track
+              <a href="/client" className="underline underline-offset-2">
+                /client
               </a>
             </span>
           </li>
