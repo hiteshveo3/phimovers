@@ -1,8 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { Icon } from "./icons";
 import { WHATSAPP_HREF, PHONE_HREF, PHONE_DISPLAY } from "@/lib/contact";
+import { isFirebaseConfigured } from "@/lib/firebase/config";
+import { createLead } from "@/lib/leads/service";
 
 const sizes = [
   "Studio / bedsits",
@@ -18,6 +21,7 @@ export default function QuoteForm({
 }: {
   serviceTitle?: string;
 }) {
+  const pathname = usePathname();
   const [step, setStep] = useState<1 | 2>(1);
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
@@ -26,10 +30,15 @@ export default function QuoteForm({
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const [done, setDone] = useState(false);
+  const [trackCode, setTrackCode] = useState("");
+  const [honeypot, setHoneypot] = useState("");
 
   const canContinue = from.trim().length >= 2 && to.trim().length >= 2;
 
-  const openWhatsApp = () => {
+  const openWhatsApp = (code?: string) => {
     const msg = [
       `Hi Phi Movers — quote request for ${serviceTitle}`,
       `From: ${from.trim()}`,
@@ -39,25 +48,118 @@ export default function QuoteForm({
       `Name: ${name.trim()}`,
       `Phone: ${phone.trim()}`,
       email.trim() ? `Email: ${email.trim()}` : null,
+      code ? `Track code: ${code}` : null,
     ]
       .filter(Boolean)
       .join("\n");
     window.open(
       `${WHATSAPP_HREF}?text=${encodeURIComponent(msg)}`,
       "_blank",
-      "noopener,noreferrer"
+      "noopener,noreferrer",
     );
   };
+
+  const submit = async () => {
+    setError("");
+    if (honeypot.trim()) {
+      setDone(true);
+      return;
+    }
+    setBusy(true);
+    try {
+      let code = "";
+      if (isFirebaseConfigured()) {
+        const created = await createLead({
+          name: name.trim(),
+          phone: phone.trim(),
+          email: email.trim() || undefined,
+          from: from.trim(),
+          to: to.trim(),
+          date: date || undefined,
+          propertySize: size,
+          service: serviceTitle,
+          source: pathname || "/",
+          priority: (() => {
+            if (!date) return "normal";
+            const move = new Date(date + "T12:00:00");
+            if (Number.isNaN(move.getTime())) return "normal";
+            const hours = (move.getTime() - Date.now()) / 36e5;
+            return hours >= 0 && hours <= 48 ? "urgent" : "normal";
+          })(),
+        });
+        code = created.trackCode;
+        setTrackCode(code);
+      }
+      setDone(true);
+      openWhatsApp(code || undefined);
+    } catch (e) {
+      setError(
+        e instanceof Error
+          ? e.message
+          : "Could not save — you can still WhatsApp us.",
+      );
+      openWhatsApp();
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  if (done) {
+    return (
+      <div
+        id="quote"
+        className="scroll-mt-24 rounded-2xl border border-line bg-surface p-5 md:p-6"
+      >
+        <span className="grid h-11 w-11 place-items-center rounded-xl bg-[#9fe870] text-[#163300]">
+          <Icon name="check" className="h-5 w-5" />
+        </span>
+        <p className="mt-4 text-lg font-extrabold text-content">
+          Request sent
+        </p>
+        <p className="mt-1 text-sm text-muted">
+          We&apos;ve logged your details
+          {isFirebaseConfigured() ? " in our dashboard" : ""} and opened
+          WhatsApp so you can send photos if you like. We usually reply within
+          about an hour.
+        </p>
+        {trackCode && (
+          <div className="mt-4 rounded-xl border border-line bg-[#f4f5f2] px-4 py-3">
+            <p className="text-xs font-bold uppercase tracking-wide text-muted">
+              Your tracking code
+            </p>
+            <p className="mt-1 text-2xl font-extrabold tracking-widest text-[#163300]">
+              {trackCode}
+            </p>
+            <a
+              href={`/track`}
+              className="mt-2 inline-flex text-sm font-bold text-[#163300] underline underline-offset-2"
+            >
+              Open customer dashboard →
+            </a>
+          </div>
+        )}
+        <a
+          href={PHONE_HREF}
+          className="btn mt-5 bg-[#9fe870] px-5 text-[#163300]"
+        >
+          <Icon name="phone" className="h-4 w-4" />
+          Or call {PHONE_DISPLAY}
+        </a>
+      </div>
+    );
+  }
 
   return (
     <div
       id="quote"
       className="scroll-mt-24 rounded-2xl border border-line bg-surface p-5 md:p-6"
     >
-      <p className="text-lg font-extrabold text-content">Get my free fixed quote</p>
+      <p className="text-lg font-extrabold text-content">
+        Get my free fixed quote
+      </p>
       <p className="mt-1 text-sm text-muted">
-        Start in under a minute. We usually reply within about one working hour —
-        no obligation, no card required.
+        Start in under a minute. We usually reply within about one working hour
+        — no obligation, no card required.
       </p>
 
       {step === 1 ? (
@@ -154,6 +256,21 @@ export default function QuoteForm({
               autoComplete="email"
             />
           </label>
+          {/* Honeypot — bots fill this; humans never see it */}
+          <label className="absolute -left-[9999px] top-auto h-px w-px overflow-hidden" aria-hidden>
+            Company
+            <input
+              tabIndex={-1}
+              autoComplete="off"
+              value={honeypot}
+              onChange={(e) => setHoneypot(e.target.value)}
+            />
+          </label>
+          {error && (
+            <p className="col-span-full text-sm font-medium text-amber-800">
+              {error}
+            </p>
+          )}
           <div className="col-span-full mt-1 flex flex-col gap-2 sm:flex-row">
             <button
               type="button"
@@ -164,20 +281,24 @@ export default function QuoteForm({
             </button>
             <button
               type="button"
-              disabled={!name.trim() || !phone.trim()}
-              onClick={openWhatsApp}
+              disabled={!name.trim() || !phone.trim() || busy}
+              onClick={submit}
               className="btn w-full flex-1 justify-center bg-[#9fe870] px-5 text-[#163300] hover:bg-[#86d957] disabled:cursor-not-allowed disabled:opacity-50"
             >
               <Icon name="whatsapp" className="h-4 w-4" />
-              Send quote request
+              {busy ? "Sending…" : "Send quote request"}
             </button>
           </div>
           <p className="col-span-full text-xs text-muted">
             Or call{" "}
-            <a href={PHONE_HREF} className="font-semibold text-[#163300] hover:underline">
+            <a
+              href={PHONE_HREF}
+              className="font-semibold text-[#163300] hover:underline"
+            >
               {PHONE_DISPLAY}
             </a>{" "}
-            — your details stay private and there’s no card required to enquire.
+            — your details stay private and there&apos;s no card required to
+            enquire.
           </p>
         </div>
       )}

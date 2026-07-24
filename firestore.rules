@@ -1,0 +1,29 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isStaff() {
+      return request.auth != null
+        && (
+          request.auth.token.staff == true
+          || request.auth.token.email == 'phimoves@gmail.com'
+        );
+    }
+
+    match /leads/{leadId} {
+      // Public quote form can create leads (extra fields like priority/tags OK)
+      allow create: if request.resource.data.keys().hasAll([
+          'name', 'phone', 'from', 'to', 'propertySize', 'service', 'source', 'status'
+        ])
+        && request.resource.data.status == 'new'
+        && request.resource.data.name is string
+        && request.resource.data.phone is string
+        && request.resource.data.name.size() > 1
+        && request.resource.data.phone.size() > 5
+        && (!('priority' in request.resource.data)
+            || request.resource.data.priority in ['normal', 'urgent']);
+
+      // Staff only (custom claim or bootstrap email)
+      allow read, update, delete: if isStaff();
+    }
+  }
+}
