@@ -13,7 +13,6 @@ import {
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
   onAuthStateChanged,
-  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
@@ -198,7 +197,17 @@ export function ClientAuthProvider({ children }: { children: ReactNode }) {
         await claimLeads(user, phone);
       },
       async resetPassword(email) {
-        await sendPasswordResetEmail(getFirebaseAuth(), email.trim());
+        const res = await fetch("/api/auth/forgot-password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: email.trim(), audience: "client" }),
+        });
+        const data = (await res.json().catch(() => ({}))) as {
+          error?: string;
+        };
+        if (!res.ok) {
+          throw new Error(data.error || "Could not send reset email.");
+        }
       },
       async logout() {
         await signOut(getFirebaseAuth());
