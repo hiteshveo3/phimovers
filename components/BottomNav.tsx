@@ -38,7 +38,7 @@ export default function BottomNav() {
   const [moreOpen, setMoreOpen] = useState(false);
   const openSearch = () => window.dispatchEvent(new Event(OPEN_EVENT));
 
-  if (pathname?.startsWith("/admin") || pathname?.startsWith("/track")) return null;
+  if (pathname?.startsWith("/admin") || pathname?.startsWith("/client")) return null;
 
   return (
     <>

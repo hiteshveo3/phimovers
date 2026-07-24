@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Icon } from "./icons";
 import { WHATSAPP_HREF, PHONE_HREF, PHONE_DISPLAY } from "@/lib/contact";
 import { isFirebaseConfigured } from "@/lib/firebase/config";
+import { getFirebaseAuth } from "@/lib/firebase/client";
 import { createLead } from "@/lib/leads/service";
 
 const sizes = [
@@ -33,12 +34,11 @@ export default function QuoteForm({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
-  const [trackCode, setTrackCode] = useState("");
   const [honeypot, setHoneypot] = useState("");
 
   const canContinue = from.trim().length >= 2 && to.trim().length >= 2;
 
-  const openWhatsApp = (code?: string) => {
+  const openWhatsApp = () => {
     const msg = [
       `Hi Phi Movers — quote request for ${serviceTitle}`,
       `From: ${from.trim()}`,
@@ -48,7 +48,6 @@ export default function QuoteForm({
       `Name: ${name.trim()}`,
       `Phone: ${phone.trim()}`,
       email.trim() ? `Email: ${email.trim()}` : null,
-      code ? `Track code: ${code}` : null,
     ]
       .filter(Boolean)
       .join("\n");
@@ -67,9 +66,9 @@ export default function QuoteForm({
     }
     setBusy(true);
     try {
-      let code = "";
       if (isFirebaseConfigured()) {
-        const created = await createLead({
+        const uid = getFirebaseAuth().currentUser?.uid;
+        await createLead({
           name: name.trim(),
           phone: phone.trim(),
           email: email.trim() || undefined,
@@ -79,6 +78,7 @@ export default function QuoteForm({
           propertySize: size,
           service: serviceTitle,
           source: pathname || "/",
+          ownerUid: uid,
           priority: (() => {
             if (!date) return "normal";
             const move = new Date(date + "T12:00:00");
@@ -87,11 +87,9 @@ export default function QuoteForm({
             return hours >= 0 && hours <= 48 ? "urgent" : "normal";
           })(),
         });
-        code = created.trackCode;
-        setTrackCode(code);
       }
       setDone(true);
-      openWhatsApp(code || undefined);
+      openWhatsApp();
     } catch (e) {
       setError(
         e instanceof Error
@@ -118,26 +116,21 @@ export default function QuoteForm({
         </p>
         <p className="mt-1 text-sm text-muted">
           We&apos;ve logged your details
-          {isFirebaseConfigured() ? " in our dashboard" : ""} and opened
-          WhatsApp so you can send photos if you like. We usually reply within
-          about an hour.
+          {isFirebaseConfigured() ? " in our system" : ""} and opened WhatsApp
+          so you can send photos if you like. We usually reply within about an
+          hour.
         </p>
-        {trackCode && (
-          <div className="mt-4 rounded-xl border border-line bg-[#f4f5f2] px-4 py-3">
-            <p className="text-xs font-bold uppercase tracking-wide text-muted">
-              Your tracking code
-            </p>
-            <p className="mt-1 text-2xl font-extrabold tracking-widest text-[#163300]">
-              {trackCode}
-            </p>
-            <a
-              href={`/track`}
-              className="mt-2 inline-flex text-sm font-bold text-[#163300] underline underline-offset-2"
-            >
-              Open customer dashboard →
-            </a>
-          </div>
-        )}
+        <div className="mt-4 rounded-xl border border-line bg-[#f4f5f2] px-4 py-3">
+          <p className="text-sm font-semibold text-[#163300]">
+            Track everything in your client dashboard
+          </p>
+          <a
+            href="/client"
+            className="mt-2 inline-flex text-sm font-bold text-[#163300] underline underline-offset-2"
+          >
+            Open My Phi →
+          </a>
+        </div>
         <a
           href={PHONE_HREF}
           className="btn mt-5 bg-[#9fe870] px-5 text-[#163300]"
