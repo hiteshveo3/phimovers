@@ -5,6 +5,7 @@ import {
 } from "@/lib/firebase/admin";
 import { isMailConfigured, sendMail } from "@/lib/email/send";
 import { passwordResetHtml } from "@/lib/email/passwordResetTemplate";
+import { sitePasswordResetLink } from "@/lib/auth/passwordResetLink";
 
 export const runtime = "nodejs";
 
@@ -96,10 +97,11 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const link = await auth.generatePasswordResetLink(email, {
+    const firebaseLink = await auth.generatePasswordResetLink(email, {
       url: continueUrl,
       handleCodeInApp: false,
     });
+    const link = sitePasswordResetLink(firebaseLink, audience, base);
     await sendMail({
       to: email,
       subject: "Reset your Phi Movers password",
