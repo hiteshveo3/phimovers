@@ -81,7 +81,22 @@ export async function POST(req: NextRequest) {
   const continueUrl =
     audience === "staff" ? `${base}/admin/login` : `${base}/client/login`;
 
-  const auth = getAdminAuth();
+  let auth;
+  try {
+    auth = getAdminAuth();
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    console.error("forgot-password admin init failed:", msg);
+    return NextResponse.json(
+      {
+        error:
+          /valid JSON|missing project_id|SERVICE_ACCOUNT/i.test(msg)
+            ? "Server Firebase credentials invalid. Re-set FIREBASE_SERVICE_ACCOUNT_JSON in Vercel."
+            : "Server auth not ready.",
+      },
+      { status: 503 },
+    );
+  }
 
   let displayName: string | undefined;
   try {
@@ -121,7 +136,7 @@ export async function POST(req: NextRequest) {
     // Safe, useful hint (no secrets)
     const hint = /SMTP|ECONN|auth|Invalid login|535|534/i.test(msg)
       ? "Mail server rejected the send. Check Zoho SMTP app password / host."
-      : /FIREBASE|credential|private_key/i.test(msg)
+      : /FIREBASE|credential|private_key|SERVICE_ACCOUNT|valid JSON/i.test(msg)
         ? "Server Firebase credentials issue."
         : "Could not send reset email. Try again shortly.";
     return NextResponse.json({ error: hint }, { status: 500 });
