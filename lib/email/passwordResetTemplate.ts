@@ -11,9 +11,16 @@ export function passwordResetHtml(input: {
     : "Hi,";
   const kind =
     input.audience === "staff" ? "staff admin account" : "Phi Movers account";
+  // Absolute URL so email clients can load the brand mark (inbox “favicon”-style icon)
+  const logoUrl = "https://www.phimovers.co.uk/logo.png";
 
   return `<!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="${logoUrl}" />
+  </head>
   <body style="margin:0;padding:0;background:#f4f5f2;font-family:Arial,Helvetica,sans-serif;color:#163300;">
     <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f5f2;padding:32px 16px;">
       <tr>
@@ -21,8 +28,17 @@ export function passwordResetHtml(input: {
           <table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #e5e7eb;">
             <tr>
               <td style="background:#163300;padding:20px 28px;">
-                <p style="margin:0;font-size:18px;font-weight:700;color:#9fe870;">Phi Movers</p>
-                <p style="margin:4px 0 0;font-size:12px;color:#c8e6a8;">Password reset</p>
+                <table cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td style="vertical-align:middle;padding-right:12px;">
+                      <img src="${logoUrl}" width="40" height="40" alt="Phi Movers" style="display:block;border-radius:10px;border:0;" />
+                    </td>
+                    <td style="vertical-align:middle;">
+                      <p style="margin:0;font-size:18px;font-weight:700;color:#9fe870;">Phi Movers</p>
+                      <p style="margin:4px 0 0;font-size:12px;color:#c8e6a8;">Password reset</p>
+                    </td>
+                  </tr>
+                </table>
               </td>
             </tr>
             <tr>
@@ -37,7 +53,7 @@ export function passwordResetHtml(input: {
                   </a>
                 </p>
                 <p style="margin:0 0 12px;font-size:13px;line-height:1.5;color:#6b7280;">
-                  This link expires soon. If you didn’t ask for a reset, you can ignore this email — your password stays the same.
+                  This link opens on phimovers.co.uk and expires soon. If you didn’t ask for a reset, you can ignore this email — your password stays the same.
                 </p>
                 <p style="margin:0;font-size:12px;line-height:1.5;color:#9ca3af;word-break:break-all;">
                   Or paste this link: ${input.link}
