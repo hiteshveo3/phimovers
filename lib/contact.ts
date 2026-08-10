@@ -16,3 +16,11 @@ export const EMAIL_HREF = `mailto:${EMAIL}`;
 
 export const COMPANY_LEGAL_NAME = "Phi Movers Ltd";
 export const SITE_URL = "https://phimovers.co.uk";
+
+/** Single site-wide address — use nowhere else. */
+export const ADDRESS = "247 Becontree Ave, Dagenham RM8 2UT, United Kingdom";
+export const ADDRESS_STREET = "247 Becontree Ave";
+export const ADDRESS_TOWN = "Dagenham";
+export const ADDRESS_POSTCODE = "RM8 2UT";
+export const ADDRESS_COUNTRY = "United Kingdom";
+

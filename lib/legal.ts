@@ -4,6 +4,7 @@ import {
   SITE_URL,
   COMPANY_LEGAL_NAME,
   EMAIL,
+  ADDRESS,
 } from "@/lib/contact";
 
 export type LegalBlock =
@@ -36,8 +37,7 @@ export const COMPANY = {
   tradingName: "Phi Movers",
   companyNo: "",
   vatNo: "",
-  address:
-    "Phi Movers Ltd, 71–75 Shelton Street, Covent Garden, London, WC2H 9JQ, United Kingdom",
+  address: `${COMPANY_LEGAL_NAME}, ${ADDRESS}`,
   emailGeneral: EMAIL,
   emailPrivacy: EMAIL,
   phoneDisplay: PHONE_DISPLAY,

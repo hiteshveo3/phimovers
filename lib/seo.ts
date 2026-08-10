@@ -1,4 +1,11 @@
-import { PHONE_E164, SITE_URL, EMAIL } from "@/lib/contact";
+import {
+  PHONE_E164,
+  SITE_URL,
+  EMAIL,
+  ADDRESS_STREET,
+  ADDRESS_TOWN,
+  ADDRESS_POSTCODE,
+} from "@/lib/contact";
 
 const SITE = SITE_URL;
 
@@ -57,9 +64,9 @@ export function organizationJsonLd() {
     priceRange: "££",
     address: {
       "@type": "PostalAddress",
-      streetAddress: "71–75 Shelton Street, Covent Garden",
-      addressLocality: "London",
-      postalCode: "WC2H 9JQ",
+      streetAddress: ADDRESS_STREET,
+      addressLocality: ADDRESS_TOWN,
+      postalCode: ADDRESS_POSTCODE,
       addressCountry: "GB",
     },
     areaServed: {

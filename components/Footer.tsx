@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Icon } from "./icons";
-import { CALL_HREF, CALL_LABEL, WHATSAPP_HREF } from "@/lib/contact";
+import { CALL_HREF, CALL_LABEL, WHATSAPP_HREF, ADDRESS } from "@/lib/contact";
 
 type FooterLink = { label: string; href: string };
 
@@ -131,6 +131,9 @@ export default function Footer() {
               <a href={CALL_HREF} className="hover:text-[#163300]">
                 {CALL_LABEL}
               </a>
+            </p>
+            <p className="mt-2 text-xs text-muted max-w-xs">
+              📍 {ADDRESS}
             </p>
           </div>
 

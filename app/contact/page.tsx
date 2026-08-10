@@ -12,6 +12,7 @@ import {
   EMAIL_HREF,
   SITE_URL,
   WHATSAPP_HREF,
+  ADDRESS,
 } from "@/lib/contact";
 
 export const metadata: Metadata = {
@@ -47,6 +48,15 @@ const channels = [
     label: EMAIL,
     icon: "mail" as const,
     external: false,
+    primary: false,
+  },
+  {
+    title: "Office Address",
+    text: ADDRESS,
+    href: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ADDRESS)}`,
+    label: "View on Google Maps",
+    icon: "location" as const,
+    external: true,
     primary: false,
   },
 ];
@@ -88,7 +98,7 @@ export default function ContactPage() {
 
       <div className="bg-[#f4f5f2]">
         <div className="container-page py-12 md:py-16">
-          <div className="grid gap-5 md:grid-cols-3">
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {channels.map((c) => (
               <a
                 key={c.title}
