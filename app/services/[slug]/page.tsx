@@ -9,7 +9,6 @@ import ServiceFaq from "@/components/ServiceFaq";
 import ReviewCard, { type Review } from "@/components/ReviewCard";
 import Reveal from "@/components/Reveal";
 import SoftImage from "@/components/SoftImage";
-import QuoteForm from "@/components/QuoteForm";
 import { Icon } from "@/components/icons";
 import {
   CALL_HREF,
@@ -23,6 +22,7 @@ import {
   getServiceBySlug,
   priceLabel,
   type ServiceItem,
+  faqs as globalFaqs,
 } from "@/lib/data";
 import { areas, comboHref } from "@/lib/areas";
 import { buildServiceCopy, relatedServices } from "@/lib/services";
@@ -383,9 +383,7 @@ export default function ServiceDetailPage({
   const { item, category } = entry;
   const copy = buildServiceCopy(item);
   const related = relatedServices(item.slug, 3);
-  const faqs = HOUSE_SLUGS.has(item.slug)
-    ? [...copy.faqs, ...houseGuideFaqs]
-    : copy.faqs;
+  const faqs = globalFaqs;
 
   const url = `${SITE}/services/${item.slug}`;
 
@@ -1000,11 +998,6 @@ export default function ServiceDetailPage({
           </section>
           </Reveal>
         </div>
-
-        {/* Quote form */}
-        <section className="container-page pb-8">
-          <QuoteForm serviceTitle={item.title} />
-        </section>
 
         {/* Final CTA — WhatsApp + Call */}
         <section className="container-page pb-4">

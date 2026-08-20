@@ -49,7 +49,7 @@ function getCfg(variant: number): Cfg {
         item: () => "rounded-card border border-line bg-surface px-5",
         q: () =>
           "flex w-full items-center gap-3 py-4 text-left text-base font-semibold text-content",
-        a: () => "pb-5 text-sm text-muted",
+        a: () => "pb-5 text-[15px] text-muted",
         ind: chevron,
       };
     case 3:
@@ -58,7 +58,7 @@ function getCfg(variant: number): Cfg {
         item: () => "",
         q: () =>
           "flex w-full items-center gap-3 py-4 text-left text-base font-semibold text-content",
-        a: () => "pb-4 text-sm text-muted",
+        a: () => "pb-4 text-[15px] text-muted",
         ind: plus,
       };
     case 4:
@@ -69,7 +69,7 @@ function getCfg(variant: number): Cfg {
           (o ? "border-[#9fe870] bg-[#9fe870]/10" : "border-line"),
         q: () =>
           "flex w-full items-center gap-3 py-4 text-left text-base font-semibold text-content",
-        a: () => "pb-4 text-sm text-muted",
+        a: () => "pb-4 text-[15px] text-muted",
         ind: chevron,
       };
     case 5:
@@ -81,7 +81,7 @@ function getCfg(variant: number): Cfg {
         q: (o) =>
           "flex w-full items-center gap-3 py-4 text-left text-base font-semibold " +
           (o ? "text-white" : "text-content"),
-        a: () => "pb-5 text-sm text-white/70",
+        a: () => "pb-5 text-[15px] text-white/70",
         ind: (o) => (
           <span className={o ? "text-white" : "text-content"}>{chevron(o)}</span>
         ),
@@ -92,7 +92,7 @@ function getCfg(variant: number): Cfg {
         item: () => "border-b border-line/70",
         q: () =>
           "flex w-full items-center gap-3 py-3.5 text-left text-[15px] font-medium text-content",
-        a: () => "pb-3.5 text-sm text-muted",
+        a: () => "pb-3.5 text-[15px] text-muted",
         ind: chevron,
       };
     case 7:
@@ -101,10 +101,10 @@ function getCfg(variant: number): Cfg {
         item: () => "rounded-2xl bg-cream px-5",
         q: () =>
           "flex w-full items-center gap-4 py-4 text-left text-base font-semibold text-content",
-        a: () => "pb-5 text-sm text-muted",
+        a: () => "pb-5 text-[15px] text-muted",
         ind: (o) => <span className="text-content">{chevron(o)}</span>,
         prefix: (i) => (
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#9fe870] text-base font-extrabold text-black">
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-accent text-base font-extrabold text-ink">
             {i + 1}
           </span>
         ),
@@ -115,7 +115,7 @@ function getCfg(variant: number): Cfg {
         item: () => "rounded-2xl bg-cream px-5",
         q: () =>
           "flex w-full items-center gap-3 py-4 text-left text-base font-semibold text-content",
-        a: () => "pb-5 text-sm text-muted",
+        a: () => "pb-5 text-[15px] text-muted",
         ind: plus,
       };
     case 9:
@@ -124,7 +124,7 @@ function getCfg(variant: number): Cfg {
         item: () => "",
         q: () =>
           "flex w-full items-start gap-3 py-5 text-left text-xl font-bold tracking-tight text-content md:text-2xl",
-        a: () => "pb-5 text-sm text-muted md:text-base",
+        a: () => "pb-5 text-[15px] text-muted md:text-base",
         ind: (o) => (
           <span className="mt-1">{plus(o)}</span>
         ),
@@ -138,7 +138,7 @@ function getCfg(variant: number): Cfg {
         q: (o) =>
           "flex w-full items-center gap-3 py-4 text-left text-base font-semibold " +
           (o ? "text-[#163300]" : "text-content"),
-        a: () => "pb-5 text-sm text-[#163300]/80",
+        a: () => "pb-5 text-[15px] text-[#163300]/80",
         ind: chevron,
       };
     case 1:
@@ -148,7 +148,7 @@ function getCfg(variant: number): Cfg {
         item: () => "",
         q: () =>
           "flex w-full items-center gap-3 py-4 text-left text-base font-semibold text-content",
-        a: () => "pb-4 text-sm text-muted",
+        a: () => "pb-4 text-[15px] text-muted",
         ind: chevron,
       };
   }

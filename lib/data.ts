@@ -392,27 +392,35 @@ export const proFeatures: string[] = [
 export const faqs: { q: string; a: string }[] = [
   {
     q: "How do you calculate my moving quote?",
-    a: "We give a fixed price based on your inventory, property access and distance — confirmed after a quick free survey. No hidden fees on moving day.",
+    a: "At Phi Movers, we believe in complete transparency and providing accurate, fixed-price quotes without hidden fees. The quoting process begins by understanding your specific moving details, such as the total volume of your belongings and property size. We also carefully assess access at both locations, checking for stairs, narrow hallways, or parking restrictions. Distance is also factored in. For larger moves, we offer a free video survey or in-person visit. This meticulous approach allows us to guarantee that the quote you receive is the final price.",
   },
   {
     q: "Are my belongings insured during the move?",
-    a: "Yes. Every move includes goods-in-transit and public liability cover, so your items are protected from start to finish.",
+    a: "The safety of your belongings is our absolute highest priority during every relocation. Every move we undertake is fully protected by comprehensive insurance policies. We carry robust Goods in Transit insurance, covering items against unforeseen damage during transport. Additionally, our extensive Public Liability insurance provides extra protection for your property and our staff. Our professional, uniformed crews use heavy-duty blankets, specialized wrapping, and secure strapping to keep everything safe. You can rest assured knowing you are financially protected, allowing you to focus on settling in.",
   },
   {
     q: "Do you provide packing materials?",
-    a: "Absolutely — we offer an optional full packing service with strong boxes, wrap and blankets, or you can pack yourself and we'll handle the rest.",
+    a: "Yes, we offer a comprehensive range of packing solutions tailored to meet your specific needs and budget. For a completely hands-off experience, our full packing service is ideal. Our trained professionals arrive before moving day equipped with high-quality materials, including double-walled boxes, acid-free paper, and heavy-duty tape. We carefully pack your entire household, paying special attention to fragile items. If you prefer packing yourself, we can deliver premium packing kits directly to your door. On moving day, we always provide complimentary wardrobe boxes and thick furniture blankets.",
   },
   {
     q: "How far in advance should I book?",
-    a: "We recommend booking 1–2 weeks ahead, but we regularly handle short-notice and same-day moves wherever possible.",
+    a: "To secure your preferred date, we strongly recommend booking your move as early as possible, ideally between two to four weeks in advance. The end of the month, Fridays, and weekends are traditionally our busiest periods, making early booking crucial for peak times. Booking early also gives you ample time to organize packing and notify utility companies. However, we understand life can be unpredictable. We maintain a flexible fleet and a large team, allowing us to frequently accommodate last-minute, next-day, or even same-day moving requests across London depending on availability.",
   },
   {
     q: "Do you offer storage?",
-    a: "Yes — we have secure, CCTV-monitored short and long-term storage available by the week or month.",
+    a: "Yes, we provide highly secure, flexible, and affordable storage solutions to accommodate both short-term and long-term needs. Whether you are caught in a moving chain, decluttering, or undertaking home renovations, our facilities are the ideal answer. Our storage units are modern, clean, and meticulously maintained. Security is paramount, featuring 24/7 centralized CCTV monitoring and strict access controls. We offer a variety of unit sizes, so you only pay for the exact space required. Our moving crew can collect, pack, and deliver items whenever you are ready.",
   },
   {
     q: "Which areas do you cover?",
-    a: "We're London specialists covering all 32 boroughs — from Camden and Islington to Croydon and Ealing, across North, South, East and West London.",
+    a: "As dedicated London moving specialists, Phi Movers proudly provides comprehensive relocation services across all 32 London boroughs and the City of London. Whether moving within Central London, the leafy suburbs of West London, or family-friendly neighborhoods in North and South London, we have you covered. Our extensive local knowledge means drivers are familiar with navigating London’s complex road networks, the Congestion Charge, ULEZ zones, and notoriously challenging parking restrictions. While London is our primary focus, we also regularly conduct long-distance moves from London to destinations across the UK.",
+  },
+  {
+    q: "Do you dismantle and reassemble furniture?",
+    a: "Yes, we certainly do. Dismantling and reassembling large, complex pieces of furniture can be stressful. Our experienced crews are highly skilled in taking apart a wide variety of furniture, including oversized wardrobes, large bed frames, and intricate office desks. We arrive fully equipped with a comprehensive toolkit to handle assembly securely and efficiently. We carefully track all screws and fittings to ensure nothing is lost. Upon arriving at your new property, our team will promptly and expertly reassemble your furniture in the rooms and positions you specify.",
+  },
+  {
+    q: "What happens if my moving date changes or is delayed?",
+    a: "We recognize that buying, selling, or renting properties can be unpredictable, and moving dates can change due to circumstances beyond your control, like property chain issues. At Phi Movers, we pride ourselves on a highly flexible approach to scheduling. If you need to change your moving date, please inform us as soon as possible. In most cases, we will gladly reschedule without applying punitive cancellation fees, provided you give reasonable notice. If you experience a delay on moving day, our crews are trained to be patient and accommodating.",
   },
 ];
 

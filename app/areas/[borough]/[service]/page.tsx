@@ -22,6 +22,7 @@ import {
   getServiceBySlug,
   priceLabel,
   type ServiceItem,
+  faqs as globalFaqs,
 } from "@/lib/data";
 import { buildServiceCopy, relatedServices } from "@/lib/services";
 import { getComboCopy } from "@/lib/combos";
@@ -55,9 +56,7 @@ export function generateMetadata({
     title: `${item.title} in ${area.name} — Phi Movers`,
     description: combo.hero.slice(0, 160),
     alternates: { canonical: url },
-    robots: combo.priority
-      ? { index: true, follow: true }
-      : { index: false, follow: true },
+    robots: { index: true, follow: true },
     openGraph: {
       title: `${item.title} in ${area.name} — Phi Movers`,
       description: combo.hero.slice(0, 160),
@@ -211,7 +210,7 @@ export default function AreaServicePage({
   if (!area || !entry) notFound();
 
   const { item, category } = entry;
-  const copy = buildServiceCopy(item);
+  const copy = buildServiceCopy(item, area.name);
   const combo = getComboCopy(area, item);
   const nearby = getNearbyAreas(area.slug, 6);
   const relatedInArea = allServices
@@ -221,36 +220,7 @@ export default function AreaServicePage({
   const url = `${SITE}${comboHref(area.slug, item.slug)}`;
   const reviews = localReviews();
 
-  const localFaqs = [
-    combo.faq,
-    ...area.faqs,
-    ...copy.faqs,
-    {
-      q: `How do I book ${item.title.toLowerCase()} in ${area.name}?`,
-      a: `WhatsApp or call with both postcodes, floors/stairs and a quick inventory or photos. We usually reply within about one working hour with a clear price for ${area.name}. No deposit to enquire — a small deposit only applies when you confirm a booking.`,
-    },
-    {
-      q: `Do I need a parking permit for a removals van in ${area.name}?`,
-      a: `${area.access} If your street needs a suspended bay, arrange it a few working days ahead — we’ll tell you if your addresses typically need one.`,
-    },
-    {
-      q: `Is ${item.title.toLowerCase()} in ${area.name} insured?`,
-      a: `Yes. Jobs include goods-in-transit and public liability cover as standard. Ask if you need higher cover for particularly valuable items.`,
-    },
-    {
-      q: `Can you do evening or weekend ${item.title.toLowerCase()} in ${area.name}?`,
-      a: `Often yes, subject to crew. ${area.name} weekends fill faster — mid-week and evening slots are usually more flexible at shorter notice.`,
-    },
-  ];
-
-  // Deduplicate FAQ questions (keep first)
-  const seen = new Set<string>();
-  const faqs = localFaqs.filter((f) => {
-    const key = f.q.toLowerCase();
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
+  const faqs = globalFaqs;
 
   const jsonLd = {
     "@context": "https://schema.org",

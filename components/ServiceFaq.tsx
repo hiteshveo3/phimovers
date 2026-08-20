@@ -19,23 +19,23 @@ export default function ServiceFaq({ faqs }: { faqs: QA[] }) {
               className={
                 "rounded-2xl border bg-surface px-5 shadow-sm transition-colors " +
                 (isOpen
-                  ? "border-[#9fe870] bg-[#9fe870]/15"
-                  : "border-[#163300]/20")
+                  ? "border-accent bg-accent/15"
+                  : "border-ink/20")
               }
             >
               <button
                 type="button"
                 onClick={() => setOpen(isOpen ? null : i)}
                 aria-expanded={isOpen}
-                className="flex w-full items-center gap-3 py-4 text-left text-[15px] font-bold text-[#163300]"
+                className="flex w-full items-center gap-3 py-4 text-left text-[15px] font-bold text-ink"
               >
                 <span className="flex-1">{f.q}</span>
                 <span
                   className={
                     "grid h-7 w-7 shrink-0 place-items-center rounded-full transition-all " +
                     (isOpen
-                      ? "bg-[#9fe870] text-[#163300]"
-                      : "bg-[#163300]/10 text-[#163300]")
+                      ? "bg-accent text-ink"
+                      : "bg-ink/10 text-ink")
                   }
                 >
                   <Icon
@@ -56,7 +56,7 @@ export default function ServiceFaq({ faqs }: { faqs: QA[] }) {
                 }
               >
                 <div className="overflow-hidden">
-                  <p className="pb-5 font-serif text-[15px] leading-relaxed text-[#163300]/80">
+                  <p className="pb-5 font-serif text-[15px] leading-relaxed text-ink/80">
                     {f.a}
                   </p>
                 </div>

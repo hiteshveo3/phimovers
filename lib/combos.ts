@@ -539,11 +539,23 @@ function angleFor(area: Area): string {
   return boroughAngle[area.slug] ?? area.blurb;
 }
 
-export function isPriorityCombo(boroughSlug: string, serviceSlug: string): boolean {
-  return (
-    (PRIORITY_BOROUGHS as readonly string[]).includes(boroughSlug) &&
-    (PRIORITY_SERVICES as readonly string[]).includes(serviceSlug)
-  );
+export const EVIDENCE_BACKED_COMBOS = [
+  { borough: "hackney", service: "house-removals" },
+  { borough: "bromley", service: "man-and-van" },
+  { borough: "croydon", service: "man-and-van" },
+  { borough: "ealing", service: "man-and-van" },
+  { borough: "enfield", service: "man-and-van" },
+  { borough: "greenwich", service: "man-and-van" },
+  { borough: "hackney", service: "man-and-van" },
+  { borough: "harrow", service: "man-and-van" },
+  { borough: "kingston-upon-thames", service: "man-and-van" },
+  { borough: "greenwich", service: "office-removals" },
+  { borough: "richmond-upon-thames", service: "office-removals" },
+  { borough: "barnet", service: "secure-storage" }
+];
+
+export function isPriorityCombo(_boroughSlug?: string, _serviceSlug?: string): boolean {
+  return true;
 }
 
 /** Resolve combo copy for any borough × service (all 990). */
@@ -574,7 +586,7 @@ export function getComboCopy(area: Area, item: ServiceItem): ComboCopy {
 }
 
 export function priorityComboCount(): number {
-  return PRIORITY_BOROUGHS.length * PRIORITY_SERVICES.length;
+  return 990;
 }
 
 /** Coverage snapshot for planning. */

@@ -4,8 +4,7 @@ import { areas } from "@/lib/areas";
 import { authors, posts } from "@/lib/blog";
 import {
   isPriorityCombo,
-  PRIORITY_BOROUGHS,
-  PRIORITY_SERVICES,
+  EVIDENCE_BACKED_COMBOS,
 } from "@/lib/combos";
 
 const SITE = "https://phimovers.co.uk";
@@ -43,7 +42,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ];
 
   for (const s of allServices) {
-    const core = (PRIORITY_SERVICES as readonly string[]).includes(s.slug);
+    const core = EVIDENCE_BACKED_COMBOS.some((c) => c.service === s.slug);
     entries.push({
       url: url(`/services/${s.slug}`),
       lastModified: now,
@@ -53,7 +52,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }
 
   for (const a of areas) {
-    const core = (PRIORITY_BOROUGHS as readonly string[]).includes(a.slug);
+    const core = EVIDENCE_BACKED_COMBOS.some((c) => c.borough === a.slug);
     entries.push({
       url: url(`/areas/${a.slug}`),
       lastModified: now,
@@ -71,12 +70,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     });
   }
 
-  // Indexation tier: only priority borough × service combos (~96)
-  for (const borough of PRIORITY_BOROUGHS) {
-    for (const service of PRIORITY_SERVICES) {
-      if (!isPriorityCombo(borough, service)) continue;
+  // Indexation tier: all borough × service combos (33 boroughs × 30 services = 990 pages)
+  for (const a of areas) {
+    for (const s of allServices) {
       entries.push({
-        url: url(`/areas/${borough}/${service}`),
+        url: url(`/areas/${a.slug}/${s.slug}`),
         lastModified: now,
         changeFrequency: "monthly",
         priority: 0.65,

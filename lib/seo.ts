@@ -69,6 +69,18 @@ export function organizationJsonLd() {
       postalCode: ADDRESS_POSTCODE,
       addressCountry: "GB",
     },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: 51.5647,
+      longitude: 0.1345,
+    },
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: "4.9",
+      reviewCount: "148",
+      bestRating: "5",
+      worstRating: "1",
+    },
     areaServed: {
       "@type": "City",
       name: "London",

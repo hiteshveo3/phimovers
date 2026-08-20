@@ -14,7 +14,7 @@ import {
   getAreaBySlug,
   getNearbyAreas,
 } from "@/lib/areas";
-import { allServices, priceLabel } from "@/lib/data";
+import { allServices, priceLabel, faqs } from "@/lib/data";
 import {
   PHONE_DISPLAY,
   PHONE_E164,
@@ -75,7 +75,7 @@ export default function AreaPage({ params }: { params: { borough: string } }) {
   const faqLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: area.faqs.map((f) => ({
+    mainEntity: faqs.map((f) => ({
       "@type": "Question",
       name: f.q,
       acceptedAnswer: { "@type": "Answer", text: f.a },
@@ -247,7 +247,7 @@ export default function AreaPage({ params }: { params: { borough: string } }) {
               Local answers for parking, timing and the jobs we run most in{" "}
               {area.name}.
             </p>
-            <ServiceFaq faqs={area.faqs} />
+            <ServiceFaq faqs={faqs} />
           </section>
 
           <section className="mt-14">

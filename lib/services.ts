@@ -1199,18 +1199,33 @@ const copy: Record<string, Partial<ServiceCopy>> = {
 };
 
 /** Build a complete, detailed copy object for any service. */
-export function buildServiceCopy(item: ServiceItem): ServiceCopy {
+export function buildServiceCopy(item: ServiceItem, areaName?: string): ServiceCopy {
   const c = copy[item.slug] ?? {};
   const t = item.title;
   const lower = item.desc.replace(/\.$/, "").toLowerCase();
 
-  const intro =
+  let intro =
     c.intro ??
     [
       `${t} from Phi Movers is a fully insured, fixed-price service designed to take the stress out of your move. In short, it means ${lower} — handled by an experienced, London-based crew who do this every single day. Whatever you’re moving and wherever you’re going in the capital, we bring the right van, the right people and the right equipment to get it done properly.`,
       `We believe a good move starts with a clear price. That’s why we quote up front based on your specific needs — the size of the job, the access at both ends and any extras you choose — with no hidden charges added on the day. Loading, transport and careful unloading are always part of the service, not costly add-ons.`,
       `Operating across all 32 London boroughs, we understand the practical realities of moving in the capital: tight streets, permit zones, congestion and ULEZ, narrow staircases and awkward lifts. That local expertise is what keeps your ${t.toLowerCase()} on time, on budget and free of the usual moving-day headaches.`,
     ];
+
+  if (areaName) {
+    intro = intro.map((p, idx) => {
+      let res = p;
+      if (idx === 0) {
+        res = res.replace(/in the capital/g, `across ${areaName}`);
+        res = res.replace(/moving in the capital/g, `moving in ${areaName}`);
+      }
+      if (idx === 2) {
+        res = res.replace(/moving in the capital/g, `moving in ${areaName}`);
+        res = res.replace(/moving in the capital:/g, `moving in ${areaName}:`);
+      }
+      return res;
+    });
+  }
 
   const included =
     c.included ??
@@ -1249,11 +1264,37 @@ export function buildServiceCopy(item: ServiceItem): ServiceCopy {
       },
     ];
 
+  let steps = c.steps ?? defaultSteps;
+  if (areaName) {
+    let sum = 0;
+    for (let i = 0; i < areaName.length; i++) {
+      sum += areaName.charCodeAt(i);
+    }
+    const hash = sum % 3;
+    if (hash === 1) {
+      steps = steps.map((s, idx) => {
+        if (idx === 0) return { title: `Enquire for ${areaName}`, body: `Start your quote in under a minute for ${areaName} removals. Tell us what you need moving, your postcodes and preferred date. We'll reply with a clear price.` };
+        if (idx === 1) return { title: "Secure your booking", body: "Pick a date that works for you. A small deposit secures the slot and is deducted from your final balance on completion day." };
+        if (idx === 2) return { title: "Protection on the day", body: "Our crew will arrive on time with protective blankets, straps and floor runners to keep both your old and new homes safe." };
+        if (idx === 3) return { title: `Transport through ${areaName}`, body: `We load, secure, and drive your belongings safely using vans selected for ${areaName} streets and ULEZ restrictions.` };
+        return { title: "Unload & final check", body: "We place your items exactly where you want them, reassemble furniture, and make sure you're happy before taking payment." };
+      });
+    } else if (hash === 2) {
+      steps = steps.map((s, idx) => {
+        if (idx === 0) return { title: "Get a free quote", body: `Message us with your move details, postcodes in ${areaName}, and inventory. We usually respond with a fixed quote within one hour.` };
+        if (idx === 1) return { title: "Lock in the slot", body: "Confirm the booking with a small deposit. We'll send you an email confirmation with helpful prep tips for your move." };
+        if (idx === 2) return { title: "Packing & wrapping", body: "We wrap furniture, protect doors and stairs, and load everything carefully using premium removals equipment." };
+        if (idx === 3) return { title: "Safe transport", body: `Your belongings are moved using well-maintained vehicles driven by experienced crews familiar with ${areaName} traffic routes.` };
+        return { title: "Delivery and setup", body: "Our team carries everything in, places it in the correct rooms, and completes any agreed dismantling/assembly before we leave." };
+      });
+    }
+  }
+
   return {
     intro,
     included,
     idealFor,
-    steps: c.steps ?? defaultSteps,
+    steps,
     affects: c.affects ?? defaultAffects,
     faqs,
   };

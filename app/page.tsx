@@ -6,7 +6,6 @@ import CategoryGrid from "@/components/CategoryGrid";
 import HowItWorks from "@/components/HowItWorks";
 import Reviews from "@/components/Reviews";
 import Faq from "@/components/Faq";
-import QuoteForm from "@/components/QuoteForm";
 import Cta from "@/components/Cta";
 import Footer from "@/components/Footer";
 import Reveal from "@/components/Reveal";
@@ -60,12 +59,6 @@ export default function Home() {
       </Reveal>
       <Reveal>
         <Faq variant={7} />
-      </Reveal>
-
-      <Reveal>
-        <section className="container-page pb-4">
-          <QuoteForm />
-        </section>
       </Reveal>
 
       <Reveal>

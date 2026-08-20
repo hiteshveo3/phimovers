@@ -160,7 +160,9 @@ function VanCard({ van }: { van: Van }) {
       </ul>
 
       <a
-        href={WHATSAPP_HREF}
+        href={`${WHATSAPP_HREF}?text=${encodeURIComponent(
+          `Hi Phi Movers! 👋\n\nI'm interested in booking the *${van.name}* at *${van.rate}/hour* (minimum ${van.min}).\n\nCould you please let me know your availability?\n\nThank you!`
+        )}`}
         target="_blank"
         rel="noopener noreferrer"
         className="btn mt-7 w-full bg-[#163300] px-6 text-[#9fe870] hover:bg-[#0e2400]"

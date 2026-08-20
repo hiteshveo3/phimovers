@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { Icon } from "./icons";
 import CalcSidebar from "./CalcSidebar";
+import { WHATSAPP_HREF } from "@/lib/contact";
 
 // Change this (1-10) to switch the estimate sidebar design.
 const SIDEBAR_VARIANT = 1;
@@ -172,6 +173,24 @@ export default function PriceCalculator() {
     ["Access & item extras", calc.flat],
   ];
 
+  const whatsappMsg = `Hi Phi Movers! 👋
+
+I've just built a quote on your website and would like to check your availability. Here are my details:
+
+📦 *Move Details:*
+• *Van:* ${VANS.find((v) => v.key === van)?.label}
+• *Team:* ${calc.movers} mover(s)
+• *Time:* ${hours} hours
+• *Distance:* ${miles} miles
+
+💰 *Estimated Total:* *£${calc.total}*
+
+What's the next step to secure my booking?
+
+Thanks!`;
+
+  const bookHref = `${WHATSAPP_HREF}?text=${encodeURIComponent(whatsappMsg)}`;
+
   return (
     <div className="grid gap-6 md:grid-cols-[1.35fr_1fr] md:items-start">
       {/* Inputs */}
@@ -188,14 +207,14 @@ export default function PriceCalculator() {
                   className={
                     "rounded-2xl border px-4 py-3 text-left transition-colors " +
                     (active
-                      ? "border-[#163300] bg-[#9fe870]"
-                      : "border-line bg-surface hover:border-[#163300]/40")
+                      ? "border-accent bg-accent"
+                      : "border-line bg-surface hover:border-ink/40")
                   }
                 >
-                  <span className="block text-sm font-bold text-[#163300]">
+                  <span className="block text-sm font-bold text-ink">
                     {v.label}
                   </span>
-                  <span className="block text-xs text-[#163300]/70">
+                  <span className="block text-xs text-ink/70">
                     £{v.rate}/hr · {v.hint}
                   </span>
                 </button>
@@ -243,7 +262,7 @@ export default function PriceCalculator() {
             step={1}
             value={miles}
             onChange={(e) => setMiles(Number(e.target.value))}
-            className="w-full accent-[#163300]"
+            className="w-full accent-ink"
           />
           <div className="mt-1 flex justify-between text-[11px] text-muted">
             <span>0 mi</span>
@@ -295,8 +314,8 @@ export default function PriceCalculator() {
                   className={
                     "flex items-center justify-between gap-2 rounded-xl border px-4 py-3 text-left text-sm transition-colors " +
                     (active
-                      ? "border-[#163300] bg-[#9fe870]"
-                      : "border-line bg-surface hover:border-[#163300]/40")
+                      ? "border-ink bg-accent"
+                      : "border-line bg-surface hover:border-ink/40")
                   }
                 >
                   <span className="flex items-center gap-2 font-medium text-content">
@@ -304,7 +323,7 @@ export default function PriceCalculator() {
                       className={
                         "grid h-5 w-5 shrink-0 place-items-center rounded-md border " +
                         (active
-                          ? "border-[#163300] bg-[#163300] text-[#9fe870]"
+                          ? "border-ink bg-ink text-accent"
                           : "border-line text-transparent")
                       }
                     >
@@ -317,7 +336,7 @@ export default function PriceCalculator() {
                     </span>
                     {o.label}
                   </span>
-                  <span className="shrink-0 text-xs font-bold text-[#163300]">
+                  <span className="shrink-0 text-xs font-bold text-ink">
                     {o.hint}
                   </span>
                 </button>
@@ -341,6 +360,7 @@ export default function PriceCalculator() {
           deposit: DEPOSIT,
           rows,
         }}
+        bookHref={bookHref}
       />
     </div>
   );
