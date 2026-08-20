@@ -20,8 +20,8 @@ function tokenize(text: string): string[] {
 function getJaccard(wordsA: string[], wordsB: string[]): number {
   const setA = new Set(wordsA);
   const setB = new Set(wordsB);
-  const intersection = new Set([...setA].filter(x => setB.has(x)));
-  const union = new Set([...setA, ...setB]);
+  const intersection = new Set(Array.from(setA).filter((x) => setB.has(x)));
+  const union = new Set([...Array.from(setA), ...Array.from(setB)]);
   return union.size === 0 ? 0 : intersection.size / union.size;
 }
 
@@ -59,8 +59,8 @@ function getNGramSimilarity(wordsA: string[], wordsB: string[], n = 2): number {
   const ngramsB = getNGrams(wordsB);
   const setA = new Set(ngramsA);
   const setB = new Set(ngramsB);
-  const intersection = new Set([...setA].filter(x => setB.has(x)));
-  const union = new Set([...setA, ...setB]);
+  const intersection = new Set(Array.from(setA).filter(x => setB.has(x)));
+  const union = new Set([...Array.from(setA), ...Array.from(setB)]);
   return union.size === 0 ? 0 : intersection.size / union.size;
 }
 
@@ -144,8 +144,8 @@ function runAnalysis() {
 
     const setA = new Set(tokensA);
     const setB = new Set(tokensB);
-    const setIntersect = new Set([...setA].filter(x => setB.has(x)));
-    const setUnion = new Set([...setA, ...setB]);
+    const setIntersect = new Set(Array.from(setA).filter(x => setB.has(x)));
+    const setUnion = new Set([...Array.from(setA), ...Array.from(setB)]);
 
     const jaccard = setIntersect.size / setUnion.size;
 
@@ -161,8 +161,8 @@ function runAnalysis() {
     const normB = tokenize(normalizeText(textB));
     const normSetA = new Set(normA);
     const normSetB = new Set(normB);
-    const normIntersect = new Set([...normSetA].filter(x => normSetB.has(x)));
-    const normUnion = new Set([...normSetA, ...normSetB]);
+    const normIntersect = new Set(Array.from(normSetA).filter(x => normSetB.has(x)));
+    const normUnion = new Set([...Array.from(normSetA), ...Array.from(normSetB)]);
     const normJaccard = normIntersect.size / normUnion.size;
     console.log(`  - Normalized Set Jaccard: ${(normJaccard * 100).toFixed(2)}%`);
 
