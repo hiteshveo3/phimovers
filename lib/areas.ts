@@ -892,6 +892,105 @@ export const areas: Area[] = [
       },
     ],
   }),
+  def({
+    name: "East London",
+    blurb: "Providing top-rated removals and man with a van services across East London. We cover all districts with local, uniformed crews ready to help.",
+    nearby: ["hackney", "tower-hamlets", "newham"],
+    housing: "East London features a mix of Victorian terraces, new high-rise developments, and converted warehouses. We bring the right tools for everything from narrow staircases to modern service lifts.",
+    access: "Traffic and parking can be challenging in bustling areas. Our local drivers know the quickest routes and how to manage tight loading bays and permits.",
+    faqs: [
+      { q: "Do you offer man and van services in East London?", a: "Yes, our man and van service is extremely popular across East London for flat moves, single items, and student relocations." },
+      { q: "Can you handle house removals in East London?", a: "Absolutely. We provide comprehensive house removals across East London, including full packing and furniture assembly." },
+    ],
+  }),
+  def({
+    name: "South London",
+    blurb: "Your trusted partner for seamless removals and man with van hire in South London. Fully insured, reliable, and affordable.",
+    nearby: ["lambeth", "southwark", "wandsworth"],
+    housing: "From grand period properties to modern apartments, South London has it all. We are experienced in safely navigating delicate items through all property types.",
+    access: "We handle parking suspensions and know the best times to navigate the busy high streets and residential roads of South London.",
+    faqs: [
+      { q: "Is your man with a van service available in South London?", a: "Yes, we have dedicated crews operating throughout South London every day, ready for both urgent and planned moves." },
+      { q: "Do you cover all of South London for house removals?", a: "We cover every borough in South London, offering tailored removal packages to suit your specific needs and budget." },
+    ],
+  }),
+  def({
+    name: "West London",
+    blurb: "Expert house removals and man with a van services across West London. We guarantee a stress-free moving day with transparent pricing.",
+    nearby: ["kensington-and-chelsea", "hammersmith-and-fulham", "ealing"],
+    housing: "West London is known for its elegant townhouses and leafy avenues. We provide floor protection and careful handling for high-value items.",
+    access: "Parking in West London can require strict permits. We advise on permit applications and ensure our vans are parked legally and safely during loading.",
+    faqs: [
+      { q: "How much does a man and van cost in West London?", a: "Our man and van pricing in West London starts from £50 per hour. Use our instant quote calculator for an exact estimate." },
+      { q: "Do you do office removals in West London?", a: "Yes, we provide efficient office removals across West London, minimizing downtime for your business." },
+    ],
+  }),
+  def({
+    name: "North London",
+    blurb: "Dedicated removals and man and van services in North London. We handle your belongings with the utmost care from start to finish.",
+    nearby: ["islington", "camden", "haringey"],
+    housing: "North London features many steep residential streets and converted flats. Our team is physically prepared and equipped to handle challenging access points.",
+    access: "Navigating North London's hills and narrow streets is our specialty. We always deploy the most suitable van size for your location.",
+    faqs: [
+      { q: "Do you provide a man with a van in North London?", a: "Yes, our North London man and van service is perfect for smaller moves, furniture delivery, and studio flats." },
+      { q: "Can you pack my house in North London?", a: "We offer a full packing service alongside our removals in North London to make your move completely effortless." },
+    ],
+  }),
+  def({
+    name: "South East London",
+    blurb: "Professional moving solutions across South East London. From single items to full house removals, we deliver excellence every time.",
+    nearby: ["greenwich", "lewisham", "bromley"],
+    housing: "A blend of suburban family homes and urban flats. We tailor our removal strategies to match the specific layout of your South East London property.",
+    access: "We are well-versed in the red routes and parking restrictions commonly found across South East London boroughs.",
+    faqs: [
+      { q: "Are you available for removals in South East London?", a: "Yes, our removal teams cover all of South East London, providing reliable and insured services." },
+      { q: "Do you offer storage in South East London?", a: "We can arrange secure storage solutions in and around South East London as part of your moving package." },
+    ],
+  }),
+  def({
+    name: "Stratford",
+    blurb: "Stratford's leading man and van and house removals team. We know E15 inside out, offering rapid and reliable moving services.",
+    nearby: ["leyton", "bow", "hackney"],
+    housing: "Stratford boasts incredible high-rise apartments and modern estates. We are experts at managing lift bookings and long walks to loading bays.",
+    access: "The area around the Olympic Park can be busy, but our local drivers know the optimal routes and loading zones in Stratford.",
+    faqs: [
+      { q: "Do you do man and van in Stratford?", a: "Yes, our man and van service is highly requested in Stratford, especially for flat moves and student relocations." },
+      { q: "Can you move me into a Stratford high-rise?", a: "Absolutely. We have extensive experience moving clients in and out of Stratford's high-rise residential towers." },
+    ],
+  }),
+  def({
+    name: "Leyton",
+    blurb: "Fast and affordable removals and man with a van services in Leyton. Your local moving experts for E10 and beyond.",
+    nearby: ["stratford", "walthamstow", "clapton"],
+    housing: "Leyton features beautiful Victorian terraces and flat conversions. We are adept at moving large furniture through narrow Victorian doorways and stairs.",
+    access: "Terraced streets in Leyton often require careful parking. We work with you to ensure a smooth loading process without blocking the road.",
+    faqs: [
+      { q: "Is your man and van service available in Leyton?", a: "Yes, we provide highly rated man and van services throughout Leyton for any size of move." },
+      { q: "Do you offer house removals in Leyton?", a: "We certainly do. Our house removals in Leyton include optional packing, dismantling, and reassembly services." },
+    ],
+  }),
+  def({
+    name: "Leamington Spa",
+    blurb: "Reliable removals in Leamington Spa. Whether moving locally or relocating to London, our expert team guarantees a smooth experience.",
+    nearby: ["warwick", "kenilworth"],
+    housing: "Known for its Regency architecture, Leamington Spa has spacious homes and stylish apartments. We treat your property and possessions with the utmost respect.",
+    access: "Our drivers are experienced in navigating both the historic town centre and the surrounding residential suburbs of Leamington Spa.",
+    faqs: [
+      { q: "Do you provide removals in Leamington Spa?", a: "Yes, we offer premium house and office removals in Leamington Spa, including long-distance moves to and from London." },
+      { q: "Can I hire a man and van in Leamington Spa?", a: "Our man and van service is available for smaller moves, collections, and deliveries in Leamington Spa." },
+    ],
+  }),
+  def({
+    name: "Warwick",
+    blurb: "Expert house and office removals in Warwick. We provide a professional, fully insured moving service tailored to your needs.",
+    nearby: ["leamington-spa", "stratford-upon-avon"],
+    housing: "Warwick's historic homes and modern estates require versatile moving approaches. We bring the right equipment for every scenario.",
+    access: "We carefully plan our routes through Warwick to avoid traffic hotspots and ensure timely arrival at your new home.",
+    faqs: [
+      { q: "Do you offer house removals in Warwick?", a: "Yes, our dedicated removal teams operate in Warwick, offering a stress-free moving day with transparent pricing." },
+      { q: "Are your removals in Warwick fully insured?", a: "Absolutely. All our removal and man and van services in Warwick come with comprehensive goods in transit and public liability insurance." },
+    ],
+  }),
 ];
 
 export function getAreaBySlug(slug: string): Area | undefined {
@@ -989,6 +1088,20 @@ export const areaRegions: { label: string; slugs: string[] }[] = [
       "ealing",
       "hounslow",
       "hillingdon",
+    ],
+  },
+  {
+    label: "Regions & Key Hubs",
+    slugs: [
+      "east-london",
+      "south-london",
+      "west-london",
+      "north-london",
+      "south-east-london",
+      "stratford",
+      "leyton",
+      "leamington-spa",
+      "warwick",
     ],
   },
 ];
