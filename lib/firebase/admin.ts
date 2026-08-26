@@ -21,11 +21,27 @@ export function getAdminApp(): App {
       "FIREBASE_SERVICE_ACCOUNT_JSON missing. Download a service account key from Firebase Console → Project settings → Service accounts.",
     );
   }
-  const sa = JSON.parse(raw) as {
+  let sa: {
     project_id: string;
     client_email: string;
     private_key: string;
   };
+  try {
+    sa = JSON.parse(raw) as {
+      project_id: string;
+      client_email: string;
+      private_key: string;
+    };
+  } catch {
+    throw new Error(
+      "FIREBASE_SERVICE_ACCOUNT_JSON is not valid JSON. Re-paste the full service account key file in Vercel env.",
+    );
+  }
+  if (!sa.project_id || !sa.client_email || !sa.private_key) {
+    throw new Error(
+      "FIREBASE_SERVICE_ACCOUNT_JSON is missing project_id, client_email, or private_key.",
+    );
+  }
   app = initializeApp({
     credential: cert({
       projectId: sa.project_id,
