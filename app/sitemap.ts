@@ -4,7 +4,7 @@ import { areaOffers, areas, comboHref, getAreaBySlug } from "@/lib/areas";
 import { townHref, towns } from "@/lib/towns";
 import { counties } from "@/lib/counties";
 import { authors, posts } from "@/lib/blog";
-import { getArticle } from "@/lib/blogArticles";
+import { ARTICLE_SLUGS } from "@/lib/blogArticleSlugs";
 import { EVIDENCE_BACKED_COMBOS } from "@/lib/combos";
 import { SITE } from "@/lib/seo";
 
@@ -53,7 +53,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const entries: MetadataRoute.Sitemap = paths.map((p) => ({ url: url(p) }));
   for (const p of posts) {
-    if (getArticle(p.slug)) entries.push({ url: url(`/blog/${p.slug}`), lastModified: new Date(p.date) });
+    if (ARTICLE_SLUGS.has(p.slug)) entries.push({ url: url(`/blog/${p.slug}`), lastModified: new Date(p.date) });
   }
   return entries;
 }

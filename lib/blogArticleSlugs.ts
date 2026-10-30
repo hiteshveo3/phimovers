@@ -1,0 +1,30 @@
+// Slugs of the blog posts that have a built article in lib/blogArticles.tsx.
+// The sitemap (an App Router file) reads this list instead of importing the article components, which pull in
+// client-only UI. Add a slug here when you add an article there.
+export const ARTICLE_SLUGS: ReadonlySet<string> = new Set([
+  "how-much-does-it-cost-to-move-house-uk",
+  "how-long-does-it-take-to-move-house",
+  "how-much-does-an-office-move-cost",
+  "storage-costs-london-uk",
+  "how-to-choose-a-long-distance-moving-company",
+  "cheapest-way-to-send-furniture-uk",
+  "car-transport-cost-uk",
+  "man-and-van-prices-uk",
+  "what-is-a-removal-service",
+  "how-to-hoist-a-sofa-through-a-window-or-balcony",
+  "sofa-wont-fit-up-the-stairs",
+  "moving-crates-vs-cardboard-boxes",
+  "how-to-move-a-mattress",
+  "how-to-move-gym-equipment-and-heavy-items",
+  "storage-during-a-house-renovation",
+  "complete-guide-to-moving-home-in-london",
+  "how-to-pack-a-kitchen-like-a-pro",
+  "moving-in-london-parking-and-permits",
+  "man-and-van-vs-full-removal",
+  "studio-flat-move-checklist",
+  "self-storage-guide-london",
+  "sofa-delivery-narrow-stairs-london",
+  "evening-weekend-moves-london",
+  "same-day-removals-london",
+  "prepare-for-flat-move-london",
+]);
