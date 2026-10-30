@@ -1,15 +1,14 @@
 import type { MetadataRoute } from "next";
 import { allServices } from "@/lib/data";
-import { areaOffers, areas, comboHref, getAreaBySlug } from "@/lib/areas";
+import { allAreaServiceParams, areas, comboHref } from "@/lib/areas";
 import { townHref, towns } from "@/lib/towns";
 import { counties } from "@/lib/counties";
 import { authors, posts } from "@/lib/blog";
 import { ARTICLE_SLUGS } from "@/lib/blogArticleSlugs";
-import { EVIDENCE_BACKED_COMBOS } from "@/lib/combos";
 import { SITE } from "@/lib/seo";
 
 // Indexable pages only: no /client, /track, /auth or /admin (robots blocks them), no blog post without a
-// built article, and only the area × service combos backed by evidence. No priority / changefreq, and a
+// built article. All area × service combos are indexable and listed. No priority / changefreq, and a
 // lastModified only where the date is real (blog posts).
 
 const STATIC_PATHS = [
@@ -38,11 +37,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   for (const s of allServices) paths.push(`/services/${s.slug}`);
   for (const a of areas) paths.push(`/areas/${a.slug}`);
 
-  for (const c of EVIDENCE_BACKED_COMBOS) {
-    const area = getAreaBySlug(c.borough);
-    const built = area && allServices.some((s) => s.slug === c.service) && areaOffers(area, c.service);
-    if (built) paths.push(comboHref(c.borough, c.service));
-  }
+  // Every borough x service page the site builds (areaOffers decides which exist).
+  for (const c of allAreaServiceParams()) paths.push(comboHref(c.borough, c.service));
 
   for (const t of towns) {
     paths.push(townHref(t.slug));

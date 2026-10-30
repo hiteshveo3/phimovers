@@ -3,7 +3,7 @@ import { Location as LocationIcon } from 'iconsax-reactjs';
 import { allAreaServiceParams, areas, areaServiceHref, comboHref, getAreaBySlug, getNearbyAreas } from '../../../lib/areas';
 import { allServices, getServiceBySlug, priceLabel } from '../../../lib/data';
 import { buildServiceCopy, relatedServices } from '../../../lib/services';
-import { EVIDENCE_BACKED_COMBOS, getComboCopy } from '../../../lib/combos';
+import { getComboCopy } from '../../../lib/combos';
 import { comboExtras, comboSeo } from '../../../lib/seoTargets';
 import { businessRef, offerFromPrice } from '../../../lib/seo';
 import { getFaqsForPath } from '../../../lib/page-faqs';
@@ -64,8 +64,6 @@ export default function AreaServicePage({ borough, service }: { borough: string;
   const isHourly = priceMode(item) === 'hourly';
   const photo = servicePhoto(item.slug);
   const book = bookHref({ service: item.slug });
-  // Only combos with search evidence are indexed (and listed in the sitemap); the rest stay reachable but noindex.
-  const indexed = EVIDENCE_BACKED_COMBOS.some((c) => c.borough === area.slug && c.service === item.slug);
   const faqs = getFaqsForPath(`/areas/${area.slug}/${item.slug}`);
   const crumbs = [
     { name: 'Areas', path: '/areas' },
@@ -107,7 +105,6 @@ export default function AreaServicePage({ borough, service }: { borough: string;
       ogImage={photo || undefined}
       crumbs={crumbs}
       schema={[jsonLd, faqLd]}
-      noindex={!indexed}
     >
       <style dangerouslySetInnerHTML={{ __html: SERVICE_PRICE_CSS }} />
       <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(320px,1fr))', gap: 40, alignItems: 'center', padding: 'clamp(28px,5vw,64px) 5vw' }}>
