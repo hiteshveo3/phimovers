@@ -3,32 +3,45 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
+import {
+  ArrowLeft2 as BackIcon,
+  Call as CallIcon,
+  Copy as CopyIcon,
+  Receipt21 as ReceiptIcon,
+  Sms as MailIcon,
+  Message as SmsIcon,
+} from "iconsax-reactjs";
 import CopyPhoneButton from "@/components/admin/CopyPhoneButton";
 import LeadStatusBadge from "@/components/admin/LeadStatusBadge";
 import LostReasonSheet from "@/components/admin/LostReasonSheet";
 import SlaBadge from "@/components/admin/SlaBadge";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
-import { Icon } from "@/components/icons";
+import { Ico } from "@/kit/components/Ico";
 import {
   addLeadNote,
   deleteLead,
   subscribeLead,
   updateLeadAssignee,
+  updateLeadDate,
   updateLeadPriority,
   updateLeadQuote,
   updateLeadStatus,
 } from "@/lib/leads/service";
-import { WA_TEMPLATES } from "@/lib/leads/templates";
+import {
+  MESSAGE_TEMPLATES,
+  mailtoHref,
+  smsHref,
+  templateSubject,
+} from "@/lib/leads/templates";
 import {
   formatLeadTime,
   LEAD_STATUSES,
-  whatsappHrefForPhone,
   type Lead,
   type LeadStatus,
 } from "@/lib/leads/types";
 
 export default function AdminLeadDetailPage() {
-  const params = useParams();
+  const params = useParams()!;
   const id = String(params.id);
   const router = useRouter();
   const { user } = useAdminAuth();
@@ -37,8 +50,11 @@ export default function AdminLeadDetailPage() {
   const [note, setNote] = useState("");
   const [quote, setQuote] = useState("");
   const [assignee, setAssignee] = useState("");
+  const [moveDate, setMoveDate] = useState("");
   const [busy, setBusy] = useState(false);
   const [lostOpen, setLostOpen] = useState(false);
+  const [tplId, setTplId] = useState(MESSAGE_TEMPLATES[0].id);
+  const [copied, setCopied] = useState(false);
 
   const author = user?.email ?? undefined;
   const me =
@@ -56,6 +72,8 @@ export default function AdminLeadDetailPage() {
           if (row) {
             setQuote(row.quoteAmount ?? "");
             setAssignee(row.assignedTo ?? "");
+            setMoveDate(row.date ?? "");
+            setError("");
           }
           if (row === null) setError("Lead not found");
         },
@@ -79,19 +97,17 @@ export default function AdminLeadDetailPage() {
   }
 
   if (!lead && !error) {
-    return (
-      <p className="py-16 text-center text-sm text-muted">Loading lead…</p>
-    );
+    return <p className="ad-loading">Loading lead…</p>;
   }
 
   if (!lead) {
     return (
-      <div className="py-10 text-center">
-        <p className="text-sm text-muted">{error || "Not found"}</p>
+      <div className="ad-empty">
+        <b>{error || "Not found"}</b>
         <button
           type="button"
           onClick={() => router.push("/admin/leads")}
-          className="btn mt-4 bg-[#9fe870] px-4 text-[#163300]"
+          className="ad-btn lime"
         >
           Back to leads
         </button>
@@ -116,72 +132,80 @@ export default function AdminLeadDetailPage() {
     })),
   ].sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime());
 
+  const tpl =
+    MESSAGE_TEMPLATES.find((t) => t.id === tplId) ?? MESSAGE_TEMPLATES[0];
+  const tplText = tpl.build(lead);
+  const emailHref = lead.email
+    ? mailtoHref(lead.email, templateSubject(lead), tplText)
+    : "";
+
+  async function copyTemplate() {
+    try {
+      await navigator.clipboard.writeText(tplText);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      /* clipboard blocked */
+    }
+  }
+
   return (
-    <div className="mx-auto max-w-3xl space-y-4 pb-28 lg:space-y-6 lg:pb-6">
-      <Link
-        href="/admin/leads"
-        className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted hover:text-[#163300]"
-      >
-        <Icon name="arrowLeft" className="h-4 w-4" />
+    <div className="ad" style={{ paddingBottom: 90 }}>
+      <Link href="/admin/leads" className="ad-link" style={{ justifySelf: "start" }}>
+        <Ico icon={BackIcon} size={18} />
         Leads
       </Link>
 
       {error && (
-        <p className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <p className="ad-banner" role="alert" style={{ margin: 0 }}>
           {error}
         </p>
       )}
 
-      <header className="rounded-2xl border border-line bg-surface p-4 lg:p-6">
-        <div className="flex flex-wrap items-start gap-2">
-          <h1 className="text-xl font-extrabold tracking-tight lg:text-2xl">
-            {lead.name}
-          </h1>
+      <header className="ad-card">
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
+          <h1 style={{ marginRight: 4 }}>{lead.name}</h1>
           <LeadStatusBadge status={lead.status} />
-          {lead.priority === "urgent" && (
-            <span className="rounded-pill bg-red-100 px-2.5 py-0.5 text-xs font-bold text-red-800">
-              Urgent
-            </span>
-          )}
+          {lead.priority === "urgent" && <span className="ad-badge urgent">Urgent</span>}
           {lead.status === "new" && <SlaBadge lead={lead} />}
         </div>
-        <p className="mt-1 text-xs text-muted">
-          {formatLeadTime(lead.createdAt)} · Updated{" "}
-          {formatLeadTime(lead.updatedAt)}
+        <p className="ad-sub">
+          {formatLeadTime(lead.createdAt)} · Updated {formatLeadTime(lead.updatedAt)}
           {lead.trackCode ? ` · Track ${lead.trackCode}` : ""}
         </p>
 
-        <div className="mt-3 flex flex-wrap items-center gap-2">
-          <p className="text-sm font-semibold text-[#163300]">{lead.phone}</p>
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8, margin: "14px 0" }}>
+          <strong style={{ fontSize: 18 }}>{lead.phone}</strong>
           <CopyPhoneButton phone={lead.phone} />
         </div>
 
-        <div className="mt-4 hidden grid-cols-2 gap-2 lg:grid">
-          <a
-            href={`tel:${lead.phone}`}
-            className="btn justify-center border border-line bg-surface py-3"
-          >
-            <Icon name="phone" className="h-4 w-4" />
+        <div className="ad-actions">
+          <a href={`tel:${lead.phone}`} className="ad-btn lime">
+            <Ico icon={CallIcon} size={18} />
             Call
           </a>
-          <a
-            href={whatsappHrefForPhone(
-              lead.phone,
-              WA_TEMPLATES[0].build(lead),
-            )}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn justify-center bg-[#9fe870] py-3 text-[#163300]"
-          >
-            <Icon name="whatsapp" className="h-4 w-4" />
-            WhatsApp
+          <a href={smsHref(lead.phone)} className="ad-btn">
+            <Ico icon={SmsIcon} size={18} />
+            SMS
           </a>
+          {lead.email ? (
+            <a href={`mailto:${lead.email}`} className="ad-btn">
+              <Ico icon={MailIcon} size={18} />
+              Email
+            </a>
+          ) : (
+            <span className="ad-btn" aria-disabled="true" title="No email address on this lead">
+              <Ico icon={MailIcon} size={18} />
+              Email
+            </span>
+          )}
         </div>
 
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 14 }}>
           <button
             type="button"
             disabled={busy}
+            className="ad-mini"
             onClick={() =>
               run(() =>
                 updateLeadPriority(
@@ -191,7 +215,6 @@ export default function AdminLeadDetailPage() {
                 ),
               )
             }
-            className="rounded-pill border border-line px-3 py-1.5 text-xs font-bold"
           >
             {lead.priority === "urgent" ? "Clear urgent" : "Mark urgent"}
           </button>
@@ -199,10 +222,10 @@ export default function AdminLeadDetailPage() {
             <button
               type="button"
               disabled={busy}
+              className="ad-mini lime"
               onClick={() =>
                 run(() => updateLeadStatus(lead.id, "contacted", undefined, author))
               }
-              className="rounded-pill bg-[#163300] px-3 py-1.5 text-xs font-bold text-[#9fe870]"
             >
               Mark contacted
             </button>
@@ -211,281 +234,272 @@ export default function AdminLeadDetailPage() {
             <button
               type="button"
               disabled={busy}
-              onClick={() =>
-                run(() => updateLeadAssignee(lead.id, me, author))
-              }
-              className="rounded-pill border border-line px-3 py-1.5 text-xs font-bold"
+              className="ad-mini"
+              onClick={() => run(() => updateLeadAssignee(lead.id, me, author))}
             >
               Assign to me
             </button>
           )}
+          <Link href={`/admin/invoices?lead=${lead.id}`} className="ad-mini">
+            <Ico icon={ReceiptIcon} size={14} />
+            Create invoice
+          </Link>
         </div>
       </header>
 
-      <section className="rounded-2xl border border-line bg-surface p-4 lg:p-5">
-        <h2 className="text-xs font-bold uppercase tracking-wide text-muted">
-          WhatsApp templates
-        </h2>
-        <div className="mt-3 grid gap-2 sm:grid-cols-2">
-          {WA_TEMPLATES.map((t) => (
-            <a
-              key={t.id}
-              href={whatsappHrefForPhone(lead.phone, t.build(lead))}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-xl border border-line bg-[#f4f5f2] px-3 py-3 text-sm font-semibold text-[#163300] hover:bg-[#9fe870]/25"
-            >
-              {t.label}
-            </a>
-          ))}
-        </div>
-      </section>
+      <div className="ad-detail wide">
+        <div className="ad-main">
+          <section className="ad-card">
+            <h2>Message templates</h2>
+            <div className="ad-tpl">
+              <div className="ad-tpl-list">
+                {MESSAGE_TEMPLATES.map((t) => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    className="ad-chip"
+                    aria-pressed={tplId === t.id}
+                    onClick={() => setTplId(t.id)}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+              <pre className="ad-tpl-box">{tplText}</pre>
+              <div className="ad-kcard-acts">
+                <a href={smsHref(lead.phone, tplText)} className="ad-mini lime">
+                  <Ico icon={SmsIcon} size={14} />
+                  Send by SMS
+                </a>
+                {emailHref ? (
+                  <a href={emailHref} className="ad-mini">
+                    <Ico icon={MailIcon} size={14} />
+                    Send by email
+                  </a>
+                ) : (
+                  <span className="ad-mini" aria-disabled="true" style={{ opacity: 0.5 }}>
+                    No email address
+                  </span>
+                )}
+                <button type="button" className="ad-mini" onClick={copyTemplate}>
+                  <Ico icon={CopyIcon} size={14} />
+                  {copied ? "Copied" : "Copy text"}
+                </button>
+              </div>
+            </div>
+          </section>
 
-      <section className="grid gap-3 sm:grid-cols-2">
-        <div className="rounded-2xl border border-line bg-surface p-4 lg:p-5">
-          <h2 className="text-xs font-bold uppercase tracking-wide text-muted">
-            Contact
-          </h2>
-          <dl className="mt-3 space-y-3 text-sm">
-            <div>
-              <dt className="text-muted">Phone</dt>
-              <dd className="font-semibold text-[#163300]">{lead.phone}</dd>
-            </div>
-            <div>
-              <dt className="text-muted">Email</dt>
-              <dd className="font-semibold">{lead.email || "—"}</dd>
-            </div>
-          </dl>
+          <section className="ad-card">
+            <h2>Activity and notes</h2>
+            <ul className="ad-tl">
+              {timeline.length === 0 && <li>Nothing yet.</li>}
+              {timeline.map((item) => (
+                <li key={item.id} className={item.kind === "note" ? "note" : ""}>
+                  {item.text}
+                  <small>
+                    {formatLeadTime(item.at)}
+                    {item.who ? ` · ${item.who}` : ""}
+                    {item.kind === "note" ? " · note" : ""}
+                  </small>
+                </li>
+              ))}
+            </ul>
+            <form
+              onSubmit={(e: FormEvent) => {
+                e.preventDefault();
+                if (!note.trim()) return;
+                run(async () => {
+                  await addLeadNote(lead.id, note, author);
+                  setNote("");
+                });
+              }}
+              style={{ display: "grid", gap: 10, marginTop: 14 }}
+            >
+              <textarea
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                placeholder="Add an internal note…"
+                rows={3}
+                className="ad-textarea"
+              />
+              <button type="submit" disabled={busy || !note.trim()} className="ad-btn dark block">
+                Add note
+              </button>
+            </form>
+          </section>
         </div>
-        <div className="rounded-2xl border border-line bg-surface p-4 lg:p-5">
-          <h2 className="text-xs font-bold uppercase tracking-wide text-muted">
-            Move
-          </h2>
-          <dl className="mt-3 space-y-3 text-sm">
-            <div>
-              <dt className="text-muted">Route</dt>
-              <dd className="font-semibold">
+
+        <div className="ad-side">
+          <section className="ad-card">
+            <h2>Status</h2>
+            <div className="ad-tpl-list">
+              {LEAD_STATUSES.map((s) => (
+                <button
+                  key={s.value}
+                  type="button"
+                  disabled={busy}
+                  className="ad-chip"
+                  aria-pressed={lead.status === s.value}
+                  onClick={() => {
+                    if (s.value === "lost") {
+                      setLostOpen(true);
+                      return;
+                    }
+                    run(() =>
+                      updateLeadStatus(lead.id, s.value as LeadStatus, undefined, author),
+                    );
+                  }}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+            {lead.lostReason && (
+              <p className="ad-muted" style={{ margin: "12px 0 0" }}>
+                Lost reason: <strong style={{ color: "var(--ink)" }}>{lead.lostReason}</strong>
+              </p>
+            )}
+          </section>
+
+          <section className="ad-card">
+            <h2>Quote and owner</h2>
+            <div style={{ display: "grid", gap: 10 }}>
+              <div className="ad-inline">
+                <input
+                  value={quote}
+                  onChange={(e) => setQuote(e.target.value)}
+                  placeholder="e.g. £299"
+                  className="ad-input"
+                  aria-label="Quote amount"
+                />
+                <button
+                  type="button"
+                  disabled={busy}
+                  className="ad-btn lime"
+                  onClick={() => run(() => updateLeadQuote(lead.id, quote, author))}
+                >
+                  Save
+                </button>
+              </div>
+              <div className="ad-inline">
+                <input
+                  type="date"
+                  value={moveDate}
+                  onChange={(e) => setMoveDate(e.target.value)}
+                  className="ad-input"
+                  aria-label="Move date"
+                />
+                <button
+                  type="button"
+                  disabled={busy}
+                  className="ad-btn"
+                  onClick={() => run(() => updateLeadDate(lead.id, moveDate, author))}
+                >
+                  Set date
+                </button>
+              </div>
+              <div className="ad-inline">
+                <input
+                  value={assignee}
+                  onChange={(e) => setAssignee(e.target.value)}
+                  placeholder="Assigned to (name)"
+                  className="ad-input"
+                  aria-label="Assigned to"
+                />
+                <button
+                  type="button"
+                  disabled={busy}
+                  className="ad-btn"
+                  onClick={() => run(() => updateLeadAssignee(lead.id, assignee, author))}
+                >
+                  Assign
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <section className="ad-card">
+            <h2>Contact</h2>
+            <dl className="ad-dl">
+              <dt>Phone</dt>
+              <dd>{lead.phone}</dd>
+              <dt>Email</dt>
+              <dd>{lead.email || "—"}</dd>
+            </dl>
+          </section>
+
+          <section className="ad-card">
+            <h2>Move</h2>
+            <dl className="ad-dl">
+              <dt>Route</dt>
+              <dd>
                 {lead.from} → {lead.to}
               </dd>
-            </div>
-            <div>
-              <dt className="text-muted">Date</dt>
-              <dd className="font-semibold">{lead.date || "Flexible"}</dd>
-            </div>
-            <div>
-              <dt className="text-muted">Property</dt>
-              <dd className="font-semibold">{lead.propertySize}</dd>
-            </div>
-            <div>
-              <dt className="text-muted">Service</dt>
-              <dd className="font-semibold">{lead.service}</dd>
-            </div>
-          </dl>
-        </div>
-      </section>
+              <dt>Date</dt>
+              <dd>{lead.date || "Flexible"}</dd>
+              <dt>Property</dt>
+              <dd>{lead.propertySize}</dd>
+              <dt>Service</dt>
+              <dd>{lead.service}</dd>
+              <dt>Source</dt>
+              <dd>
+                <Link href={lead.source} style={{ color: "var(--link)", textDecoration: "underline" }}>
+                  {lead.source}
+                </Link>
+              </dd>
+            </dl>
+          </section>
 
-      <section className="rounded-2xl border border-line bg-surface p-4 lg:p-5">
-        <h2 className="text-xs font-bold uppercase tracking-wide text-muted">
-          Status
-        </h2>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {LEAD_STATUSES.map((s) => (
-            <button
-              key={s.value}
-              type="button"
-              disabled={busy}
-              onClick={() => {
-                if (s.value === "lost") {
-                  setLostOpen(true);
-                  return;
-                }
-                run(() =>
-                  updateLeadStatus(lead.id, s.value as LeadStatus, undefined, author),
-                );
-              }}
-              className={
-                "rounded-pill px-3.5 py-2 text-sm font-semibold " +
-                (lead.status === s.value
-                  ? "bg-[#163300] text-[#9fe870]"
-                  : "border border-line bg-[#f4f5f2] text-[#163300]")
-              }
-            >
-              {s.label}
-            </button>
-          ))}
-        </div>
-        {lead.lostReason && (
-          <p className="mt-3 text-sm text-muted">
-            Lost reason:{" "}
-            <span className="font-semibold text-content">{lead.lostReason}</span>
-          </p>
-        )}
-      </section>
-
-      <section className="rounded-2xl border border-line bg-surface p-4 lg:p-5">
-        <h2 className="text-xs font-bold uppercase tracking-wide text-muted">
-          Quote & owner
-        </h2>
-        <div className="mt-3 space-y-3">
-          <div className="flex gap-2">
-            <input
-              value={quote}
-              onChange={(e) => setQuote(e.target.value)}
-              placeholder="e.g. £299"
-              className="h-11 flex-1 rounded-xl border border-line bg-[#f6f6f4] px-3 text-sm text-[#163300] outline-none ring-[#9fe870] focus:ring-2"
-            />
-            <button
-              type="button"
-              disabled={busy}
-              onClick={() =>
-                run(() => updateLeadQuote(lead.id, quote, author))
-              }
-              className="btn bg-[#9fe870] px-4 text-[#163300]"
-            >
-              Save
-            </button>
-          </div>
-          <div className="flex gap-2">
-            <input
-              value={assignee}
-              onChange={(e) => setAssignee(e.target.value)}
-              placeholder="Assigned to (name)"
-              className="h-11 flex-1 rounded-xl border border-line bg-[#f6f6f4] px-3 text-sm text-[#163300] outline-none ring-[#9fe870] focus:ring-2"
-            />
-            <button
-              type="button"
-              disabled={busy}
-              onClick={() =>
-                run(() => updateLeadAssignee(lead.id, assignee, author))
-              }
-              className="btn border border-line bg-surface px-4"
-            >
-              Assign
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <section className="rounded-2xl border border-line bg-surface p-4 lg:p-5">
-        <h2 className="text-xs font-bold uppercase tracking-wide text-muted">
-          Activity & notes
-        </h2>
-        <ul className="mt-3 space-y-3">
-          {timeline.length === 0 && (
-            <li className="text-sm text-muted">Nothing yet.</li>
-          )}
-          {timeline.map((item) => (
-            <li
-              key={item.id}
-              className={
-                "rounded-xl border border-line px-3 py-2.5 " +
-                (item.kind === "note" ? "bg-[#f4f5f2]" : "bg-surface")
-              }
-            >
-              <p className="text-sm leading-relaxed text-[#163300]">
-                {item.kind === "note" ? item.text : item.text}
-              </p>
-              <p className="mt-1 text-[11px] text-muted">
-                {formatLeadTime(item.at)}
-                {item.who ? ` · ${item.who}` : ""}
-                {item.kind === "note" ? " · note" : ""}
-              </p>
-            </li>
-          ))}
-        </ul>
-        <form
-          onSubmit={(e: FormEvent) => {
-            e.preventDefault();
-            if (!note.trim()) return;
-            run(async () => {
-              await addLeadNote(lead.id, note, author);
-              setNote("");
-            });
-          }}
-          className="mt-4 space-y-2"
-        >
-          <textarea
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            placeholder="Add an internal note…"
-            rows={3}
-            className="w-full resize-none rounded-xl border border-line bg-[#f6f6f4] px-3 py-2.5 text-sm text-[#163300] outline-none ring-[#9fe870] focus:ring-2"
-          />
           <button
-            type="submit"
-            disabled={busy || !note.trim()}
-            className="btn w-full justify-center bg-[#163300] py-3 text-[#9fe870] disabled:opacity-50"
+            type="button"
+            disabled={busy}
+            className="ad-btn danger block"
+            onClick={() => {
+              if (!window.confirm("Delete this lead permanently?")) return;
+              run(async () => {
+                await deleteLead(lead.id);
+                router.push("/admin/leads");
+              });
+            }}
           >
-            Add note
+            Delete lead
           </button>
-        </form>
-      </section>
+        </div>
+      </div>
 
-      <section className="rounded-2xl border border-line bg-surface p-4 lg:p-5">
-        <h2 className="text-xs font-bold uppercase tracking-wide text-muted">
-          Source
-        </h2>
-        <p className="mt-2 text-sm">
-          <Link
-            href={lead.source}
-            className="font-semibold text-[#163300] underline underline-offset-2"
-          >
-            {lead.source}
-          </Link>
-        </p>
-      </section>
-
-      <button
-        type="button"
-        disabled={busy}
-        onClick={() => {
-          if (!window.confirm("Delete this lead permanently?")) return;
-          run(async () => {
-            await deleteLead(lead.id);
-            router.push("/admin/leads");
-          });
-        }}
-        className="w-full rounded-2xl border border-red-200 bg-red-50 py-3 text-sm font-bold text-red-800"
-      >
-        Delete lead
-      </button>
-
-      {/* Mobile sticky actions */}
-      <div className="fixed inset-x-0 bottom-16 z-40 border-t border-line bg-surface/95 px-3 py-2 backdrop-blur-sm lg:hidden">
-        <div className="mx-auto grid max-w-lg grid-cols-3 gap-2">
-          <a
-            href={`tel:${lead.phone}`}
-            className="btn justify-center border border-line py-3 text-sm"
-          >
-            <Icon name="phone" className="h-4 w-4" />
+      {/* Phones: quick actions stay in reach above the tab bar */}
+      <div className="ad-sticky">
+        <div className="ad-actions">
+          <a href={`tel:${lead.phone}`} className="ad-btn lime">
+            <Ico icon={CallIcon} size={16} />
             Call
           </a>
-          <a
-            href={whatsappHrefForPhone(
-              lead.phone,
-              WA_TEMPLATES[0].build(lead),
-            )}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn justify-center bg-[#9fe870] py-3 text-sm text-[#163300]"
-          >
-            <Icon name="whatsapp" className="h-4 w-4" />
-            WA
+          <a href={smsHref(lead.phone, tplText)} className="ad-btn">
+            <Ico icon={SmsIcon} size={16} />
+            SMS
           </a>
+          {lead.email ? (
+            <a href={emailHref} className="ad-btn">
+              <Ico icon={MailIcon} size={16} />
+              Email
+            </a>
+          ) : (
+            <span className="ad-btn" aria-disabled="true">
+              <Ico icon={MailIcon} size={16} />
+              Email
+            </span>
+          )}
           <button
             type="button"
             disabled={busy || lead.status !== "new"}
+            className="ad-btn dark"
             onClick={() =>
-              run(() =>
-                updateLeadStatus(lead.id, "contacted", undefined, author),
-              )
+              run(() => updateLeadStatus(lead.id, "contacted", undefined, author))
             }
-            className="btn justify-center bg-[#163300] py-3 text-sm text-[#9fe870] disabled:opacity-40"
           >
             Contacted
           </button>
         </div>
-        <div className="h-[env(safe-area-inset-bottom)]" />
       </div>
 
       <LostReasonSheet

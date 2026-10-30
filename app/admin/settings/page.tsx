@@ -1,23 +1,26 @@
 "use client";
 
 import Link from "next/link";
-import { Icon } from "@/components/icons";
+import {
+  ArrowLeft2 as BackIcon,
+  DocumentDownload as DownloadIcon,
+  Logout as LogoutIcon,
+} from "iconsax-reactjs";
+import { Ico } from "@/kit/components/Ico";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
+import SecurityPanel from "@/components/admin/SecurityPanel";
+import StaffPanel from "@/components/admin/StaffPanel";
+import AccountSecurity from "@/components/admin/AccountSecurity";
+import { ROLE_LABEL } from "@/lib/admin/roles";
 import { useLeads } from "@/components/admin/LeadsProvider";
 import { CALL_LABEL, EMAIL, SITE_URL } from "@/lib/contact";
 import { isFirebaseConfigured } from "@/lib/firebase/config";
-import {
-  getStaffEmails,
-  staffGateEnabled,
-} from "@/lib/admin/staff";
 import { useLeadSoundPref } from "@/lib/admin/sound";
 import { downloadCsv, exportLeadsCsv } from "@/lib/leads/stats";
 
 export default function AdminSettingsPage() {
-  const { user, logout, configured } = useAdminAuth();
+  const { user, logout, configured, demo, role } = useAdminAuth();
   const { leads } = useLeads();
-  const staffList = getStaffEmails();
-  const gateOn = staffGateEnabled();
   const sound = useLeadSoundPref();
   const appCheck = Boolean(
     process.env.NEXT_PUBLIC_FIREBASE_APPCHECK_SITE_KEY?.trim(),
@@ -31,181 +34,129 @@ export default function AdminSettingsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl space-y-4 lg:space-y-6">
-      <header className="hidden lg:block">
-        <p className="text-xs font-bold uppercase tracking-wide text-[#163300]">
-          Config
-        </p>
-        <h1 className="mt-1 text-3xl font-extrabold tracking-tight">
-          Settings
-        </h1>
-      </header>
+    <div className="ad" style={{ maxWidth: 760 }}>
+      <div>
+        <p className="ad-eyebrow">Config</p>
+        <h1>Settings</h1>
+      </div>
 
-      <section className="rounded-2xl border border-line bg-surface p-4 lg:p-6">
-        <h2 className="flex items-center gap-2 text-base font-bold">
-          <Icon name="user" className="h-4 w-4 text-[#163300]" />
-          Account
-        </h2>
-        <p className="mt-3 text-sm text-muted">
+      <section className="ad-card">
+        <h2>Account</h2>
+        <p className="ad-muted" style={{ margin: "0 0 14px" }}>
           Signed in as{" "}
-          <span className="font-semibold text-content">
-            {user?.email ?? "—"}
-          </span>
+          <strong style={{ color: "var(--ink)" }}>{user?.email ?? "—"}</strong>
+          {role ? ` · ${ROLE_LABEL[role]}` : ""}
         </p>
-        <div className="mt-4 grid gap-2 sm:grid-cols-2">
-          <button
-            type="button"
-            onClick={() => logout()}
-            className="btn justify-center border border-line bg-[#f4f5f2] py-3"
-          >
-            <Icon name="lock" className="h-4 w-4" />
+        <div className="ad-two">
+          <button type="button" onClick={() => logout()} className="ad-btn">
+            <Ico icon={LogoutIcon} size={18} />
             Sign out
           </button>
-          <Link
-            href="/"
-            className="btn justify-center border border-line bg-surface py-3"
-          >
-            <Icon name="arrowLeft" className="h-4 w-4" />
+          <Link href="/" className="ad-btn">
+            <Ico icon={BackIcon} size={18} />
             Website
           </Link>
         </div>
       </section>
 
-      <section className="rounded-2xl border border-line bg-surface p-4 lg:p-6">
-        <h2 className="flex items-center gap-2 text-base font-bold">
-          <Icon name="shield" className="h-4 w-4 text-[#163300]" />
-          Staff allowlist
-        </h2>
-        <p className="mt-2 text-sm text-muted">
-          {gateOn
-            ? "Only these emails can open the dashboard (after Firebase Auth)."
-            : "Gate off — any signed-in Firebase user can access. Set NEXT_PUBLIC_ADMIN_EMAILS in .env.local to lock it down."}
-        </p>
-        {gateOn ? (
-          <ul className="mt-3 space-y-1.5">
-            {staffList.map((e) => (
-              <li
-                key={e}
-                className="rounded-xl bg-[#f4f5f2] px-3 py-2 text-sm font-semibold text-[#163300]"
-              >
-                {e}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <pre className="mt-3 overflow-x-auto rounded-xl bg-[#163300] px-3 py-3 text-xs text-[#9fe870]">
-            {`NEXT_PUBLIC_ADMIN_EMAILS=you@email.com,other@email.com`}
-          </pre>
-        )}
-      </section>
+      <SecurityPanel />
 
-      <section className="rounded-2xl border border-line bg-surface p-4 lg:p-6">
-        <h2 className="flex items-center gap-2 text-base font-bold">
-          <Icon name="doc" className="h-4 w-4 text-[#163300]" />
-          Data
-        </h2>
-        <p className="mt-2 text-sm text-muted">
-          Download all {leads.length} leads as CSV for backup or sheets.
-        </p>
-        <button
-          type="button"
-          onClick={onExportAll}
-          disabled={leads.length === 0}
-          className="btn mt-4 w-full justify-center border border-line bg-[#f4f5f2] py-3 disabled:opacity-50 sm:w-auto sm:px-5"
-        >
-          Export all leads
-        </button>
-      </section>
+      <AccountSecurity />
 
-      <section className="rounded-2xl border border-line bg-surface p-4 lg:p-6">
-        <h2 className="flex items-center gap-2 text-base font-bold">
-          <Icon name="alert" className="h-4 w-4 text-[#163300]" />
-          Alerts
-        </h2>
-        <div className="mt-3 flex items-center justify-between gap-3">
+      <section className="ad-card">
+        <h2>Alerts</h2>
+        <div className="ad-switch">
           <div>
-            <p className="text-sm font-semibold">New lead sound</p>
-            <p className="text-xs text-muted">Soft chime when a quote arrives</p>
+            <p style={{ fontWeight: 600 }}>New lead sound</p>
+            <p className="ad-muted ad-small">A soft chime and a pop-up when a quote arrives.</p>
           </div>
           <button
             type="button"
             onClick={sound.toggle}
-            className={
-              "rounded-pill px-4 py-2 text-sm font-bold " +
-              (sound.enabled
-                ? "bg-[#9fe870] text-[#163300]"
-                : "border border-line bg-[#f4f5f2] text-muted")
-            }
+            className={"ad-btn" + (sound.enabled ? " lime" : "")}
+            role="switch"
+            aria-checked={sound.enabled}
           >
             {sound.enabled ? "On" : "Off"}
           </button>
         </div>
       </section>
 
-      <section className="rounded-2xl border border-line bg-surface p-4 lg:p-6">
-        <h2 className="flex items-center gap-2 text-base font-bold">
-          <Icon name="phone" className="h-4 w-4 text-[#163300]" />
-          Public contact
-        </h2>
-        <dl className="mt-4 space-y-3 text-sm">
-          <div className="flex justify-between gap-3 border-b border-line pb-3">
-            <dt className="text-muted">Site</dt>
-            <dd className="font-semibold">{SITE_URL}</dd>
-          </div>
-          <div className="flex justify-between gap-3 border-b border-line pb-3">
-            <dt className="text-muted">Phone</dt>
-            <dd className="font-semibold">{CALL_LABEL}</dd>
-          </div>
-          <div className="flex justify-between gap-3">
-            <dt className="text-muted">Email</dt>
-            <dd className="font-semibold">{EMAIL}</dd>
-          </div>
-        </dl>
+      <StaffPanel />
+
+      <section className="ad-card">
+        <h2>Data</h2>
+        <p className="ad-muted" style={{ margin: "0 0 14px" }}>
+          Download all {leads.length} leads as CSV for backup or a spreadsheet.
+        </p>
+        <button
+          type="button"
+          onClick={onExportAll}
+          disabled={leads.length === 0}
+          className="ad-btn"
+        >
+          <Ico icon={DownloadIcon} size={18} />
+          Export all leads
+        </button>
       </section>
 
-      <section className="rounded-2xl border border-line bg-surface p-4 lg:p-6">
-        <h2 className="flex items-center gap-2 text-base font-bold">
-          <Icon name="check" className="h-4 w-4 text-[#163300]" />
-          Security status
-        </h2>
-        <ul className="mt-3 space-y-2 text-sm">
-          <li className="flex justify-between gap-3">
-            <span className="text-muted">Firebase</span>
-            <span className="font-semibold">
-              {configured || isFirebaseConfigured()
-                ? "Connected"
-                : "Not configured"}
-            </span>
+      <section className="ad-card">
+        <h2>Public contact</h2>
+        <ul className="ad-set-list">
+          <li>
+            <span>Site</span>
+            <b>{SITE_URL}</b>
           </li>
-          <li className="flex justify-between gap-3">
-            <span className="text-muted">Staff gate</span>
-            <span className="font-semibold">{gateOn ? "On" : "Off"}</span>
+          <li>
+            <span>Phone</span>
+            <b>{CALL_LABEL}</b>
           </li>
-          <li className="flex justify-between gap-3">
-            <span className="text-muted">Quote → Firestore</span>
-            <span className="font-semibold">Public create</span>
-          </li>
-          <li className="flex justify-between gap-3">
-            <span className="text-muted">Lead read/update</span>
-            <span className="font-semibold">Staff claim</span>
-          </li>
-          <li className="flex justify-between gap-3">
-            <span className="text-muted">App Check key</span>
-            <span className="font-semibold">{appCheck ? "Set" : "Not set"}</span>
-          </li>
-          <li className="flex justify-between gap-3">
-            <span className="text-muted">Client portal</span>
-            <span className="font-semibold">
-              <a href="/client" className="underline underline-offset-2">
-                /client
-              </a>
-            </span>
+          <li>
+            <span>Email</span>
+            <b>{EMAIL}</b>
           </li>
         </ul>
-        <p className="mt-3 text-xs leading-relaxed text-muted">
-          Ops guide:{" "}
-          <code className="text-content">docs/FIREBASE_OPS.md</code> — service
-          account, App Check, email templates, rules.
+      </section>
+
+      <section className="ad-card">
+        <h2>Security status</h2>
+        <ul className="ad-set-list">
+          <li>
+            <span>Firebase</span>
+            <b>{demo ? "Demo mode" : configured || isFirebaseConfigured() ? "Connected" : "Not configured"}</b>
+          </li>
+          <li>
+            <span>Staff access</span>
+            <b>Staff claim + two-step sign-in</b>
+          </li>
+          <li>
+            <span>Quote to Firestore</span>
+            <b>Public create</b>
+          </li>
+          <li>
+            <span>Leads and invoices</span>
+            <b>Staff claim only</b>
+          </li>
+          <li>
+            <span>Invoice PDFs</span>
+            <b>Server-verified staff token</b>
+          </li>
+          <li>
+            <span>App Check key</span>
+            <b>{appCheck ? "Set" : "Not set"}</b>
+          </li>
+          <li>
+            <span>Client portal</span>
+            <b>
+              <a href="/client" style={{ textDecoration: "underline" }}>
+                /client
+              </a>
+            </b>
+          </li>
+        </ul>
+        <p className="ad-muted ad-small" style={{ margin: "12px 0 0" }}>
+          Ops guide: <code>docs/FIREBASE_OPS.md</code> and{" "}
+          <code>docs/ADMIN_DASHBOARD.md</code> (invoice bank details, rules).
         </p>
       </section>
     </div>

@@ -112,7 +112,7 @@ const privacy: LegalDoc = {
           items: [
             "Contact details — your name, email address and phone number.",
             "Move details — collection and delivery addresses, property type, floor/access details, inventory of items, and preferred dates.",
-            "Correspondence — messages you send us by email, phone, WhatsApp or our contact and quote forms.",
+            "Correspondence — messages you send us by email, phone or our contact and quote forms.",
             "Payment information — processed securely by our payment provider; we do not store full card details on our systems.",
           ],
         },

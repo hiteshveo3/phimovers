@@ -100,12 +100,6 @@ export function formatLeadTime(iso: string) {
   });
 }
 
-export function whatsappHrefForPhone(phone: string, text?: string) {
-  const digits = phone.replace(/\D/g, "").replace(/^0/, "44");
-  const base = `https://wa.me/${digits}`;
-  return text ? `${base}?text=${encodeURIComponent(text)}` : base;
-}
-
 /** Hours since created — for reply SLA. */
 export function hoursSince(iso: string) {
   return (Date.now() - new Date(iso).getTime()) / 36e5;

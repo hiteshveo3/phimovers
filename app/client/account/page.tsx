@@ -116,6 +116,71 @@ export default function ClientAccountPage() {
           Sign out
         </button>
       </section>
+      <DeleteAccount />
     </div>
+  );
+}
+
+const DELETE_ERRORS: Record<string, string> = {
+  recent: "For your safety, sign out and sign in again, then delete within 10 minutes.",
+  active: "You have a booking that is still to happen. Call us to cancel or keep it, then delete your account.",
+  staff: "Staff accounts are removed by the office.",
+  unavailable: "Account deletion is not available online right now. Email or call us and we will do it for you.",
+};
+
+/** Deletes the account (see /delete-account for what is removed and what is kept). */
+function DeleteAccount() {
+  const { user, logout } = useClientAuth();
+  const [open, setOpen] = useState(false);
+  const [typed, setTyped] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+
+  async function remove() {
+    if (!user) return;
+    setBusy(true);
+    setError("");
+    try {
+      const r = await fetch("/api/client/delete-account", { method: "POST", headers: { Authorization: `Bearer ${await user.getIdToken(true)}` } });
+      const j = (await r.json().catch(() => ({}))) as { error?: string };
+      if (r.ok) {
+        await logout().catch(() => undefined);
+        window.location.href = "/delete-account?done=1";
+        return;
+      }
+      setError(DELETE_ERRORS[j.error ?? ""] ?? "We could not delete the account. Please try again or contact us.");
+    } catch {
+      setError("Please check your connection and try again.");
+    }
+    setBusy(false);
+  }
+
+  return (
+    <section className="rounded-2xl border border-line bg-surface p-4 lg:p-6">
+      <h2 className="text-base font-bold">Delete my account</h2>
+      <p className="mt-1 text-sm text-muted">
+        Removes your sign-in, profile, saved addresses, notifications and photos. Quote requests are
+        anonymised. <a href="/delete-account" className="font-semibold underline">What is deleted and what we keep</a>
+      </p>
+      {!open ? (
+        <button type="button" onClick={() => setOpen(true)} className="btn mt-3 w-full justify-center border border-red-200 py-3 text-red-800">
+          Delete my account
+        </button>
+      ) : (
+        <div className="mt-3 space-y-2" role="group" aria-label="Confirm account deletion">
+          <label className="block text-sm font-semibold">
+            Type DELETE to confirm. This cannot be undone.
+            <input value={typed} onChange={(e) => setTyped(e.target.value)} className={field} autoComplete="off" />
+          </label>
+          {error && <p className="text-sm font-medium text-red-800" role="alert">{error}</p>}
+          <div className="flex gap-2">
+            <button type="button" onClick={() => { setOpen(false); setTyped(""); setError(""); }} className="btn flex-1 justify-center border border-line py-3">Keep my account</button>
+            <button type="button" disabled={busy || typed.trim().toUpperCase() !== "DELETE"} onClick={remove} className="btn flex-1 justify-center bg-red-700 py-3 text-white disabled:opacity-50">
+              {busy ? "Deleting…" : "Delete for good"}
+            </button>
+          </div>
+        </div>
+      )}
+    </section>
   );
 }

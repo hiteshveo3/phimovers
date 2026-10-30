@@ -33,7 +33,7 @@ function friendlyResetError(err: unknown): string {
 
 function ResetPasswordForm() {
   const router = useRouter();
-  const params = useSearchParams();
+  const params = useSearchParams()!;
   const oobCode = params.get("oobCode")?.trim() || "";
   const nextPath = useMemo(() => {
     const raw = params.get("next")?.trim() || "/client/login";

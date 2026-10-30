@@ -3,30 +3,108 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useState } from "react";
+import {
+  Call as CallIcon,
+  Category as BoardIcon,
+  DocumentDownload as DownloadIcon,
+  HamburgerMenu as ListIcon,
+  SearchNormal1 as SearchIcon,
+} from "iconsax-reactjs";
 import CopyPhoneButton from "@/components/admin/CopyPhoneButton";
 import EmptyState from "@/components/admin/EmptyState";
 import LeadStatusBadge from "@/components/admin/LeadStatusBadge";
+import LostReasonSheet from "@/components/admin/LostReasonSheet";
 import SlaBadge from "@/components/admin/SlaBadge";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
 import { useLeads } from "@/components/admin/LeadsProvider";
-import { Icon } from "@/components/icons";
-import { bulkUpdateLeadStatus } from "@/lib/leads/service";
-import { downloadCsv, exportLeadsCsv } from "@/lib/leads/stats";
+import { Ico } from "@/kit/components/Ico";
+import { bulkUpdateLeadStatus, updateLeadStatus } from "@/lib/leads/service";
+import { downloadCsv, exportLeadsCsv, matchesLeadQuery } from "@/lib/leads/stats";
 import {
   formatLeadTime,
   hoursSince,
   LEAD_STATUSES,
+  type Lead,
   type LeadPriority,
   type LeadStatus,
 } from "@/lib/leads/types";
+
+type View = "list" | "board";
 
 const statusFilters: { label: string; value: LeadStatus | "all" }[] = [
   { label: "All", value: "all" },
   ...LEAD_STATUSES.map((s) => ({ label: s.label, value: s.value })),
 ];
+const FLOW: LeadStatus[] = ["new", "contacted", "quoted", "booked", "lost"];
+
+function BoardCard({
+  lead,
+  busy,
+  onMove,
+}: {
+  lead: Lead;
+  busy: boolean;
+  onMove: (lead: Lead, to: LeadStatus) => void;
+}) {
+  const i = FLOW.indexOf(lead.status);
+  const prev = i > 0 && lead.status !== "lost" ? FLOW[i - 1] : null;
+  const next = lead.status !== "lost" && i < 3 ? FLOW[i + 1] : null;
+  const label = (s: LeadStatus) => LEAD_STATUSES.find((x) => x.value === s)?.label ?? s;
+  return (
+    <article className="ad-kcard">
+      <div className="ad-kcard-top">
+        <Link href={`/admin/leads/${lead.id}`} className="t">
+          {lead.name}
+        </Link>
+        {lead.priority === "urgent" && <span className="ad-badge urgent">Urgent</span>}
+      </div>
+      <p>
+        {lead.from} → {lead.to}
+      </p>
+      <p>
+        {lead.service}
+        {lead.quoteAmount ? ` · ${lead.quoteAmount}` : ""}
+        {lead.date ? ` · ${lead.date}` : ""}
+      </p>
+      <p>
+        {lead.phone} · {formatLeadTime(lead.createdAt)}
+      </p>
+      {lead.status === "new" && (
+        <div>
+          <SlaBadge lead={lead} />
+        </div>
+      )}
+      <div className="ad-kcard-acts">
+        <a href={`tel:${lead.phone}`} className="ad-mini" aria-label={`Call ${lead.name}`}>
+          <Ico icon={CallIcon} size={14} />
+        </a>
+        {prev && (
+          <button type="button" className="ad-mini" disabled={busy} onClick={() => onMove(lead, prev)}>
+            ← {label(prev)}
+          </button>
+        )}
+        {next && (
+          <button type="button" className="ad-mini lime" disabled={busy} onClick={() => onMove(lead, next)}>
+            {label(next)} →
+          </button>
+        )}
+        {lead.status !== "lost" && lead.status !== "booked" && (
+          <button type="button" className="ad-mini" disabled={busy} onClick={() => onMove(lead, "lost")}>
+            Lost
+          </button>
+        )}
+        {lead.status === "lost" && (
+          <button type="button" className="ad-mini lime" disabled={busy} onClick={() => onMove(lead, "new")}>
+            Reopen
+          </button>
+        )}
+      </div>
+    </article>
+  );
+}
 
 function LeadsInner() {
-  const searchParams = useSearchParams();
+  const searchParams = useSearchParams()!;
   const router = useRouter();
   const { user } = useAdminAuth();
   const initialStatus =
@@ -37,6 +115,9 @@ function LeadsInner() {
 
   const { leads, loading, error } = useLeads();
   const [q, setQ] = useState("");
+  const [view, setView] = useState<View>(
+    searchParams.get("view") === "board" ? "board" : "list",
+  );
   const [status, setStatus] = useState<LeadStatus | "all">(
     statusFilters.some((f) => f.value === initialStatus)
       ? initialStatus
@@ -51,6 +132,8 @@ function LeadsInner() {
       : "all",
   );
   const [busy, setBusy] = useState(false);
+  const [actionError, setActionError] = useState("");
+  const [lostFor, setLostFor] = useState<Lead | null>(null);
 
   const me =
     user?.displayName?.trim() ||
@@ -60,19 +143,19 @@ function LeadsInner() {
 
   useEffect(() => {
     const params = new URLSearchParams();
-    if (status !== "all") params.set("status", status);
+    if (view === "list" && status !== "all") params.set("status", status);
     if (priority !== "all") params.set("priority", priority);
     if (assignee !== "all") params.set("assignee", assignee);
+    if (view === "board") params.set("view", "board");
     const qs = params.toString();
     router.replace(qs ? `/admin/leads?${qs}` : "/admin/leads", {
       scroll: false,
     });
-  }, [status, priority, assignee, router]);
+  }, [status, priority, assignee, view, router]);
 
-  const rows = useMemo(() => {
-    const query = q.trim().toLowerCase();
-    let list = leads.filter((l) => {
-      if (status !== "all" && l.status !== status) return false;
+  // Everything except the status filter, shared by the list and the board.
+  const matching = useMemo(() => {
+    return leads.filter((l) => {
       if (priority !== "all" && l.priority !== priority) return false;
       if (assignee === "mine") {
         const a = (l.assignedTo ?? "").toLowerCase();
@@ -80,17 +163,12 @@ function LeadsInner() {
         if (!a || (!a.includes(me.toLowerCase()) && a !== email)) return false;
       }
       if (assignee === "unassigned" && l.assignedTo) return false;
-      if (!query) return true;
-      return (
-        l.name.toLowerCase().includes(query) ||
-        l.phone.toLowerCase().includes(query) ||
-        l.service.toLowerCase().includes(query) ||
-        l.from.toLowerCase().includes(query) ||
-        l.to.toLowerCase().includes(query) ||
-        (l.assignedTo ?? "").toLowerCase().includes(query)
-      );
+      return matchesLeadQuery(l, q);
     });
+  }, [leads, q, priority, assignee, me, user?.email]);
 
+  const rows = useMemo(() => {
+    let list = matching.filter((l) => status === "all" || l.status === status);
     if (status === "new" || status === "all") {
       list = [...list].sort((a, b) => {
         const aNew = a.status === "new" ? 0 : 1;
@@ -105,14 +183,15 @@ function LeadsInner() {
       });
     }
     return list;
-  }, [leads, q, status, priority, assignee, me, user?.email]);
+  }, [matching, status]);
 
-  const newIds = rows.filter((l) => l.status === "new").map((l) => l.id);
+  const shown = view === "board" ? matching : rows;
+  const newIds = shown.filter((l) => l.status === "new").map((l) => l.id);
 
   function onExport() {
     downloadCsv(
       `phi-leads-${new Date().toISOString().slice(0, 10)}.csv`,
-      exportLeadsCsv(rows),
+      exportLeadsCsv(shown),
     );
   }
 
@@ -125,227 +204,256 @@ function LeadsInner() {
     )
       return;
     setBusy(true);
+    setActionError("");
     try {
       await bulkUpdateLeadStatus(
         newIds,
         "contacted",
         user?.email ?? undefined,
       );
+    } catch (e) {
+      setActionError(e instanceof Error ? e.message : "Update failed");
     } finally {
       setBusy(false);
     }
   }
 
+  async function move(lead: Lead, to: LeadStatus) {
+    if (to === "lost") {
+      setLostFor(lead);
+      return;
+    }
+    setBusy(true);
+    setActionError("");
+    try {
+      await updateLeadStatus(lead.id, to, undefined, user?.email ?? undefined);
+    } catch (e) {
+      setActionError(e instanceof Error ? e.message : "Update failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function confirmLost(reason: string) {
+    const lead = lostFor;
+    setLostFor(null);
+    if (!lead) return;
+    setBusy(true);
+    setActionError("");
+    try {
+      await updateLeadStatus(lead.id, "lost", reason, user?.email ?? undefined);
+    } catch (e) {
+      setActionError(e instanceof Error ? e.message : "Update failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const clear = () => {
+    setQ("");
+    setStatus("all");
+    setPriority("all");
+    setAssignee("all");
+  };
+
+  const counts = useMemo(() => {
+    const c: Record<string, number> = { all: matching.length };
+    for (const l of matching) c[l.status] = (c[l.status] ?? 0) + 1;
+    return c;
+  }, [matching]);
+
   return (
-    <div className="space-y-4 lg:space-y-6">
-      <header className="flex flex-wrap items-end justify-between gap-3">
-        <div className="hidden lg:block">
-          <p className="text-xs font-bold uppercase tracking-wide text-[#163300]">
-            Inbox
-          </p>
-          <h1 className="mt-1 text-3xl font-extrabold tracking-tight">Leads</h1>
-          <p className="mt-1 text-sm text-muted">
-            {loading ? "Loading…" : `${rows.length} showing`}
+    <div className="ad">
+      <div className="ad-head">
+        <div>
+          <p className="ad-eyebrow">Inbox</p>
+          <h1>Leads</h1>
+          <p className="ad-sub">
+            {loading ? "Loading…" : `${shown.length} showing of ${leads.length}`}
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="ad-head-actions">
+          <div className="ad-seg" role="group" aria-label="View">
+            <button type="button" aria-pressed={view === "list"} onClick={() => setView("list")}>
+              <Ico icon={ListIcon} size={18} />
+              List
+            </button>
+            <button type="button" aria-pressed={view === "board"} onClick={() => setView("board")}>
+              <Ico icon={BoardIcon} size={18} />
+              Board
+            </button>
+          </div>
           {newIds.length > 0 && (
-            <button
-              type="button"
-              onClick={markAllContacted}
-              disabled={busy}
-              className="btn border border-line bg-surface px-4 py-2.5 text-sm disabled:opacity-50"
-            >
+            <button type="button" onClick={markAllContacted} disabled={busy} className="ad-btn">
               Mark {newIds.length} contacted
             </button>
           )}
-          <button
-            type="button"
-            onClick={onExport}
-            disabled={rows.length === 0}
-            className="btn border border-line bg-surface px-4 py-2.5 text-sm disabled:opacity-50"
-          >
-            <Icon name="doc" className="h-4 w-4" />
+          <button type="button" onClick={onExport} disabled={shown.length === 0} className="ad-btn">
+            <Ico icon={DownloadIcon} size={18} />
             Export CSV
           </button>
         </div>
-      </header>
+      </div>
 
-      {error && (
-        <p className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-          {error}
+      {(error || actionError) && (
+        <p className="ad-banner" role="alert" style={{ margin: 0 }}>
+          {error || actionError}
         </p>
       )}
 
-      <div className="relative">
-        <Icon
-          name="search"
-          className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted"
-        />
+      <div className="ad-search">
+        <Ico icon={SearchIcon} size={18} />
         <input
+          type="search"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Search name, phone, postcode…"
-          className="h-12 w-full rounded-2xl border border-line bg-surface pl-10 pr-3 text-base text-[#163300] outline-none ring-[#9fe870] focus:ring-2 lg:h-11 lg:rounded-xl lg:text-sm"
+          placeholder="Search name, phone, email, postcode, service…"
+          className="ad-input"
+          aria-label="Search leads"
         />
       </div>
 
-      <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0">
-        {statusFilters.map((f) => (
-          <button
-            key={f.value}
-            type="button"
-            onClick={() => setStatus(f.value)}
-            className={
-              "shrink-0 rounded-pill px-3.5 py-2 text-sm font-semibold " +
-              (status === f.value
-                ? "bg-[#163300] text-[#9fe870]"
-                : "border border-line bg-surface text-content")
-            }
-          >
-            {f.label}
-          </button>
-        ))}
+      <div className="ad-chips">
+        {view === "list" &&
+          statusFilters.map((f) => (
+            <button
+              key={f.value}
+              type="button"
+              className="ad-chip"
+              aria-pressed={status === f.value}
+              onClick={() => setStatus(f.value)}
+            >
+              {f.label}
+              <small>{counts[f.value] ?? 0}</small>
+            </button>
+          ))}
         <button
           type="button"
-          onClick={() =>
-            setPriority((p) => (p === "urgent" ? "all" : "urgent"))
-          }
-          className={
-            "shrink-0 rounded-pill px-3.5 py-2 text-sm font-semibold " +
-            (priority === "urgent"
-              ? "bg-red-700 text-white"
-              : "border border-line bg-surface text-content")
-          }
+          className="ad-chip red"
+          aria-pressed={priority === "urgent"}
+          onClick={() => setPriority((p) => (p === "urgent" ? "all" : "urgent"))}
         >
           Urgent
         </button>
         <button
           type="button"
-          onClick={() =>
-            setAssignee((a) => (a === "mine" ? "all" : "mine"))
-          }
-          className={
-            "shrink-0 rounded-pill px-3.5 py-2 text-sm font-semibold " +
-            (assignee === "mine"
-              ? "bg-[#163300] text-[#9fe870]"
-              : "border border-line bg-surface text-content")
-          }
+          className="ad-chip"
+          aria-pressed={assignee === "mine"}
+          onClick={() => setAssignee((a) => (a === "mine" ? "all" : "mine"))}
         >
           Mine
         </button>
         <button
           type="button"
-          onClick={() =>
-            setAssignee((a) => (a === "unassigned" ? "all" : "unassigned"))
-          }
-          className={
-            "shrink-0 rounded-pill px-3.5 py-2 text-sm font-semibold " +
-            (assignee === "unassigned"
-              ? "bg-[#163300] text-[#9fe870]"
-              : "border border-line bg-surface text-content")
-          }
+          className="ad-chip"
+          aria-pressed={assignee === "unassigned"}
+          onClick={() => setAssignee((a) => (a === "unassigned" ? "all" : "unassigned"))}
         >
           Unassigned
         </button>
       </div>
 
-      <ul className="divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface">
-        {loading && (
-          <li className="px-4 py-10 text-center text-sm text-muted">
-            Loading…
-          </li>
-        )}
-        {!loading && rows.length === 0 && (
-          <li>
-            {leads.length === 0 ? (
-              <EmptyState
-                title="No leads yet"
-                body="When someone submits the quote form, they’ll appear here live."
-                actionHref="/#quote"
-                actionLabel="Open quote form"
-              />
-            ) : (
-              <EmptyState
-                title="No matches"
-                body="Try clearing filters or search."
-                actionLabel="Clear filters"
-                onAction={() => {
-                  setQ("");
-                  setStatus("all");
-                  setPriority("all");
-                  setAssignee("all");
-                }}
-              />
-            )}
-          </li>
-        )}
-        {rows.map((lead) => (
-          <li key={lead.id}>
-            <div className="flex items-stretch">
-              <Link
-                href={`/admin/leads/${lead.id}`}
-                className="min-w-0 flex-1 px-4 py-4 active:bg-[#9fe870]/15 lg:hover:bg-[#9fe870]/10"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <p className="truncate text-base font-bold">{lead.name}</p>
-                      {lead.priority === "urgent" && (
-                        <span className="rounded-pill bg-red-100 px-2 py-0.5 text-[10px] font-bold text-red-800">
-                          Urgent
-                        </span>
-                      )}
-                    </div>
-                    <p className="mt-0.5 text-sm text-muted">{lead.phone}</p>
+      {view === "board" ? (
+        loading ? (
+          <p className="ad-loading">Loading…</p>
+        ) : (
+          <div className="ad-board" aria-label="Lead pipeline board">
+            {FLOW.map((st) => {
+              const col = matching.filter((l) => l.status === st);
+              const meta = LEAD_STATUSES.find((x) => x.value === st)!;
+              return (
+                <section key={st} className="ad-col" aria-label={meta.label}>
+                  <div className="ad-col-h">
+                    <b>
+                      <i className={`c-${st}`} />
+                      {meta.label}
+                    </b>
+                    <span>{col.length}</span>
                   </div>
-                  <div className="flex shrink-0 flex-col items-end gap-1">
-                    <LeadStatusBadge status={lead.status} />
-                    {lead.status === "new" && <SlaBadge lead={lead} />}
-                  </div>
-                </div>
-                <p className="mt-2 text-sm text-content/80">
-                  {lead.from} → {lead.to}
-                </p>
-                <div className="mt-1 flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
+                  {col.length === 0 && <p className="ad-col-empty">Nothing here.</p>}
+                  {col.map((l) => (
+                    <BoardCard key={l.id} lead={l} busy={busy} onMove={move} />
+                  ))}
+                </section>
+              );
+            })}
+          </div>
+        )
+      ) : (
+        <div className="ad-list">
+          {loading && <p className="ad-loading">Loading…</p>}
+          {!loading && rows.length === 0 && (
+            <div className="ad-card">
+              {leads.length === 0 ? (
+                <EmptyState
+                  title="No leads yet"
+                  body="When someone submits the quote form, they appear here live."
+                  actionHref="/contact#quote"
+                  actionLabel="Open the quote form"
+                />
+              ) : (
+                <EmptyState
+                  title="No matches"
+                  body="Try clearing the filters or the search."
+                  actionLabel="Clear filters"
+                  onAction={clear}
+                />
+              )}
+            </div>
+          )}
+          {rows.map((lead) => (
+            <div key={lead.id} className="ad-lead-row">
+              <Link href={`/admin/leads/${lead.id}`} className="ad-lead">
+                <div className="ad-lead-main">
+                  <strong>
+                    {lead.name}
+                    {lead.priority === "urgent" && <span className="ad-badge urgent">Urgent</span>}
+                  </strong>
+                  <span>{lead.phone}</span>
+                  <span>
+                    {lead.from} → {lead.to}
+                  </span>
                   <span>
                     {lead.service}
                     {lead.quoteAmount ? ` · ${lead.quoteAmount}` : ""}
-                    {lead.assignedTo ? ` · ${lead.assignedTo}` : ""}
+                    {lead.assignedTo ? ` · ${lead.assignedTo}` : ""} · {formatLeadTime(lead.createdAt)}
                   </span>
-                  <span>{formatLeadTime(lead.createdAt)}</span>
+                </div>
+                <div className="ad-lead-side">
+                  <LeadStatusBadge status={lead.status} />
+                  {lead.status === "new" && <SlaBadge lead={lead} />}
                 </div>
               </Link>
-              <div className="flex flex-col justify-center gap-1 border-l border-line px-2 py-2">
-                <CopyPhoneButton
-                  phone={lead.phone}
-                  iconOnly
-                  className="grid h-9 w-9 place-items-center rounded-xl border border-line bg-[#f4f5f2] text-[#163300]"
-                />
-                <a
-                  href={`tel:${lead.phone}`}
-                  onClick={(e) => e.stopPropagation()}
-                  className="grid h-9 w-9 place-items-center rounded-xl bg-[#9fe870] text-[#163300]"
-                  aria-label="Call"
-                >
-                  <Icon name="phone" className="h-4 w-4" />
+              <div className="ad-kcard-acts">
+                <a href={`tel:${lead.phone}`} className="ad-mini lime" aria-label={`Call ${lead.name}`}>
+                  <Ico icon={CallIcon} size={14} />
+                  Call
                 </a>
+                <CopyPhoneButton phone={lead.phone} label="Copy" />
+                {lead.status === "new" && (
+                  <button type="button" className="ad-mini" disabled={busy} onClick={() => move(lead, "contacted")}>
+                    Mark contacted
+                  </button>
+                )}
               </div>
             </div>
-          </li>
-        ))}
-      </ul>
+          ))}
+        </div>
+      )}
+
+      <LostReasonSheet
+        open={Boolean(lostFor)}
+        busy={busy}
+        onClose={() => setLostFor(null)}
+        onConfirm={confirmLost}
+      />
     </div>
   );
 }
 
 export default function AdminLeadsPage() {
   return (
-    <Suspense
-      fallback={
-        <p className="py-10 text-center text-sm text-muted">Loading…</p>
-      }
-    >
+    <Suspense fallback={<p className="ad-loading">Loading…</p>}>
       <LeadsInner />
     </Suspense>
   );

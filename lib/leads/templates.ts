@@ -1,12 +1,12 @@
 import type { Lead } from "./types";
 
-export type WaTemplate = {
+export type MessageTemplate = {
   id: string;
   label: string;
   build: (lead: Lead) => string;
 };
 
-export const WA_TEMPLATES: WaTemplate[] = [
+export const MESSAGE_TEMPLATES: MessageTemplate[] = [
   {
     id: "intro",
     label: "Intro + ask photos",
@@ -32,7 +32,7 @@ export const WA_TEMPLATES: WaTemplate[] = [
         `Route: ${l.from} → ${l.to}${l.date ? ` · Preferred ${l.date}` : ""}`,
         ``,
         `Fully insured. No obligation until you book.`,
-        `Reply here if you’d like to lock the slot.`,
+        `Reply or call us if you’d like to lock the slot.`,
         ``,
         `— Phi Movers`,
       ].join("\n"),
@@ -45,8 +45,8 @@ export const WA_TEMPLATES: WaTemplate[] = [
         `Hi ${l.name.split(" ")[0]},`,
         ``,
         `You’re booked for ${l.service}${l.date ? ` on ${l.date}` : ""}.`,
-        `We’ll message the crew ETA the morning of the move.`,
-        `Any parking / permit notes, reply here.`,
+        `We’ll send the crew ETA the morning of the move.`,
+        `Any parking / permit notes, just reply.`,
         ``,
         `— Phi Movers`,
       ].join("\n"),
@@ -65,3 +65,17 @@ export const WA_TEMPLATES: WaTemplate[] = [
       ].join("\n"),
   },
 ];
+
+/** sms: link with a prefilled body (works on phones and most desktop messaging apps). */
+export function smsHref(phone: string, text?: string) {
+  const num = phone.replace(/[^d+]/g, "");
+  return text ? `sms:${num}?&body=${encodeURIComponent(text)}` : `sms:${num}`;
+}
+
+export function mailtoHref(email: string, subject: string, body: string) {
+  return `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+export function templateSubject(lead: Lead) {
+  return `Your ${lead.service} quote — Phi Movers`;
+}

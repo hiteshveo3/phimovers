@@ -78,7 +78,8 @@ type ClientAuthCtx = {
 
 const Ctx = createContext<ClientAuthCtx | null>(null);
 
-async function claimLeads(user: User, phone: string) {
+/** Attaches quote requests and guest bookings made with this account's verified email or phone. */
+async function claimLeads(user: User, phone = "") {
   try {
     const token = await user.getIdToken();
     await fetch("/api/client/claim-leads", {
@@ -116,6 +117,7 @@ export function ClientAuthProvider({ children }: { children: ReactNode }) {
       if (u) {
         try {
           await loadProfile(u);
+          void claimLeads(u);
         } catch {
           setProfile(null);
         }

@@ -1,16 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Icon } from "@/components/icons";
+import { Copy as CopyIcon, TickCircle as TickIcon } from "iconsax-reactjs";
+import { Ico } from "@/kit/components/Ico";
 
 export default function CopyPhoneButton({
   phone,
-  className = "",
   label = "Copy",
   iconOnly = false,
 }: {
   phone: string;
-  className?: string;
   label?: string;
   iconOnly?: boolean;
 }) {
@@ -24,7 +23,7 @@ export default function CopyPhoneButton({
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     } catch {
-      /* ignore */
+      /* clipboard blocked */
     }
   }
 
@@ -32,14 +31,11 @@ export default function CopyPhoneButton({
     <button
       type="button"
       onClick={onCopy}
-      className={
-        className ||
-        "inline-flex items-center gap-1 rounded-pill border border-line bg-surface px-2.5 py-1 text-xs font-bold text-[#163300]"
-      }
+      className={iconOnly ? "ad-icon-btn" : "ad-mini"}
       aria-label={copied ? "Copied" : `Copy ${phone}`}
       title={copied ? "Copied" : "Copy number"}
     >
-      <Icon name={copied ? "check" : "copy"} className="h-3.5 w-3.5" />
+      <Ico icon={copied ? TickIcon : CopyIcon} size={16} />
       {!iconOnly && (copied ? "Copied" : label)}
     </button>
   );

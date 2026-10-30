@@ -1,59 +1,59 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  getAdminAuth,
-  getAdminDb,
-  isAdminSdkConfigured,
-} from "@/lib/firebase/admin";
+import { getAdminDb, isAdminSdkConfigured } from "@/lib/firebase/admin";
+import { firebaseCaller } from "@/lib/booking-flow/auth";
 import { normalizePhone } from "@/lib/users/types";
 
 export const runtime = "nodejs";
 
-/** Attach orphan leads (no ownerUid) whose phone matches the client. */
+/**
+ * Attaches orphan quote requests (leads with no ownerUid) and guest bookings (customerId "") to the
+ * signed-in customer, but only by a VERIFIED identity: the account's email when Firebase says it is
+ * verified (Google sign-in, or a verified address), or the account's phone number when it signed in by
+ * phone. A phone typed into the profile is never enough: anyone could type someone else's number.
+ * The body is ignored; everything comes from the ID token.
+ */
 export async function POST(req: NextRequest) {
   if (!isAdminSdkConfigured()) {
-    return NextResponse.json(
-      { ok: false, error: "Admin SDK not configured" },
-      { status: 503 },
-    );
+    return NextResponse.json({ ok: false, error: "Admin SDK not configured" }, { status: 503 });
+  }
+  const caller = await firebaseCaller(req);
+  if (!caller) return NextResponse.json({ error: "Missing token" }, { status: 401 });
+
+  const email = caller.verifiedEmail;
+  const phone = caller.verifiedPhone ? normalizePhone(caller.verifiedPhone) : "";
+  if (!email && phone.length < 10) {
+    return NextResponse.json({ ok: true, claimed: 0, bookings: 0, reason: "unverified" });
   }
 
-  const header = req.headers.get("authorization") || "";
-  const token = header.startsWith("Bearer ") ? header.slice(7) : "";
-  if (!token) {
-    return NextResponse.json({ error: "Missing token" }, { status: 401 });
-  }
+  const emailMatches = (v: unknown) => Boolean(email && typeof v === "string" && v.trim().toLowerCase() === email);
+  const phoneMatches = (v: unknown) => Boolean(phone.length >= 10 && typeof v === "string" && normalizePhone(v) === phone);
 
   try {
-    const auth = getAdminAuth();
-    const decoded = await auth.verifyIdToken(token);
-    const body = (await req.json()) as { phone?: string };
-    const phoneNorm = normalizePhone(String(body.phone ?? ""));
-    if (phoneNorm.length < 10) {
-      return NextResponse.json({ error: "Invalid phone" }, { status: 400 });
-    }
-
     const db = getAdminDb();
-    const snap = await db.collection("leads").limit(200).get();
-    let claimed = 0;
+    const now = new Date().toISOString();
+    const [leads, bookings] = await Promise.all([
+      db.collection("leads").where("ownerUid", "==", null).limit(500).get(),
+      db.collection("bookings").where("customerId", "==", "").limit(500).get(),
+    ]);
     const batch = db.batch();
-    for (const d of snap.docs) {
+    let claimed = 0;
+    let claimedBookings = 0;
+    for (const d of leads.docs) {
       const data = d.data();
       if (data.ownerUid) continue;
-      const leadPhone = normalizePhone(String(data.phone ?? ""));
-      if (!leadPhone) continue;
-      const match =
-        leadPhone === phoneNorm ||
-        leadPhone.endsWith(phoneNorm) ||
-        phoneNorm.endsWith(leadPhone);
-      if (!match) continue;
-      batch.update(d.ref, {
-        ownerUid: decoded.uid,
-        updatedAt: new Date().toISOString(),
-      });
+      if (!emailMatches(data.email) && !phoneMatches(data.phone)) continue;
+      batch.update(d.ref, { ownerUid: caller.uid, updatedAt: now });
       claimed++;
     }
-    if (claimed > 0) await batch.commit();
-    return NextResponse.json({ ok: true, claimed });
+    for (const d of bookings.docs) {
+      const data = d.data();
+      if (data.customerId) continue;
+      if (!emailMatches(data.customerEmail) && !phoneMatches(data.customerPhone)) continue;
+      batch.update(d.ref, { customerId: caller.uid, updatedAt: new Date() });
+      claimedBookings++;
+    }
+    if (claimed + claimedBookings > 0) await batch.commit();
+    return NextResponse.json({ ok: true, claimed, bookings: claimedBookings });
   } catch (e) {
     console.error(e);
     return NextResponse.json({ error: "Claim failed" }, { status: 500 });

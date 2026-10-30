@@ -1,4 +1,22 @@
 import { allServices, slugify, type ServiceItem } from "./data";
+import { NEIGHBOURHOOD_CORE_SERVICES, neighbourhoods as coreNeighbourhoods } from "./neighbourhoods";
+import { extraNeighbourhoods } from "./neighbourhoods-extra";
+
+const neighbourhoods = [...coreNeighbourhoods, ...extraNeighbourhoods];
+
+/** Specialist services that only get a London-wide page — area combos for these earn almost no traffic. */
+export const NO_AREA_COMBO_SERVICES = [
+  "sofa-and-furniture-hoisting",
+  "moving-crate-hire",
+  "heavy-and-machinery-moving",
+  "storage-with-collection",
+  "long-distance-removals",
+  "part-load-removals",
+  "office-furniture-removals",
+  "marketplace-collection-and-delivery",
+  "ikea-collection-and-assembly",
+  "antique-and-fine-art-moving",
+];
 
 export type AreaFaq = { q: string; a: string };
 
@@ -15,6 +33,12 @@ export type Area = {
   access: string;
   /** Local FAQs for the borough hub page */
   faqs: AreaFaq[];
+  /** Neighbourhoods only: parent borough slug */
+  borough?: string;
+  /** Neighbourhoods only: outward postcodes */
+  postcodes?: string;
+  /** Neighbourhoods only: services that get their own combo page */
+  services?: string[];
 };
 
 type AreaInput = Omit<Area, "slug" | "nearby"> & { nearby: string[] };
@@ -47,7 +71,7 @@ export const areas: Area[] = [
       },
       {
         q: "How fast can I get a quote for Barking & Dagenham?",
-        a: "WhatsApp or call with postcodes and a quick inventory — most replies within about one working hour.",
+        a: "Call us or send a quote request with postcodes and a quick inventory — most replies within about one working hour.",
       },
     ],
   }),
@@ -139,7 +163,7 @@ export const areas: Area[] = [
       },
       {
         q: "What size van for a Bromley family house?",
-        a: "Many 3–4 bed homes need a Luton and a full crew. WhatsApp room photos and we’ll confirm before moving day.",
+        a: "Many 3–4 bed homes need a Luton and a full crew. Send a quote request with your rooms and we’ll confirm before moving day.",
       },
       {
         q: "Can you combine removals with storage?",
@@ -207,7 +231,7 @@ export const areas: Area[] = [
     faqs: [
       {
         q: "How much is a house removal in Croydon?",
-        a: "Full houses get a fixed quote from inventory and access. Guides for smaller homes start lower; WhatsApp details for a number that fits your load.",
+        a: "Full houses get a fixed quote from inventory and access. Guides for smaller homes start lower; send us the details for a number that fits your load.",
       },
       {
         q: "Do you move high-rise flats in central Croydon?",
@@ -904,6 +928,18 @@ export const areas: Area[] = [
     ],
   }),
   def({
+    name: "Central London",
+    blurb: "Removals and man and van across Central London: the City, Westminster, Camden, Islington, Kensington & Chelsea and Southwark, planned around loading rules and the Congestion Charge.",
+    nearby: ["city-of-london", "westminster", "camden", "islington", "kensington-and-chelsea", "southwark"],
+    housing: "Mansion blocks, period conversions with narrow stairs, serviced apartments and new-build towers with booked goods lifts and loading bays.",
+    access: "Most streets are controlled parking zones with short loading windows, and the Congestion Charge zone covers much of the area. Book a parking suspension or a building loading bay early and tell us the floor and lift size at both ends.",
+    faqs: [
+      { q: "Do you move in Central London?", a: "Yes. We cover every Central London borough, including the City of London, Westminster, Camden, Islington, Kensington & Chelsea and Southwark." },
+      { q: "Who pays the Congestion Charge on a Central London move?", a: "Charges outside our control, such as the Congestion Charge and parking, are passed on at cost with no markup and agreed before the day." },
+    ],
+    services: [],
+  }),
+  def({
     name: "South London",
     blurb: "Your trusted partner for seamless removals and man with van hire in South London. Fully insured, reliable, and affordable.",
     nearby: ["lambeth", "southwark", "wandsworth"],
@@ -993,6 +1029,11 @@ export const areas: Area[] = [
   }),
 ];
 
+/** London neighbourhoods (Chelsea, Fulham, Wimbledon…) — see lib/neighbourhoods.ts. */
+for (const { extraServices, ...n } of neighbourhoods) {
+  areas.push(def({ ...n, services: [...NEIGHBOURHOOD_CORE_SERVICES, ...(extraServices ?? [])] }));
+}
+
 export function getAreaBySlug(slug: string): Area | undefined {
   return areas.find((a) => a.slug === slug);
 }
@@ -1010,12 +1051,24 @@ export function getNearbyAreas(slug: string, count = 6): Area[] {
   return [...nearby, ...rest].slice(0, count);
 }
 
-/** Full area × service matrix — every borough × every service (1000+ pages). */
+/** Whether an area has its own combo page for a service (neighbourhoods only build targeted ones). */
+export function areaOffers(area: Area, serviceSlug: string): boolean {
+  if (NO_AREA_COMBO_SERVICES.includes(serviceSlug)) return false;
+  return !area.services || area.services.includes(serviceSlug);
+}
+
+/** Combo link for an area, falling back to the parent borough when a neighbourhood has no page for it. */
+export function areaServiceHref(area: Area, serviceSlug: string): string {
+  if (NO_AREA_COMBO_SERVICES.includes(serviceSlug)) return `/services/${serviceSlug}`;
+  return comboHref(areaOffers(area, serviceSlug) ? area.slug : area.borough ?? area.slug, serviceSlug);
+}
+
+/** Full area × service matrix — every borough × every service, plus targeted neighbourhood combos. */
 export function allAreaServiceParams(): { borough: string; service: string }[] {
   const params: { borough: string; service: string }[] = [];
   for (const a of areas) {
     for (const s of allServices) {
-      params.push({ borough: a.slug, service: s.slug });
+      if (areaOffers(a, s.slug)) params.push({ borough: a.slug, service: s.slug });
     }
   }
   return params;
@@ -1093,6 +1146,7 @@ export const areaRegions: { label: string; slugs: string[] }[] = [
   {
     label: "Regions & Key Hubs",
     slugs: [
+      "central-london",
       "east-london",
       "south-london",
       "west-london",
@@ -1100,9 +1154,11 @@ export const areaRegions: { label: string; slugs: string[] }[] = [
       "south-east-london",
       "stratford",
       "leyton",
-      "leamington-spa",
-      "warwick",
     ],
+  },
+  {
+    label: "London neighbourhoods",
+    slugs: neighbourhoods.map((n) => slugify(n.name)),
   },
 ];
 

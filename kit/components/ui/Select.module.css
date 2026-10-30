@@ -1,0 +1,124 @@
+/* Same field look as the booking form: 50px tall, 12px radius, 1px soft border, ink on focus. */
+
+.root {
+  position: relative;
+  min-width: 0;
+}
+
+.trigger {
+  width: 100%;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid rgba(15, 26, 9, 0.2);
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  font-size: 16px;
+  color: #0f1a09;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.trigger:focus-visible,
+.trigger[aria-expanded='true'] {
+  outline: none;
+  border-color: #0f1a09;
+}
+
+.trigger[aria-invalid='true'] {
+  border-color: #8c1f1f;
+}
+
+.trigger:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.trigger > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.placeholder {
+  color: rgba(15, 26, 9, 0.5);
+}
+
+.chev {
+  flex: none;
+  color: rgba(15, 26, 9, 0.7);
+  transition: transform 0.16s ease;
+}
+
+.trigger[aria-expanded='true'] .chev {
+  transform: rotate(180deg);
+}
+
+.list {
+  position: absolute;
+  z-index: 60;
+  left: 0;
+  right: 0;
+  top: calc(100% + 6px);
+  max-height: 300px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: #fff;
+  border: 1px solid rgba(15, 26, 9, 0.14);
+  border-radius: 12px;
+  box-shadow: 0 18px 36px -12px rgba(15, 26, 9, 0.25);
+  outline: none;
+}
+
+.group {
+  padding: 10px 10px 4px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(15, 26, 9, 0.55);
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 44px;
+  padding: 8px 10px;
+  border-radius: 9px;
+  font-size: 15.5px;
+  color: #0f1a09;
+  cursor: pointer;
+}
+
+.option[data-active='true'] {
+  background: #f1f8e8;
+}
+
+.option[aria-selected='true'] {
+  font-weight: 600;
+}
+
+.option[aria-disabled='true'] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.check {
+  flex: none;
+  color: #0f1a09;
+  opacity: 0;
+}
+
+.option[aria-selected='true'] .check {
+  opacity: 1;
+}

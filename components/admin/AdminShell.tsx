@@ -2,169 +2,316 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Icon } from "@/components/icons";
+import { useEffect, useState, type ReactNode } from "react";
+import {
+  ArrowDown2 as ChevronDownIcon,
+  ArrowLeft2 as ChevronLeftIcon,
+  ArrowRight2 as ChevronRightIcon,
+  Calendar as CalendarIcon,
+  Calendar2 as BookingIcon,
+  Box as ServicesIcon,
+  Category as CategoryIcon,
+  CloseCircle as CloseIcon,
+  Global as GlobalIcon,
+  HamburgerMenu as MoreIcon,
+  Logout as LogoutIcon,
+  Messages2 as ChatsIcon,
+  Receipt21 as ReceiptIcon,
+  Setting2 as SettingsIcon,
+  Chart2 as ReportsIcon,
+  People as CustomersIcon,
+  Star1 as ReviewsIcon,
+  Sms as MailIcon,
+  User as UserIcon,
+} from "iconsax-reactjs";
+import { Ico, type IconType } from "@/kit/components/Ico";
+import { BRAND } from "@/kit/site-facts";
+import { can, type Permission } from "@/lib/admin/roles";
 import { useAdminAuth } from "./AdminAuthProvider";
 import { useLeads } from "./LeadsProvider";
+import { useBookings } from "./BookingsProvider";
+import { OfficeAIProvider, OfficeAssistantFab, useOfficeAI } from "./OfficeAssistant";
 
-const nav = [
-  { href: "/admin", label: "Home", icon: "dashboard", exact: true },
-  { href: "/admin/leads", label: "Leads", icon: "mail", exact: false },
-  { href: "/admin/settings", label: "More", icon: "menu", exact: false },
+/** `perm`: shown only to roles that have it (lib/admin/roles.ts). */
+type Nav = { href: string; label: string; icon: IconType; exact?: boolean; perm?: Permission };
+
+const OFFICE: Nav[] = [
+  { href: "/admin", label: "Overview", icon: CategoryIcon, exact: true },
+  { href: "/admin/leads", label: "Leads", icon: MailIcon, perm: "leads" },
+  { href: "/admin/bookings", label: "Bookings", icon: BookingIcon, perm: "bookings" },
+  { href: "/admin/jobs", label: "Calendar", icon: CalendarIcon, perm: "bookings" },
+  { href: "/admin/customers", label: "Customers", icon: CustomersIcon, perm: "bookings" },
+  { href: "/admin/invoices", label: "Invoices", icon: ReceiptIcon, perm: "invoices" },
+  { href: "/admin/reports", label: "Reports", icon: ReportsIcon, perm: "reports" },
+  { href: "/admin/chats", label: "Chats", icon: ChatsIcon, perm: "chats" },
+  { href: "/admin/reviews", label: "Reviews", icon: ReviewsIcon, perm: "leads" },
+  { href: "/admin/movers", label: "Crew", icon: UserIcon, perm: "crew" },
+  { href: "/admin/services", label: "Services", icon: ServicesIcon },
 ];
+const ACCOUNT: Nav[] = [
+  { href: "/admin/settings", label: "Settings", icon: SettingsIcon },
+];
+const TABS: Nav[] = [
+  { href: "/admin", label: "Home", icon: CategoryIcon, exact: true },
+  { href: "/admin/leads", label: "Leads", icon: MailIcon, perm: "leads" },
+  { href: "/admin/bookings", label: "Bookings", icon: BookingIcon, perm: "bookings" },
+  { href: "/admin/invoices", label: "Invoices", icon: ReceiptIcon, perm: "invoices" },
+];
+const RAIL_KEY = "phi-office-rail";
 
-function isActive(pathname: string, href: string, exact: boolean) {
-  if (exact) return pathname === href;
-  return pathname === href || pathname.startsWith(href + "/");
+function isActive(pathname: string, n: Nav) {
+  if (n.exact) return pathname === n.href;
+  return pathname === n.href || pathname.startsWith(n.href + "/");
 }
 
-export default function AdminShell({
+function SideGroup({
+  name,
+  open,
+  onToggle,
   children,
 }: {
-  children: React.ReactNode;
+  name: string;
+  open: boolean;
+  onToggle: () => void;
+  children: ReactNode;
 }) {
-  const pathname = usePathname();
-  const { user, logout } = useAdminAuth();
+  return (
+    <div className={`sh-group${open ? "" : " is-closed"}`}>
+      <button
+        type="button"
+        className="sh-group-h"
+        aria-expanded={open}
+        onClick={onToggle}
+      >
+        <span className="sh-lbl">{name}</span>
+        <Ico icon={ChevronDownIcon} size={14} />
+      </button>
+      <div className="sh-group-body">
+        <div className="sh-group-list">{children}</div>
+      </div>
+    </div>
+  );
+}
+
+/** "Ask AI" on every screen but Home, where it is a card on the page itself. */
+function AskAiButton({ pathname }: { pathname: string }) {
+  const ai = useOfficeAI();
+  return pathname === "/admin" ? null : <OfficeAssistantFab ai={ai} />;
+}
+
+export default function AdminShell({ children }: { children: ReactNode }) {
+  const pathname = usePathname() ?? "";
+  if (pathname === "/admin/login") return <>{children}</>;
+  return (
+    <OfficeAIProvider>
+      <Shell pathname={pathname}>{children}</Shell>
+      <AskAiButton pathname={pathname} />
+    </OfficeAIProvider>
+  );
+}
+
+function Shell({ children, pathname }: { children: ReactNode; pathname: string }) {
+  const { user, logout, demo, role } = useAdminAuth();
+  const allowed = (n: Nav) => !n.perm || can(role, n.perm);
   const { leads } = useLeads();
-  const isLogin = pathname === "/admin/login";
+  const { pending: pendingBookings, changeRequests } = useBookings();
+  const bookingAlerts = pendingBookings + changeRequests;
+  const [more, setMore] = useState(false);
+  const [rail, setRail] = useState(false);
+  const [open, setOpen] = useState<Record<string, boolean>>({
+    Office: true,
+    Account: true,
+    Website: true,
+  });
   const newCount = leads.filter((l) => l.status === "new").length;
 
-  if (isLogin) {
-    return <div className="min-h-screen bg-[#f4f5f2]">{children}</div>;
-  }
+  useEffect(() => {
+    try {
+      setRail(localStorage.getItem(RAIL_KEY) === "1");
+    } catch {
+      /* storage blocked: sidebar starts open */
+    }
+  }, []);
 
-  const title = pathname.startsWith("/admin/leads/")
-    ? "Lead"
-    : pathname.startsWith("/admin/leads")
-      ? "Leads"
-      : pathname.startsWith("/admin/settings")
-        ? "Settings"
-        : "Overview";
+  useEffect(() => {
+    setMore(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!more) return undefined;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMore(false);
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [more]);
+
+  const toggleRail = () =>
+    setRail((r) => {
+      const next = !r;
+      try {
+        localStorage.setItem(RAIL_KEY, next ? "1" : "0");
+      } catch {
+        /* choice lasts for this page only */
+      }
+      return next;
+    });
+  const toggleGroup = (name: string) =>
+    setOpen((o) => ({ ...o, [name]: !o[name] }));
+
+  const email = user?.email ?? "Staff";
+  const moreCurrent = isActive(pathname, ACCOUNT[0]);
+
+  const link = (n: Nav) => (
+    <Link
+      key={n.href}
+      href={n.href}
+      className="sh-row"
+      title={n.label}
+      aria-current={isActive(pathname, n) ? "page" : undefined}
+    >
+      <Ico icon={n.icon} size={20} />
+      <span className="sh-lbl">{n.label}</span>
+      {n.href === "/admin/leads" && newCount > 0 && (
+        <span className="sh-count">{newCount}</span>
+      )}
+      {n.href === "/admin/bookings" && bookingAlerts > 0 && (
+        <span className="sh-count">{bookingAlerts}</span>
+      )}
+    </Link>
+  );
 
   return (
-    <div className="min-h-screen bg-[#f4f5f2] text-content">
-      <header className="sticky top-0 z-40 border-b border-line bg-surface/95 backdrop-blur-sm lg:hidden">
-        <div className="flex h-14 items-center justify-between gap-3 px-4">
-          <div className="min-w-0">
-            <p className="truncate text-base font-extrabold tracking-tight">
-              {title}
-            </p>
-            {newCount > 0 && !pathname.startsWith("/admin/leads") && (
-              <p className="text-[11px] font-semibold text-[#163300]">
-                {newCount} new
-              </p>
-            )}
+    <div className={`sh${rail ? " is-rail" : ""}`}>
+      <aside className={`sh-side${rail ? " is-rail" : ""}`} aria-label="Staff menu">
+        <div className="sh-side-top">
+          <Link href="/admin" className="sh-brand">
+            <b><img src="/brand/phi-movers-icon-192.png" alt="" width={26} height={26} style={{ display: 'inline-block', width: 26, height: 26, borderRadius: 8, marginRight: 8, verticalAlign: 'middle' }} />{BRAND}</b>
+            <small>Staff</small>
+          </Link>
+          <button
+            type="button"
+            className="sh-toggle"
+            aria-label={rail ? "Open the menu" : "Collapse the menu"}
+            aria-expanded={!rail}
+            onClick={toggleRail}
+          >
+            <Ico icon={rail ? ChevronRightIcon : ChevronLeftIcon} size={18} />
+          </button>
+        </div>
+        <nav aria-label="Staff sections">
+          <SideGroup name="Office" open={open.Office} onToggle={() => toggleGroup("Office")}>
+            {OFFICE.filter(allowed).map(link)}
+          </SideGroup>
+          <SideGroup name="Account" open={open.Account} onToggle={() => toggleGroup("Account")}>
+            {ACCOUNT.map(link)}
+          </SideGroup>
+          <SideGroup name="Website" open={open.Website} onToggle={() => toggleGroup("Website")}>
+            <a href="/" className="sh-row" title="View website">
+              <Ico icon={GlobalIcon} size={20} />
+              <span className="sh-lbl">View website</span>
+            </a>
+          </SideGroup>
+        </nav>
+        <div className="sh-side-foot">
+          <div className="sh-who-card">
+            <i aria-hidden="true">
+              <Ico icon={UserIcon} size={18} />
+            </i>
+            <span title={email}>{email}</span>
+            <button type="button" onClick={() => logout()}>
+              Sign out
+            </button>
           </div>
-          <Link href="/" className="shrink-0" aria-label="Website">
-            <img
-              src="/logo.png"
-              alt=""
-              className="no-grayscale h-8 w-8 rounded-lg object-cover"
-            />
+        </div>
+      </aside>
+
+      <header className="sh-top">
+        <Link href="/admin" className="sh-brand">
+          <b><img src="/brand/phi-movers-icon-192.png" alt="" width={26} height={26} style={{ display: 'inline-block', width: 26, height: 26, borderRadius: 8, marginRight: 8, verticalAlign: 'middle' }} />{BRAND}</b>
+          <small>{demo ? "Staff · demo" : "Staff"}</small>
+        </Link>
+        <div className="sh-end">
+          <Link
+            href="/admin/leads?status=new"
+            className="sh-icon"
+            aria-label={`${newCount} new leads`}
+          >
+            <Ico icon={MailIcon} size={22} />
+            {newCount > 0 && (
+              <span className="sh-dot">{newCount > 9 ? "9+" : newCount}</span>
+            )}
           </Link>
         </div>
       </header>
 
-      <div className="mx-auto flex min-h-screen max-w-[1400px]">
-        <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r border-line bg-surface lg:flex">
-          <div className="flex items-center gap-2.5 border-b border-line px-5 py-5">
-            <img
-              src="/logo.png"
-              alt=""
-              className="no-grayscale h-8 w-8 rounded-md object-cover"
-            />
-            <div className="min-w-0">
-              <p className="text-sm font-extrabold tracking-tight">Phi Admin</p>
-              <p className="truncate text-[11px] text-muted">
-                {user?.email ?? "Staff"}
-              </p>
-            </div>
-          </div>
-          <nav className="flex-1 space-y-1 p-3">
-            {nav.map((item) => {
-              const active = isActive(pathname, item.href, item.exact);
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={
-                    "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors " +
-                    (active
-                      ? "bg-[#9fe870] text-[#163300]"
-                      : "text-content/80 hover:bg-[#9fe870]/20")
-                  }
-                >
-                  <Icon name={item.icon} className="h-5 w-5" />
-                  <span className="flex-1">
-                    {item.label === "More" ? "Settings" : item.label}
-                  </span>
-                  {item.href === "/admin/leads" && newCount > 0 && (
-                    <span className="rounded-pill bg-[#163300] px-2 py-0.5 text-[10px] font-bold text-[#9fe870]">
-                      {newCount}
-                    </span>
-                  )}
-                </Link>
-              );
-            })}
-          </nav>
-          <div className="space-y-2 border-t border-line p-4">
+      <main id="main" className="sh-main">
+        {children}
+      </main>
+
+      <nav className="sh-tabs" aria-label="Staff tabs">
+        {TABS.filter(allowed).map((t) => {
+          const cur = isActive(pathname, t);
+          return (
             <Link
-              href="/"
-              className="flex items-center gap-2 text-sm font-medium text-muted hover:text-[#163300]"
+              key={t.href}
+              href={t.href}
+              className="sh-tab"
+              aria-current={cur ? "page" : undefined}
             >
-              <Icon name="arrowLeft" className="h-4 w-4" />
-              Website
+              <Ico icon={t.icon} size={24} variant={cur ? "Bold" : "Linear"} />
+              {t.label}
+              {t.href === "/admin/leads" && newCount > 0 && (
+                <span className="sh-dot">{newCount > 9 ? "9+" : newCount}</span>
+              )}
+              {t.href === "/admin/bookings" && bookingAlerts > 0 && (
+                <span className="sh-dot">{bookingAlerts > 9 ? "9+" : bookingAlerts}</span>
+              )}
             </Link>
-            {user && (
-              <button
-                type="button"
-                onClick={() => logout()}
-                className="flex w-full items-center gap-2 text-sm font-medium text-muted hover:text-[#163300]"
-              >
-                <Icon name="lock" className="h-4 w-4" />
-                Sign out
-              </button>
-            )}
-          </div>
-        </aside>
-
-        <main className="min-w-0 flex-1 px-4 pb-24 pt-4 sm:px-6 lg:px-8 lg:pb-8 lg:pt-8">
-          {children}
-        </main>
-      </div>
-
-      <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-line bg-surface lg:hidden">
-        <div className="mx-auto grid h-16 max-w-lg grid-cols-3">
-          {nav.map((item) => {
-            const active = isActive(pathname, item.href, item.exact);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={
-                  "relative flex flex-col items-center justify-center gap-0.5 text-[10px] font-semibold " +
-                  (active ? "text-[#163300]" : "text-muted")
-                }
-              >
-                <span
-                  className={
-                    "relative grid h-8 w-8 place-items-center rounded-xl " +
-                    (active ? "bg-[#9fe870]" : "")
-                  }
-                >
-                  <Icon name={item.icon} className="h-5 w-5" />
-                  {item.href === "/admin/leads" && newCount > 0 && (
-                    <span className="absolute -right-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full bg-[#163300] px-1 text-[9px] font-bold text-[#9fe870]">
-                      {newCount > 9 ? "9+" : newCount}
-                    </span>
-                  )}
-                </span>
-                {item.label}
-              </Link>
-            );
-          })}
-        </div>
-        <div className="h-[env(safe-area-inset-bottom)]" />
+          );
+        })}
+        <button
+          type="button"
+          className="sh-tab"
+          aria-current={moreCurrent ? "page" : undefined}
+          aria-expanded={more}
+          onClick={() => setMore(true)}
+        >
+          <Ico icon={MoreIcon} size={24} variant={moreCurrent ? "Bold" : "Linear"} />
+          More
+        </button>
       </nav>
+
+      {more && (
+        <div className="sh-sheet" role="dialog" aria-modal="true" aria-label="More">
+          <button type="button" aria-label="Close" onClick={() => setMore(false)} />
+          <div className="sh-sheet-panel">
+            <h2>More</h2>
+            <Link
+              href="/admin/settings"
+              className="sh-row"
+              aria-current={moreCurrent ? "page" : undefined}
+            >
+              <Ico icon={SettingsIcon} size={22} />
+              Settings
+            </Link>
+            <Link href="/admin/chats" className="sh-row" aria-current={isActive(pathname, { href: "/admin/chats", label: "Chats", icon: ChatsIcon }) ? "page" : undefined}>
+              <Ico icon={ChatsIcon} size={22} />
+              Website chats
+            </Link>
+            <a href="/" className="sh-row">
+              <Ico icon={GlobalIcon} size={22} />
+              View website
+            </a>
+            <button type="button" className="sh-row" onClick={() => logout()}>
+              <Ico icon={LogoutIcon} size={22} />
+              Sign out
+            </button>
+            <button type="button" className="sh-row" onClick={() => setMore(false)}>
+              <Ico icon={CloseIcon} size={22} />
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

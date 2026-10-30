@@ -5,7 +5,7 @@ import LeadStatusBadge from "@/components/admin/LeadStatusBadge";
 import { useClientAuth } from "@/components/client/ClientAuthProvider";
 import { useClientLeads } from "@/components/client/ClientLeadsProvider";
 import { Icon } from "@/components/icons";
-import { CALL_LABEL, PHONE_HREF, WHATSAPP_HREF } from "@/lib/contact";
+import { CALL_LABEL, EMAIL_HREF, PHONE_HREF } from "@/lib/contact";
 import { formatLeadTime } from "@/lib/leads/types";
 
 export default function ClientDashboardPage() {
@@ -70,13 +70,11 @@ export default function ClientDashboardPage() {
           New quote
         </Link>
         <a
-          href={WHATSAPP_HREF}
-          target="_blank"
-          rel="noopener noreferrer"
+          href={EMAIL_HREF}
           className="btn justify-center border border-line bg-surface py-3.5"
         >
-          <Icon name="whatsapp" className="h-4 w-4" />
-          WhatsApp
+          <Icon name="mail" className="h-4 w-4" />
+          Email us
         </a>
         <a
           href={PHONE_HREF}

@@ -124,7 +124,7 @@ export const siteReviews: SiteReview[] = [
     service: "Sofa Delivery",
     rating: 5,
     date: "2026-01-29",
-    text: "Marketplace sofa collection and delivery in one trip. On time, careful with the walls, and priced exactly as quoted on WhatsApp.",
+    text: "Marketplace sofa collection and delivery in one trip. On time, careful with the walls, and priced exactly as quoted.",
     avatar: "/reviews/abhinav-arora.jpg",
   },
 ];

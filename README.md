@@ -1,55 +1,41 @@
-# SwiftMove Removals
+# Phi Movers
 
-A modern, front-end marketing site for a UK removals (moving) company, built
-with **Next.js 14 (App Router) + React + Tailwind CSS**.
+London removals website, staff dashboard and client portal for Phi Movers (phimovers.co.uk).
+Next.js 14, React 18, Firebase (Auth + Firestore). The Android app lives in the sibling folder `../phimovers-app`.
 
-Features: services grid, moving packages, drag/arrow carousels, live service
-search, transparent pricing toggle, scroll-reveal animations, trust marquee,
-mega-menu navigation, and full light/dark mode.
-
-> The design system was originally adapted from a Craftwork-style layout and
-> fully re-themed for a removals business.
-
-## Getting started
+## Run
 
 ```bash
 npm install
-npm run dev
+npm run dev      # http://localhost:3000
+npm run build
 ```
 
-Then open http://localhost:3000
+Copy `.env.example` to `.env.local` and fill what you need. Everything optional is switched off when its value is empty.
 
-## Project structure
+## How it is organised
 
 ```
-app/
-  layout.tsx        # Root layout + font (Manrope, a Grotesk substitute)
-  page.tsx          # Assembles all homepage sections
-  globals.css       # Tailwind layers + component utility classes
-components/          # Navbar, Hero, ProBanner, CategoryGrid, ProductCard,
-                    # ProductSection, FeatureGrid, Stats, Pricing, Newsletter, Footer
-lib/
-  data.ts           # ALL content lives here (nav, categories, products, plans)
-tailwind.config.ts  # Colors, fonts, container width, shadows
+pages/    Public site (Pages Router): /, /services, /areas, /blog, /pricing, /reviews, /contact, legal pages
+app/      Staff dashboard (/admin), client portal (/client), auth, API routes, sitemap, robots
+kit/      The shared UI kit: header, footer, mobile tab bar, cookie card, blocks, price calculator, assistant
+lib/      Content and data: services, areas, blog, reviews, legal, SEO, leads, Firebase
+components/admin, components/client   Dashboard and portal components
+docs/     Firebase ops, dashboard, Flutter app notes
 ```
 
-## Swapping in real photos
+Business facts (phone, email, address, rates, hours) are set once in `lib/contact.ts` and `kit/site-facts.ts`.
+Every public page is wrapped in `DcPage` (`kit/components/DcPage.tsx`).
 
-All imagery currently uses stable placeholders via the `img()` helper in
-`lib/data.ts`. Replace the `image` values with real photo URLs, e.g.:
+## Features
 
-```ts
-{ title: "2-Bed House Move", price: "from £499", author: "3 movers · 1 van",
-  category: "Home Removals", image: "https://<your-cdn>/2bed-move.jpg" },
-```
-
-`next.config.mjs` already allows remote images from any host, so external URLs
-will render through `next/image` without extra config.
-
-## Notes / not included
-
-- This is UI-only: no backend, quote engine, booking or payments.
-- Prices, areas, phone number and accreditations are placeholder content —
-  update them in `lib/data.ts` and the components.
-- Fonts: **Manrope** (a clean grotesk) is used; change it in `app/layout.tsx`.
-- Colors are defined in `tailwind.config.ts` and easy to fine-tune.
+- Quote requests are saved as leads in Firestore and shown live in `/admin`.
+- `/admin`: overview, leads (list and board), calendar, invoices (PDF), settings. See `docs/ADMIN_DASHBOARD.md`.
+- Invoice PDFs use the "Ticket" layout from Alpha Movers (Figtree fonts in `lib/admin/fonts`, bank card, remittance slip, legal footer). Bank details: `INVOICE_BANK_*` env; company number: `COMPANY_NUMBER` in `lib/contact.ts`.
+- A booking marked Completed gets a draft invoice automatically (`lib/admin/invoice-auto.ts`); jobs completed in the app are drafted when `/admin/invoices` opens.
+- "Ask AI" on the dashboard answers questions about live leads, bookings and invoices (Gemini), and drafts payment reminders from an invoice. `/admin/chats` shows and exports the "Ask Phi" chats.
+- Two-step sign-in (authenticator app, backup codes, trusted browsers) is opt-in per staff member in Settings. Publish the updated `firestore.rules` so the data checks it too.
+- WhatsApp sits next to Get a quote everywhere, plus a floating button (`kit/components/WhatsApp.tsx`).
+- `/client`: customers follow their quotes.
+- "Ask Phi" assistant: needs `GEMINI_API_KEY` and a Firebase service account; otherwise it shows call and email options.
+- Analytics stays off until `NEXT_PUBLIC_GA_ID` is set and the visitor accepts cookies.

@@ -1,0 +1,60 @@
+rules_version = '2';
+
+// What may be stored, and by whom (mirrors Alpha Movers). Three kinds of
+// picture and nothing else, each an image of at most 8 MB, written by a
+// signed-in person. Nobody can list a folder.
+//
+//   profile_photos/{uid}/{file}                 the person's own photo
+//   request_photos/{uid}/{bookingId}/{file}     photos a customer attaches to a booking
+//   job_photos/{bookingId}/{uid}/{file}         before/after photos by the job's mover
+//
+// The crew check reads users/{uid}.role from Firestore, so the first deploy
+// asks to let Storage read Firestore (say yes).
+service firebase.storage {
+  match /b/{bucket}/o {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    // Same rule as firestore.rules isStaff(): the staff claim (or the owner address with a verified
+    // email), and the mandatory two-step pass (officeUntil still running; lib/admin/staff-2fa.ts).
+    function office() {
+      return signedIn()
+        && (
+          request.auth.token.get('staff', false) == true
+          || (
+            request.auth.token.get('email', '') == 'phimoves@gmail.com'
+            && request.auth.token.get('email_verified', false) == true
+          )
+        )
+        && request.auth.token.get('officeUntil', 0) > request.time.toMillis();
+    }
+
+    function crew() {
+      return signedIn()
+        && firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.get('role', '') == 'mover';
+    }
+
+    function picture() {
+      return request.resource.contentType.matches('image/.*')
+        && request.resource.size < 8 * 1024 * 1024;
+    }
+
+    match /profile_photos/{uid}/{file} {
+      allow get: if signedIn();
+      allow write: if signedIn() && request.auth.uid == uid && picture();
+    }
+
+    match /request_photos/{uid}/{bookingId}/{file} {
+      allow get: if office() || (signedIn() && request.auth.uid == uid);
+      allow create: if signedIn() && request.auth.uid == uid && picture();
+      allow delete: if office() || (signedIn() && request.auth.uid == uid);
+    }
+
+    match /job_photos/{bookingId}/{uid}/{file} {
+      allow get: if office() || (signedIn() && request.auth.uid == uid);
+      allow create: if signedIn() && request.auth.uid == uid && (crew() || office()) && picture();
+      allow delete: if office();
+    }
+  }
+}

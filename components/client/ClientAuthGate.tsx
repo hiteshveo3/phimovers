@@ -21,7 +21,10 @@ export default function ClientAuthGate({
     if (!configured) return;
     if (!user && !isLogin) router.replace("/client/login");
     if (user && isLogin) {
-      router.replace(needsProfile ? "/client/complete-profile" : "/client");
+      // ?next=/book (and other same-site paths) sends the customer back where they came from.
+      const next = new URLSearchParams(window.location.search).get("next") ?? "";
+      const back = next.startsWith("/") && !next.startsWith("//") ? next : "/client";
+      router.replace(needsProfile ? "/client/complete-profile" : back);
     }
     if (user && needsProfile && !isComplete && !isLogin) {
       router.replace("/client/complete-profile");

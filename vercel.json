@@ -1,0 +1,22 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "redirects": [
+    { "source": "/home", "destination": "/", "statusCode": 301 },
+    { "source": "/index.html", "destination": "/", "statusCode": 301 },
+    { "source": "/about-us", "destination": "/about", "statusCode": 301 },
+    { "source": "/contact-us", "destination": "/contact", "statusCode": 301 },
+    { "source": "/prices", "destination": "/pricing", "statusCode": 301 },
+    { "source": "/areas-we-cover", "destination": "/areas", "statusCode": 301 },
+    { "source": "/blogs", "destination": "/blog", "statusCode": 301 },
+    { "source": "/blog/page/:n", "destination": "/blog", "statusCode": 301 },
+    { "source": "/terms-and-conditions", "destination": "/terms", "statusCode": 301 },
+    { "source": "/terms-conditions", "destination": "/terms", "statusCode": 301 },
+    { "source": "/privacy-policy", "destination": "/privacy", "statusCode": 301 },
+    { "source": "/cookie-policy", "destination": "/cookies", "statusCode": 301 },
+    { "source": "/complaints-policy", "destination": "/complaints", "statusCode": 301 },
+    { "source": "/accessibility-statement", "destination": "/accessibility", "statusCode": 301 },
+    { "source": "/testimonials", "destination": "/reviews", "statusCode": 301 },
+    { "source": "/login", "destination": "/client/login", "statusCode": 301 }
+  ]
+}

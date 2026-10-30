@@ -1,0 +1,1007 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(242, 248, 233, 0.96);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid transparent;
+  font-family: var(--amh-ui, 'Instrument Sans'), system-ui, sans-serif;
+  color: #0f1a09;
+  transition: background-color 0.24s ease, border-color 0.24s ease;
+}
+
+/* Once the page scrolls the header changes tone instead of carrying a permanent rule. */
+.scrolled {
+  background: rgba(255, 255, 255, 0.97);
+  border-bottom-color: rgba(15, 26, 9, 0.1);
+}
+
+/* Once reading, the header shrinks. */
+@media (min-width: 1024px) {
+  .scrolled .inner {
+    height: 56px;
+  }
+}
+
+/* Doubled class selectors outrank the site-wide "html body *:not(...)" Manrope override in site-typography.css. */
+.header.header,
+.header.header * {
+  font-family: var(--amh-ui, 'Instrument Sans'), system-ui, sans-serif !important;
+}
+
+.header .logo.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--amh-display, 'Bricolage Grotesque'), sans-serif !important;
+}
+
+.inner {
+  position: relative;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 5vw;
+}
+
+.logo {
+  font-family: var(--amh-display, 'Bricolage Grotesque'), sans-serif;
+  font-weight: 500;
+  font-size: 22px;
+  letter-spacing: -0.03em;
+  color: #0f1a09;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14.5px;
+  font-weight: 500;
+}
+
+.phoneLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #0f1a09;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+@media (hover: hover) {
+  .phoneLink:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+
+/* Header search: an icon button that opens a panel. Phones use the search in the bottom tab bar. */
+.siteSearch {
+  display: none;
+  position: relative;
+}
+
+@media (min-width: 1180px) {
+  .siteSearch {
+    display: block;
+  }
+}
+
+.sitePanel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 400px;
+  max-height: min(70vh, 560px);
+  overflow-y: auto;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid rgba(15, 26, 9, 0.12);
+  border-radius: 18px;
+}
+
+.siteBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 46px;
+  padding: 0 12px 0 14px;
+  border-radius: 999px;
+  background: #edf3e4;
+  border: 1px solid rgba(15, 26, 9, 0.1);
+  color: rgba(15, 26, 9, 0.62);
+}
+
+.siteBox:focus-within {
+  background: #fff;
+  outline: 2px solid rgba(15, 26, 9, 0.55);
+  outline-offset: 1px;
+}
+
+.siteBox input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 15px;
+  color: #0f1a09;
+}
+
+.siteKbd {
+  font: inherit;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 7px;
+  background: #fff;
+  border: 1px solid rgba(15, 26, 9, 0.1);
+  color: rgba(15, 26, 9, 0.6);
+  white-space: nowrap;
+}
+
+.siteGroup {
+  margin: 14px 12px 4px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: rgba(15, 26, 9, 0.6);
+}
+
+.siteResults {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.siteResults a {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: #0f1a09;
+  text-decoration: none;
+  font-size: 14.5px;
+  font-weight: 600;
+}
+
+.siteResults small {
+  font-weight: 400;
+  font-size: 12.5px;
+  color: rgba(15, 26, 9, 0.6);
+  white-space: nowrap;
+}
+
+.siteResults a.siteActive {
+  background: rgba(15, 26, 9, 0.07);
+}
+
+.siteEmpty {
+  padding: 14px 12px 6px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(15, 26, 9, 0.7);
+}
+
+.siteEmptyActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.siteHint {
+  margin: 10px 12px 4px;
+  font-size: 12.5px;
+  color: rgba(15, 26, 9, 0.6);
+}
+
+.item {
+  display: flex;
+}
+
+.navLink,
+.navBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 13px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(15, 26, 9, 0.75);
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.16s ease, color 0.16s ease;
+}
+
+.navBtn[aria-expanded='true'],
+.navLink[aria-current='page'],
+.navBtn.active {
+  background: rgba(15, 26, 9, 0.07);
+  color: #0f1a09;
+}
+
+@media (hover: hover) {
+  .navLink:hover,
+  .navBtn:hover {
+    background: rgba(15, 26, 9, 0.07);
+    color: #0f1a09;
+  }
+}
+
+.navLink:focus-visible,
+.navBtn:focus-visible,
+.iconBtnOutline:focus-visible,
+.btnLime:focus-visible,
+.btnWhite:focus-visible,
+.panel a:focus-visible,
+.utility a:focus-visible {
+  outline: 2px solid rgba(15, 26, 9, 0.55);
+  outline-offset: 2px;
+}
+
+.chev {
+  display: inline-flex;
+  transition: transform 0.16s ease;
+}
+
+.navBtn[aria-expanded='true'] svg {
+  transform: rotate(180deg);
+}
+
+/* Desktop panels, sized to their content. */
+.panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(760px, calc(100vw - 40px));
+  padding: 22px 20px 18px;
+  background: #fff;
+  border: 1px solid rgba(15, 26, 9, 0.1);
+  border-radius: 20px;
+  box-shadow: 0 28px 56px -18px rgba(15, 26, 9, 0.28), 0 4px 12px rgba(15, 26, 9, 0.06);
+  animation: panelIn 0.18s ease-out both;
+}
+
+/* Lime accent along the top edge of every panel. */
+.panel::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 24px;
+  right: 24px;
+  height: 3px;
+  border-radius: 0 0 3px 3px;
+  background: #9fe870;
+}
+
+@keyframes panelIn {
+  from {
+    opacity: 0;
+    margin-top: -6px;
+  }
+  to {
+    opacity: 1;
+    margin-top: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel {
+    animation: none;
+  }
+}
+
+.panel[hidden] {
+  display: none;
+}
+
+.panelWide {
+  width: min(1120px, calc(100vw - 40px));
+}
+
+/* Services mega menu: 4-column service grid plus a 300px side panel that previews the hovered service. */
+.mega {
+  position: absolute;
+  top: 100%;
+  left: 5vw;
+  right: 5vw;
+  z-index: 50;
+  padding-top: 8px;
+  animation: megaIn 0.16s ease-out both;
+}
+
+.mega[hidden] {
+  display: none;
+}
+
+@keyframes megaIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.megaCard {
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #ecedf1;
+  border-radius: 16px;
+  box-shadow: 0 6px 24px rgba(16, 24, 40, 0.05);
+}
+
+.megaGrid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+}
+
+.megaMain {
+  padding: 24px;
+}
+
+.megaLabel {
+  margin: 0 0 16px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6b7280;
+}
+
+.megaItems {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.megaItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 12px;
+  color: #0b0b0f;
+  text-decoration: none;
+  transition: background-color 0.16s ease;
+}
+
+.megaItem:hover,
+.megaItem:focus-visible,
+.megaItemOn {
+  background: #f6f6f4;
+}
+
+.megaIco {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(159, 232, 112, 0.25);
+  color: #163300;
+  transition: background-color 0.16s ease;
+}
+
+.megaItem:hover .megaIco,
+.megaItem:focus-visible .megaIco,
+.megaItemOn .megaIco {
+  background: #9fe870;
+}
+
+.megaName {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.25;
+  color: rgba(11, 11, 15, 0.85);
+}
+
+.megaItem:hover .megaName,
+.megaItemOn .megaName {
+  color: #0b0b0f;
+}
+
+.megaSide {
+  display: flex;
+  flex-direction: column;
+  background: #9fe870;
+  color: #0b0b0f;
+}
+
+.megaSide > * {
+  flex: 1;
+  animation: megaSwap 0.18s ease-out both;
+}
+
+@keyframes megaSwap {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Default state: the "free home survey" promo. */
+.megaPromo {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px;
+}
+
+.megaTag {
+  display: inline-flex;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(22, 51, 0, 0.1);
+  color: #163300;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.megaPromoTitle {
+  margin: 16px 0 0;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: #163300;
+}
+
+.megaPromoText {
+  margin: 8px 0 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(22, 51, 0, 0.7);
+}
+
+.megaCta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  min-height: 48px;
+  margin-top: 20px;
+  padding: 0 20px;
+  border-radius: 999px;
+  background: #163300;
+  color: #9fe870;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 0.16s ease;
+}
+
+.megaCta:hover {
+  background: #0e2400;
+}
+
+/* Hover state: photo, description and price of the service under the cursor. */
+.megaPreview {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.megaPhoto {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: 12px;
+  background: rgba(22, 51, 0, 0.12);
+}
+
+.megaPhoto img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.megaPrice {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #163300;
+  color: #9fe870;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.megaPreviewTitle {
+  margin-top: 4px;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: #163300;
+}
+
+.megaPreviewText {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: rgba(22, 51, 0, 0.75);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  overflow: hidden;
+}
+
+.megaPreviewMore {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: auto;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #163300;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mega,
+  .megaSide > * {
+    animation: none;
+  }
+}
+
+.panelCols {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.panelCol {
+  display: grid;
+  align-content: start;
+  gap: 2px;
+}
+
+.panelHeading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  padding: 0 10px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(15, 26, 9, 0.58);
+}
+
+.panelHeading::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #9fe870;
+  flex: none;
+}
+
+.panelLink {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 7px 10px;
+  border-radius: 12px;
+  color: #0f1a09;
+  text-decoration: none;
+  min-width: 0;
+  transition: background-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.panelLink[aria-current='page'] {
+  background: #eef5e5;
+  box-shadow: inset 3px 0 0 #9fe870;
+}
+
+.panelLink[aria-current='page'] .panelText {
+  font-weight: 700;
+}
+
+@media (hover: hover) {
+  .panelLink:hover {
+    background: #f4f9ee;
+  }
+
+  .panelLink:hover .panelIco {
+    background: #9fe870;
+  }
+}
+
+.panelIco {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: #f1f5ec;
+  color: #0f1a09;
+  transition: background-color 0.16s ease;
+}
+
+.panelText {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.panelFoot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(15, 26, 9, 0.08);
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.panelFoot a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #0f1a09;
+  text-decoration: none;
+  padding: 6px 9px;
+  border-radius: 999px;
+}
+
+/* Beats .panelFoot a, so the lime pill keeps its padding and hover colour. */
+.panelFoot a.panelFootStrong {
+  background: #9fe870;
+  color: #0f1a09;
+  font-weight: 700;
+  padding: 8px 14px;
+}
+
+@media (hover: hover) {
+  .panelFoot a.panelFootStrong:hover {
+    background: #93dd63;
+  }
+}
+
+@media (hover: hover) {
+  .panelFoot a:hover {
+    background: rgba(15, 26, 9, 0.07);
+  }
+}
+
+.panelNote {
+  font-weight: 500;
+  color: rgba(15, 26, 9, 0.62);
+}
+
+.panelAreas {
+  width: min(900px, calc(100vw - 40px));
+}
+
+.areasSplit {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr 1fr;
+  gap: 18px;
+}
+
+.regionRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 48px;
+  padding: 7px 10px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f1a09;
+  text-decoration: none;
+}
+
+.regionRow small {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: rgba(15, 26, 9, 0.62);
+}
+
+.regionRow[aria-current='page'] {
+  background: #eef5e5;
+  box-shadow: inset 3px 0 0 #9fe870;
+}
+
+@media (hover: hover) {
+  .regionRow:hover {
+    background: #f4f9ee;
+  }
+}
+
+/* Area search (desktop panel). */
+.search {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+}
+
+.searchLabel {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: rgba(15, 26, 9, 0.62);
+  padding: 0 2px;
+}
+
+.searchField {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 50px;
+  padding: 0 14px;
+  border: 1px solid rgba(15, 26, 9, 0.2);
+  border-radius: 12px;
+  background: #fff;
+  color: rgba(15, 26, 9, 0.62);
+}
+
+.searchField input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  font-size: 16px;
+  color: #0f1a09;
+}
+
+.searchField:focus-within {
+  border-color: #0f1a09;
+}
+
+.searchHint {
+  margin: 0;
+  min-height: 18px;
+  font-size: 12.5px;
+  color: rgba(15, 26, 9, 0.62);
+}
+
+.searchResults {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.searchResults a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f1a09;
+  text-decoration: none;
+  background: #f2f8e9;
+}
+
+.searchResults a span {
+  flex: 1;
+}
+
+.searchResults small {
+  font-weight: 500;
+  font-size: 12px;
+  color: rgba(15, 26, 9, 0.62);
+}
+
+@media (hover: hover) {
+  .searchResults a:hover {
+    background: rgba(15, 26, 9, 0.07);
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.iconBtnOutline {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  color: #0f1a09;
+  cursor: pointer;
+  transition: background-color 0.16s ease;
+}
+
+.iconBtnOutline {
+  background: #fff;
+  border: 1px solid rgba(15, 26, 9, 0.18);
+}
+
+/* Phones and tablets: a call circle next to Book online. The menu is in the bottom tab bar. */
+.phoneOnly {
+  display: none;
+}
+
+@media (hover: hover) {
+  .iconBtnOutline:hover {
+    background: rgba(15, 26, 9, 0.07);
+  }
+}
+
+.btnLime,
+.btnWhite {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.16s ease, transform 0.16s ease;
+}
+
+.btnLime:active,
+.btnWhite:active {
+  transform: scale(0.98);
+}
+
+.btnLime {
+  background: #9fe870;
+  color: #0f1a09;
+}
+
+.btnWhite {
+  background: #fff;
+  color: #0f1a09;
+  border: 1px solid rgba(15, 26, 9, 0.18);
+}
+
+.btnWhite[aria-current='page'] {
+  background: rgba(15, 26, 9, 0.07);
+}
+
+@media (hover: hover) {
+  .btnLime:hover {
+    background: #93dd63;
+    color: #0f1a09;
+  }
+
+  .btnWhite:hover {
+    background: #eef5e5;
+    color: #0f1a09;
+  }
+}
+
+.phoneShort {
+  display: none;
+}
+
+@media (max-width: 1180px) {
+  .phoneText {
+    display: none;
+  }
+
+  .phoneShort {
+    display: inline;
+  }
+}
+
+@media (max-width: 1023px) {
+  .nav,
+  .desktopOnly {
+    display: none;
+  }
+
+  .phoneOnly {
+    display: grid;
+  }
+}
+
+@media (max-width: 560px) {
+  .inner {
+    padding: 0 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header,
+  .navLink,
+  .navBtn,
+  .chev,
+  .iconBtnOutline,
+  .btnLime,
+  .btnWhite,
+  .panelLink {
+    transition: none;
+  }
+}
+
+.siteTry {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 12px 0;
+}
+
+.siteTry button {
+  border: 1px solid rgba(15, 26, 9, 0.14);
+  background: #fff;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: #0f1a09;
+  cursor: pointer;
+}
+
+.siteTry button:hover {
+  background: #eef5e5;
+}
+
+.logoMark {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: block;
+  transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.logo:hover .logoMark {
+  transform: rotate(-8deg) scale(1.06);
+}
+
+@media (max-width: 1023.98px) {
+  .logoMark {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+  }
+}
+
+/* The search icon sits bare in the header; the circle only appears on hover. */
+.searchBare.searchBare {
+  background: transparent;
+  border-color: transparent;
+}

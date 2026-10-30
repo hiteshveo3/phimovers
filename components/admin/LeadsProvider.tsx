@@ -26,7 +26,7 @@ type LeadsCtx = {
 const Ctx = createContext<LeadsCtx | null>(null);
 
 export function LeadsProvider({ children }: { children: ReactNode }) {
-  const { user } = useAdminAuth();
+  const { user, demo } = useAdminAuth();
   const pathname = usePathname();
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,7 +36,7 @@ export function LeadsProvider({ children }: { children: ReactNode }) {
   const skipToast = pathname === "/admin/login";
 
   useEffect(() => {
-    if (!user || !isFirebaseConfigured() || skipToast) {
+    if (!user || (!isFirebaseConfigured() && !demo) || skipToast) {
       setLoading(false);
       return;
     }
@@ -65,7 +65,7 @@ export function LeadsProvider({ children }: { children: ReactNode }) {
       setError(e instanceof Error ? e.message : "Failed to load leads");
       setLoading(false);
     }
-  }, [user, skipToast]);
+  }, [user, demo, skipToast]);
 
   const value = useMemo(
     () => ({

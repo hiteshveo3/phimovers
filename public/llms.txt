@@ -1,0 +1,54 @@
+# Phi Movers
+
+> London removals company: house and flat moves, man and van, office removals, packing, storage and single-item delivery across all 32 London boroughs, plus longer moves across the UK. Based in Dagenham, east London.
+
+Facts in this file come from kit/site-facts.ts and lib/contact.ts. Update it when those change.
+
+## Company
+- Trading name: Phi Movers
+- Legal entity: Phi Movers Ltd
+- Address: 247 Becontree Ave, Dagenham RM8 2UT, United Kingdom
+- Area served: all 32 London boroughs and the City of London (Greater London), plus UK moves
+- Office hours: 7am–9pm, seven days a week (London time)
+- Phone and WhatsApp: +44 7405 793433 (https://wa.me/447405793433)
+- Email: info@phimovers.co.uk
+- Website: https://www.phimovers.co.uk/
+- Quotes: a fixed quote in about one working hour (https://www.phimovers.co.uk/contact#quote)
+
+## Prices
+Published hourly van rates, two-hour minimum, billed by the hour after that:
+- Small van: £50/hr (boxes and single items)
+- Transit van: £55/hr (a sofa or a studio move)
+- Luton van: £65/hr (flats and house moves)
+- Extra helper: £20/hr
+- First 10 miles free, then £1.50 a mile
+- Full price guide: https://www.phimovers.co.uk/pricing
+
+## Services
+- [House removals](https://www.phimovers.co.uk/services/house-removals)
+- [Flat removals](https://www.phimovers.co.uk/services/flat-removals)
+- [Studio moves](https://www.phimovers.co.uk/services/studio-moves)
+- [Man and van](https://www.phimovers.co.uk/services/man-and-van)
+- [Student moves](https://www.phimovers.co.uk/services/student-moves)
+- [Office removals](https://www.phimovers.co.uk/services/office-removals)
+- [IT and server relocation](https://www.phimovers.co.uk/services/it-and-server-relocation)
+- [Full packing service](https://www.phimovers.co.uk/services/full-packing-service)
+- [Secure storage](https://www.phimovers.co.uk/services/secure-storage)
+- [Sofa delivery](https://www.phimovers.co.uk/services/sofa-delivery)
+- [Sofa and furniture hoisting](https://www.phimovers.co.uk/services/sofa-and-furniture-hoisting)
+- [Furniture assembly](https://www.phimovers.co.uk/services/furniture-assembly)
+- [House clearance](https://www.phimovers.co.uk/services/house-clearance)
+- [Piano and specialist moves](https://www.phimovers.co.uk/services/piano-and-specialist)
+- [Long distance removals](https://www.phimovers.co.uk/services/long-distance-removals)
+- [Same-day move](https://www.phimovers.co.uk/services/same-day-move)
+- [All services](https://www.phimovers.co.uk/services)
+
+## Pages
+- [Areas we cover](https://www.phimovers.co.uk/areas)
+- [UK removals by town](https://www.phimovers.co.uk/removals)
+- [Reviews](https://www.phimovers.co.uk/reviews)
+- [Moving guides](https://www.phimovers.co.uk/blog)
+- [About](https://www.phimovers.co.uk/about)
+- [Contact](https://www.phimovers.co.uk/contact)
+- [Terms](https://www.phimovers.co.uk/terms)
+- [Privacy](https://www.phimovers.co.uk/privacy)

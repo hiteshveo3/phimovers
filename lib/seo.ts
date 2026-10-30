@@ -1,13 +1,25 @@
+import { PHONE_E164, ADDRESS_STREET, ADDRESS_TOWN, ADDRESS_POSTCODE } from "@/lib/contact";
 import {
-  PHONE_E164,
-  SITE_URL,
+  BRAND,
+  COMPANY_NAME,
+  COMPANY_NO,
+  COMPANIES_HOUSE_URL,
   EMAIL,
-  ADDRESS_STREET,
-  ADDRESS_TOWN,
-  ADDRESS_POSTCODE,
-} from "@/lib/contact";
+  GOOGLE_DIRECTIONS,
+  HOURS,
+  SOCIALS,
+  TRUSTPILOT_URL,
+} from "@/kit/site-facts";
 
-const SITE = SITE_URL;
+/**
+ * The one canonical host. Vercel redirects the apex to www, so every absolute URL in the sitemap, robots,
+ * schema and metadata uses www. kit/site-facts `SITE` and lib/contact `SITE_URL` must match this.
+ */
+export const SITE = "https://www.phimovers.co.uk";
+
+/** The business node every page's schema points at, e.g. `provider: businessRef()`. */
+export const BUSINESS_ID = `${SITE}/#business`;
+export const businessRef = () => ({ "@id": BUSINESS_ID });
 
 /** Parse marketing price strings into a schema.org Offer (or omit price). */
 export function offerFromPrice(price: string): Record<string, unknown> {
@@ -49,13 +61,27 @@ export function offerFromPrice(price: string): Record<string, unknown> {
   };
 }
 
-/** Canonical business entity for homepage @graph. */
+const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+const hh = (h: number) => `${String(h).padStart(2, "0")}:00`;
+
+/**
+ * Canonical business entity for the site-wide @graph, built from kit/site-facts.ts. No AggregateRating:
+ * the rating is shown on the page where the reviews are, not claimed site-wide. Facts that are still
+ * empty in site-facts (company number, socials, Trustpilot) are left out until they are filled in.
+ */
 export function organizationJsonLd() {
+  const hours = {
+    "@type": "OpeningHoursSpecification",
+    dayOfWeek: DAYS,
+    opens: hh(HOURS.open),
+    closes: hh(HOURS.close),
+  };
+  const sameAs = [...SOCIALS.map((s) => s.url), TRUSTPILOT_URL, COMPANIES_HOUSE_URL].filter(Boolean);
   return {
     "@type": "MovingCompany",
-    "@id": `${SITE}/#business`,
-    name: "Phi Movers",
-    legalName: "Phi Movers Ltd",
+    "@id": BUSINESS_ID,
+    name: BRAND,
+    legalName: COMPANY_NAME,
     url: SITE,
     telephone: PHONE_E164,
     email: EMAIL,
@@ -74,52 +100,37 @@ export function organizationJsonLd() {
       latitude: 51.5647,
       longitude: 0.1345,
     },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: "4.9",
-      reviewCount: "148",
-      bestRating: "5",
-      worstRating: "1",
-    },
-    areaServed: {
-      "@type": "City",
-      name: "London",
-    },
-    openingHoursSpecification: [
-      {
-        "@type": "OpeningHoursSpecification",
-        dayOfWeek: [
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday",
-          "Saturday",
-          "Sunday",
-        ],
-        opens: "07:00",
-        closes: "21:00",
-      },
+    hasMap: GOOGLE_DIRECTIONS,
+    areaServed: [
+      { "@type": "City", name: "London" },
+      { "@type": "AdministrativeArea", name: "Greater London" },
     ],
-    sameAs: [] as string[],
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "customer service",
+      telephone: PHONE_E164,
+      email: EMAIL,
+      areaServed: "GB",
+      availableLanguage: "en-GB",
+      hoursAvailable: hours,
+    },
+    openingHoursSpecification: [hours],
+    ...(COMPANY_NO
+      ? { identifier: { "@type": "PropertyValue", propertyID: "Companies House", value: COMPANY_NO } }
+      : {}),
+    ...(sameAs.length ? { sameAs } : {}),
   };
 }
 
+// No SearchAction: /services does not read a ?q= parameter, and Google retired the sitelinks search box.
 export function websiteJsonLd() {
   return {
     "@type": "WebSite",
     "@id": `${SITE}/#website`,
     url: SITE,
-    name: "Phi Movers",
-    publisher: { "@id": `${SITE}/#business` },
-    potentialAction: {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: `${SITE}/services?q={search_term_string}`,
-      },
-      "query-input": "required name=search_term_string",
-    },
+    name: BRAND,
+    publisher: businessRef(),
+    inLanguage: "en-GB",
   };
 }
 

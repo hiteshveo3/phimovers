@@ -1,14 +1,20 @@
-import { getStaffEmails } from "@/lib/admin/staff";
+import { isStaffEmail } from "@/lib/admin/staff";
 
-/** Bootstrap staff emails baked into rules fallback — keep in sync with env. */
-export const BOOTSTRAP_STAFF_EMAILS = [
-  "phimoves@gmail.com",
-  ...getStaffEmails(),
-].map((e) => e.toLowerCase());
+/**
+ * The owner's address: always staff, always the owner role, and the one address firestore.rules and
+ * storage.rules accept before the `staff` claim is on the token (and only with a verified email).
+ * Keep it the same in both rules files.
+ */
+export const OWNER_EMAIL = "phimoves@gmail.com";
 
+/** Kept for older imports: the owner address. The rest of the list is server only (lib/admin/staff.ts). */
+export const BOOTSTRAP_STAFF_EMAILS = [OWNER_EMAIL];
+
+export const isOwnerEmail = (email: string | null | undefined) =>
+  Boolean(email && email.trim().toLowerCase() === OWNER_EMAIL);
+
+/** The owner address or an address on the server-only staff list. Callers must also check `email_verified`. */
 export function isAllowlistedStaffEmail(email: string | null | undefined) {
   if (!email) return false;
-  const e = email.trim().toLowerCase();
-  const list = new Set(BOOTSTRAP_STAFF_EMAILS);
-  return list.has(e);
+  return isOwnerEmail(email) || isStaffEmail(email);
 }

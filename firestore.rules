@@ -1,12 +1,58 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    // The owner address (lib/admin/claims.ts OWNER_EMAIL; same in storage.rules). Trusted only with a
+    // verified email, and only until the `staff` claim is on the token (sync-claims puts it there).
+    function ownerToken() {
+      return request.auth.token.get('email', '') == 'phimoves@gmail.com'
+        && request.auth.token.get('email_verified', false) == true;
+    }
+
+    // Admin / office staff: the `staff` custom claim (or the owner address), and the two-step pass.
     function isStaff() {
       return request.auth != null
-        && (
-          request.auth.token.staff == true
-          || request.auth.token.email == 'phimoves@gmail.com'
-        );
+        && (request.auth.token.get('staff', false) == true || ownerToken())
+        && twoStepPassed();
+    }
+
+    // Two-step sign-in is mandatory for staff (lib/admin/staff-2fa.ts): a code puts `officeUntil` (12 hours
+    // on) on the token. No pass, no office data: from the website dashboard or the app.
+    function twoStepPassed() {
+      return request.auth.token.get('officeUntil', 0) > request.time.toMillis();
+    }
+
+    // Role (lib/admin/roles.ts): owner and finance change prices; staff without a role count as ops.
+    function canEditPrices() {
+      return isStaff()
+        && (ownerToken() || request.auth.token.get('staffRole', 'ops') in ['owner', 'finance']);
+    }
+
+    // A staff email written into a record (paidBy, archivedBy, updatedBy) must be the writer's own, when
+    // the write changes it. Writers that never set it (the app today) are unaffected.
+    function ownEmailIfChanged(field) {
+      return !(field in request.resource.data.diff(resource.data).affectedKeys())
+        || request.resource.data.get(field, null) == null
+        || request.resource.data.get(field, null) == request.auth.token.get('email', '');
+    }
+
+    function isSelf(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function userDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    // Crew account created by an admin (users/{uid}.role == 'mover'), not suspended.
+    function isMover() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && userDoc().data.get('role', '') == 'mover'
+        && userDoc().data.get('status', 'active') != 'suspended';
     }
 
     function isOwner() {
@@ -14,16 +60,38 @@ service cloud.firestore {
         && resource.data.ownerUid == request.auth.uid;
     }
 
+    // ---------------------------------------------------------------- users
     match /users/{uid} {
-      allow read: if request.auth != null
-        && (request.auth.uid == uid || isStaff());
-      allow create, update: if request.auth != null
-        && request.auth.uid == uid
-        && request.resource.data.role == 'client';
+      allow read: if signedIn() && (request.auth.uid == uid || isStaff());
+
+      // A person creates their own profile as a customer ('client'); only staff
+      // can create anything else (movers are made by /api/admin/movers).
+      allow create: if isStaff()
+        || (isSelf(uid) && request.resource.data.role == 'client');
+
+      // Self-service edits can never change role / status / skills / adminNote.
+      allow update: if isStaff()
+        || (
+          isSelf(uid)
+          && request.resource.data.get('role', 'client') == resource.data.get('role', 'client')
+          && !request.resource.data.diff(resource.data).affectedKeys()
+            .hasAny(['role', 'status', 'skills', 'adminNote'])
+        );
+
       allow delete: if false;
+
+      match /addresses/{addressId} {
+        allow read, write: if isSelf(uid) || isStaff();
+      }
+      match /settings/{settingId} {
+        allow read, write: if isSelf(uid) || isStaff();
+      }
     }
 
+    // ---------------------------------------------------------------- leads (website quote requests)
     match /leads/{leadId} {
+      // Website and app quotes. Office fields (notes, assignee, quote, lost reason, tags) start empty; the
+      // one "created" activity entry the website and app write is the only activity allowed.
       allow create: if request.resource.data.keys().hasAll([
           'name', 'phone', 'from', 'to', 'propertySize', 'service', 'source', 'status'
         ])
@@ -37,11 +105,231 @@ service cloud.firestore {
         && (!('ownerUid' in request.resource.data)
             || request.resource.data.ownerUid == null
             || (request.auth != null
-                && request.resource.data.ownerUid == request.auth.uid));
+                && request.resource.data.ownerUid == request.auth.uid))
+        && request.resource.data.get('assignedTo', null) == null
+        && request.resource.data.get('quoteAmount', null) == null
+        && request.resource.data.get('lostReason', null) == null
+        && request.resource.data.get('notes', []).size() == 0
+        && request.resource.data.get('tags', []).size() == 0
+        && request.resource.data.get('activity', []).size() <= 1;
 
-      // Staff: full access. Clients: read own quotes only.
+      // Staff: full access. Clients: read own quotes only (office data is in leadsPrivate, below).
       allow read: if isStaff() || isOwner();
       allow update, delete: if isStaff();
+    }
+
+    // Office-only side of a lead: notes, activity (staff emails) and the assignee. Never the customer.
+    match /leadsPrivate/{leadId} {
+      allow read, write: if isStaff();
+    }
+
+    // Two-step sign-in records: server only (Admin SDK), never readable or writable from a browser or app.
+    match /staff_security/{uid} {
+      allow read, write: if false;
+    }
+
+    // Staff dashboard invoices: staff only (read, create, update). Never public, never the client portal.
+    match /invoices/{invoiceId} {
+      allow read, create, update: if isStaff();
+      allow delete: if false;
+    }
+
+    // ---------------------------------------------------------------- bookings
+    // See docs/BOOKINGS.md for the field list and the lifecycle.
+
+    // The status table: lib/bookings/status.ts STAFF_MOVES / MOVER_MOVES. Change them together.
+    function staffMoves() {
+      return {
+        'pending': ['confirmed', 'cancelled'],
+        'confirmed': ['pending', 'accepted', 'en_route', 'in_progress', 'completed', 'cancelled'],
+        'accepted': ['confirmed', 'en_route', 'in_progress', 'completed', 'cancelled'],
+        'en_route': ['in_progress', 'completed', 'cancelled'],
+        'in_progress': ['completed', 'cancelled'],
+        'completed': ['pending'],
+        'cancelled': ['pending']
+      };
+    }
+    function moverMoves() {
+      return {
+        'pending': ['accepted'],
+        'confirmed': ['accepted'],
+        'accepted': ['en_route'],
+        'en_route': ['in_progress'],
+        'in_progress': ['completed']
+      };
+    }
+    function statusFrom() {
+      return resource.data.get('status', 'pending');
+    }
+    function statusTo() {
+      return request.resource.data.get('status', 'pending');
+    }
+    function staffMoveOk() {
+      return statusFrom() == statusTo() || statusTo() in staffMoves().get(statusFrom(), []);
+    }
+    function moverMoveOk() {
+      return statusFrom() == statusTo() || statusTo() in moverMoves().get(statusFrom(), []);
+    }
+
+    match /bookings/{bookingId} {
+      allow read: if isStaff()
+        || (signedIn() && resource.data.customerId == request.auth.uid)
+        || (signedIn() && resource.data.get('moverId', null) == request.auth.uid);
+
+      // A signed-in customer books for themselves, always as a new unpaid, unassigned request whose price
+      // is an estimate until the office confirms it (`priceIsEstimate` missing counts as true, for app
+      // builds that do not send it). No office fields. Staff confirm, price, assign and take payment.
+      // The server booking API writes with the Admin SDK and is not bound by this.
+      allow create: if isStaff()
+        || (
+          signedIn()
+          && request.resource.data.keys().hasAll([
+            'customerId', 'customerName', 'customerPhone', 'serviceId', 'serviceName',
+            'scheduledDate', 'addressLine', 'toAddressLine', 'totalPrice',
+            'status', 'paymentStatus', 'createdAt'
+          ])
+          && request.resource.data.customerId == request.auth.uid
+          && request.resource.data.status == 'pending'
+          && request.resource.data.paymentStatus == 'unpaid'
+          && request.resource.data.get('moverId', null) == null
+          && request.resource.data.get('priceIsEstimate', true) == true
+          && request.resource.data.get('adminNote', null) == null
+          && request.resource.data.get('paidAt', null) == null
+          && request.resource.data.get('paidBy', null) == null
+          && request.resource.data.get('archived', false) == false
+          && request.resource.data.get('jobPhotos', []).size() == 0
+          && request.resource.data.customerName is string
+          && request.resource.data.customerName.size() > 1
+          && request.resource.data.customerPhone is string
+          && request.resource.data.customerPhone.size() > 5
+          && request.resource.data.addressLine is string
+          && request.resource.data.toAddressLine is string
+          && request.resource.data.totalPrice is number
+          && request.resource.data.totalPrice >= 0
+          && request.resource.data.totalPrice < 100000
+          && request.resource.data.scheduledDate is timestamp
+        );
+
+      allow update: if (
+          // staff: anything, but the status only along the table, and staff emails must be their own
+          isStaff()
+          && staffMoveOk()
+          && ownEmailIfChanged('paidBy')
+          && ownEmailIfChanged('archivedBy')
+          && ownEmailIfChanged('updatedBy')
+        )
+        // customer: cancel while still pending
+        || (
+          signedIn()
+          && resource.data.customerId == request.auth.uid
+          && resource.data.status == 'pending'
+          && request.resource.data.status == 'cancelled'
+          && request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['status', 'cancelledAt', 'cancelReason', 'updatedAt'])
+        )
+        // customer: ask for another date (staff decide)
+        || (
+          signedIn()
+          && resource.data.customerId == request.auth.uid
+          && resource.data.status in ['pending', 'confirmed', 'accepted']
+          && request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['moveRequestedAt', 'moveRequestedFrom', 'updatedAt'])
+        )
+        // mover: run their own job, one step at a time (photos while accepted or later)
+        || (
+          isMover()
+          && resource.data.get('moverId', null) == request.auth.uid
+          && request.resource.data.get('moverId', null) == request.auth.uid
+          && request.resource.data.status in ['accepted', 'en_route', 'in_progress', 'completed']
+          && moverMoveOk()
+          && request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['status', 'acceptedAt', 'enRouteAt', 'startedAt', 'completedAt', 'jobPhotos', 'updatedAt'])
+        );
+
+      // No hard delete of a paid (or refunded) booking: archive it instead (AUDIT D12).
+      allow delete: if isStaff() && resource.data.get('paymentStatus', 'unpaid') == 'unpaid';
+    }
+
+    // Office-only side of a booking: the office note (it used to be `adminNote` on the booking, which the
+    // customer and mover can read) and the change history, which nobody can edit or delete.
+    match /bookingsPrivate/{bookingId} {
+      allow read, create, update: if isStaff();
+      allow delete: if false;
+
+      match /history/{entryId} {
+        allow read: if isStaff();
+        allow create: if isStaff()
+          && request.resource.data.keys().hasOnly(['field', 'from', 'to', 'by', 'at'])
+          && request.resource.data.by == request.auth.token.get('email', '')
+          && request.resource.data.field in ['status', 'price', 'payment', 'mover', 'date', 'archived', 'note'];
+        allow update, delete: if false;
+      }
+    }
+
+    // ---------------------------------------------------------------- notifications
+    // Written by staff / the server. Each person reads their own, marks it read, deletes it.
+    match /notifications/{notificationId} {
+      allow create: if isStaff();
+      allow read, delete: if isStaff()
+        || (signedIn() && resource.data.userId == request.auth.uid);
+      allow update: if isStaff()
+        || (
+          signedIn()
+          && resource.data.userId == request.auth.uid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['isRead', 'updatedAt'])
+        );
+    }
+
+    // Tells the office something happened (new booking, change request, cancellation). A customer may only
+    // raise one about a booking that exists and is theirs.
+    match /adminAlerts/{alertId} {
+      allow create: if isStaff()
+        || (
+          signedIn()
+          && request.resource.data.keys().hasAll(['type', 'bookingId', 'createdAt'])
+          && request.resource.data.type in ['new_booking', 'change_request', 'cancelled']
+          && request.resource.data.get('read', false) == false
+          && request.resource.data.bookingId is string
+          && exists(/databases/$(database)/documents/bookings/$(request.resource.data.bookingId))
+          && get(/databases/$(database)/documents/bookings/$(request.resource.data.bookingId)).data.customerId == request.auth.uid
+        );
+      allow read, update, delete: if isStaff();
+    }
+
+    // ---------------------------------------------------------------- reviews
+    // Customers review their own completed booking. The office approves or hides (status, /admin/reviews);
+    // the public site shows approved ones through the server (Admin SDK), so there is no public read here.
+    match /reviews/{reviewId} {
+      allow read: if isStaff()
+        || (signedIn() && resource.data.customerId == request.auth.uid);
+      allow create: if isStaff()
+        || (
+          signedIn()
+          && request.resource.data.customerId == request.auth.uid
+          && request.resource.data.rating is int
+          && request.resource.data.rating >= 1
+          && request.resource.data.rating <= 5
+          && request.resource.data.get('status', 'pending') == 'pending'
+          && exists(/databases/$(database)/documents/bookings/$(request.resource.data.bookingId))
+          && get(/databases/$(database)/documents/bookings/$(request.resource.data.bookingId)).data.customerId == request.auth.uid
+          && get(/databases/$(database)/documents/bookings/$(request.resource.data.bookingId)).data.status == 'completed'
+        );
+      allow update, delete: if isStaff();
+    }
+
+    // ---------------------------------------------------------------- catalogue (public read)
+    // Prices: owner and finance. The announcement band on serviceSettings/default: any staff.
+    match /services/{serviceId} {
+      allow read: if true;
+      allow write: if canEditPrices();
+    }
+    match /serviceSettings/{settingId} {
+      allow read: if true;
+      allow create: if canEditPrices()
+        || (isStaff() && request.resource.data.keys().hasOnly(['announcement', 'updatedAt']));
+      allow update: if canEditPrices()
+        || (isStaff() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['announcement', 'updatedAt']));
+      allow delete: if canEditPrices();
     }
   }
 }

@@ -69,7 +69,6 @@ const CANDIDATES: Record<string, string[]> = {
   twitter: ["NewTwitterIcon", "TwitterIcon", "NewTwitterRectangleIcon"],
   facebook: ["Facebook01Icon", "Facebook02Icon", "FacebookIcon"],
   linkedin: ["Linkedin01Icon", "Linkedin02Icon", "LinkedinIcon"],
-  whatsapp: ["WhatsappBusinessIcon", "WhatsappIcon", "Whatsapp02Icon"],
   check2: ["CheckmarkCircle02Icon", "Tick02Icon"],
   phone: ["Call02Icon", "CallIcon", "Call01Icon", "TelephoneIcon"],
   menu: ["Menu01Icon", "Menu02Icon", "MenuIcon", "Menu03Icon"],

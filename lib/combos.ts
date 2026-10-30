@@ -124,7 +124,7 @@ const serviceBuilders: Record<string, ServiceBuilder> = {
     tip: `In ${area.name}, book parking or a suspended bay early on tighter streets — it often saves more than it costs on carry time.`,
     faq: {
       q: `How much is a house removal in ${area.name}?`,
-      a: `Full house moves in ${area.name} get an individually calculated fixed quote from volume, floors and distance. WhatsApp your inventory for a number that fits your addresses.`,
+      a: `Full house moves in ${area.name} get an individually calculated fixed quote from volume, floors and distance. Send your inventory in a quote request for a number that fits your addresses.`,
     },
   }),
 
@@ -147,7 +147,7 @@ const serviceBuilders: Record<string, ServiceBuilder> = {
     intro: [
       `Studio and micro-flat moves in ${area.name} shouldn’t be priced like a four-bed house. ${area.blurb}`,
       `We keep the van and crew matched to a studio load — sofa, bed, boxes and the awkward doorway turns that come with ${angle}.`,
-      `${area.access} WhatsApp both postcodes and a couple of photos for a fixed studio quote or hourly option if that suits better.`,
+      `${area.access} Send both postcodes and a few details in a quote request for a fixed studio quote or hourly option if that suits better.`,
     ],
     tip: `Studios in ${area.name} move fastest when mattress and sofa sizes are in the first message — we can confirm stair clearance early.`,
     faq: {

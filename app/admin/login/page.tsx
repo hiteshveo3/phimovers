@@ -6,12 +6,11 @@ import {
   friendlyAuthError,
   useAdminAuth,
 } from "@/components/admin/AdminAuthProvider";
-import { Icon } from "@/components/icons";
+import { ShieldTick as ShieldIcon } from "iconsax-reactjs";
+import { Ico } from "@/kit/components/Ico";
+import { BRAND } from "@/kit/site-facts";
 
 type Mode = "login" | "forgot" | "sent";
-
-const field =
-  "admin-login-field mt-1.5 w-full rounded-xl border border-[#e5e7eb] bg-[#f6f6f4] px-3.5 py-3.5 text-base font-medium text-[#163300] outline-none ring-[#9fe870] placeholder:font-normal placeholder:text-[#9ca3af] focus:ring-2";
 
 export default function AdminLoginPage() {
   const {
@@ -19,7 +18,7 @@ export default function AdminLoginPage() {
     loginWithGoogle,
     resetPassword,
     configured,
-    staffDenied,
+    denyReason,
   } = useAdminAuth();
   const [mode, setMode] = useState<Mode>("login");
   const [email, setEmail] = useState("");
@@ -30,9 +29,12 @@ export default function AdminLoginPage() {
 
   if (!configured) return null;
 
-  const gateMessage = staffDenied
-    ? "That Google/email account isn’t on the staff allowlist. Ask the owner to add your email to NEXT_PUBLIC_ADMIN_EMAILS."
-    : error;
+  const gateMessage =
+    denyReason === "verify"
+      ? "Confirm your email address first: we have sent a link to your inbox. Then sign in again."
+      : denyReason === "notStaff"
+        ? "That account is not a staff account. Ask the owner to add you in Settings > Staff."
+        : error;
 
   async function onLogin(e: FormEvent) {
     e.preventDefault();
@@ -78,46 +80,33 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#f4f5f2] text-[#163300]">
-      {/* Soft brand atmosphere — no white-on-white */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(159,232,112,0.45), transparent 55%), linear-gradient(180deg, #eef6e4 0%, #f4f5f2 40%, #f4f5f2 100%)",
-        }}
-      />
-
-      <div className="relative mx-auto flex min-h-screen max-w-md flex-col justify-center px-4 py-10">
-        <div className="mb-7 text-center">
-          <img
-            src="/logo.png"
-            alt="Phi Movers"
-            className="no-grayscale mx-auto h-14 w-14 rounded-2xl object-cover ring-2 ring-[#9fe870]/60"
-          />
-          <h1 className="mt-4 text-2xl font-extrabold tracking-tight text-[#163300]">
+    <div className="as-page">
+      <div className="as-box">
+        <div>
+          <span className="as-brand">
+            <b><img src="/brand/phi-movers-icon-192.png" alt="" width={26} height={26} style={{ display: 'inline-block', width: 26, height: 26, borderRadius: 8, marginRight: 8, verticalAlign: 'middle' }} />{BRAND}</b>
+            <small>Staff</small>
+          </span>
+          <h1>
             {mode === "login"
               ? "Staff sign in"
               : mode === "forgot"
                 ? "Reset password"
                 : "Check your email"}
           </h1>
-          <p className="mt-1.5 text-sm text-[#4b5563]">
+          <p className="lead">
             {mode === "login"
-              ? "Phi Movers admin — authorised staff only"
+              ? "Authorised staff only."
               : mode === "forgot"
-                ? "We’ll send a secure reset link to your inbox"
+                ? "We will send a secure reset link to your inbox."
                 : `If an account exists for ${email}, a reset link is on its way.`}
           </p>
         </div>
 
-        <div className="rounded-[24px] border border-[#e5e7eb] bg-white p-5 shadow-none sm:p-6">
+        <div className="ad-card">
           {mode === "sent" ? (
-            <div className="space-y-4">
-              <div className="grid h-12 w-12 place-items-center rounded-2xl bg-[#9fe870] text-[#163300]">
-                <Icon name="mail" className="h-6 w-6" />
-              </div>
-              <p className="text-sm leading-relaxed text-[#374151]">
+            <div style={{ display: "grid", gap: 14 }}>
+              <p className="ad-muted" style={{ margin: 0 }}>
                 Open the email and follow the link. Then come back here to sign
                 in with your new password.
               </p>
@@ -127,39 +116,31 @@ export default function AdminLoginPage() {
                   setMode("login");
                   setError("");
                 }}
-                className="btn w-full justify-center bg-[#9fe870] py-3.5 text-[#163300] hover:bg-[#86d957]"
+                className="ad-btn lime block"
               >
                 Back to sign in
               </button>
             </div>
           ) : mode === "forgot" ? (
-            <form onSubmit={onForgot} className="space-y-4">
-              <label className="block text-sm font-semibold text-[#163300]">
-                Work email
+            <form onSubmit={onForgot} style={{ display: "grid", gap: 14 }}>
+              <label className="ad-field">
+                <span>Work email</span>
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className={field}
+                  className="ad-input as-input"
                   placeholder="you@company.com"
                   autoComplete="email"
-                  style={{ color: "#163300", WebkitTextFillColor: "#163300" }}
                 />
               </label>
               {gateMessage && (
-                <p
-                  role="alert"
-                  className="rounded-xl bg-red-50 px-3 py-2.5 text-sm font-medium text-red-800"
-                >
+                <p role="alert" className="ad-banner err" style={{ margin: 0 }}>
                   {gateMessage}
                 </p>
               )}
-              <button
-                type="submit"
-                disabled={busy}
-                className="btn w-full justify-center bg-[#9fe870] py-3.5 text-[#163300] hover:bg-[#86d957] disabled:opacity-60"
-              >
+              <button type="submit" disabled={busy} className="ad-btn lime block">
                 {busy ? "Sending…" : "Send reset link"}
               </button>
               <button
@@ -168,48 +149,41 @@ export default function AdminLoginPage() {
                   setMode("login");
                   setError("");
                 }}
-                className="w-full text-center text-sm font-semibold text-[#4b5563] hover:text-[#163300]"
+                className="ad-btn quiet block"
               >
-                ← Back to sign in
+                Back to sign in
               </button>
             </form>
           ) : (
-            <>
+            <div style={{ display: "grid", gap: 16 }}>
               <button
                 type="button"
                 disabled={busy}
                 onClick={onGoogle}
-                className="btn w-full justify-center border border-[#e5e7eb] bg-white py-3.5 text-[#163300] hover:bg-[#f6f6f4] disabled:opacity-60"
+                className="ad-btn block"
               >
                 <GoogleMark />
                 Continue with Google
               </button>
 
-              <div className="my-5 flex items-center gap-3">
-                <div className="h-px flex-1 bg-[#e5e7eb]" />
-                <span className="text-xs font-semibold uppercase tracking-wide text-[#9ca3af]">
-                  or email
-                </span>
-                <div className="h-px flex-1 bg-[#e5e7eb]" />
-              </div>
+              <div className="as-sep">or email</div>
 
-              <form onSubmit={onLogin} className="space-y-4">
-                <label className="block text-sm font-semibold text-[#163300]">
-                  Email
+              <form onSubmit={onLogin} style={{ display: "grid", gap: 14 }}>
+                <label className="ad-field">
+                  <span>Email</span>
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className={field}
+                    className="ad-input as-input"
                     placeholder="you@company.com"
                     autoComplete="email"
-                    style={{ color: "#163300", WebkitTextFillColor: "#163300" }}
                   />
                 </label>
 
-                <label className="block text-sm font-semibold text-[#163300]">
-                  <span className="flex items-center justify-between gap-2">
+                <label className="ad-field">
+                  <span style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
                     Password
                     <button
                       type="button"
@@ -217,29 +191,26 @@ export default function AdminLoginPage() {
                         setMode("forgot");
                         setError("");
                       }}
-                      className="text-xs font-bold text-[#163300] underline underline-offset-2"
+                      className="ad-link"
+                      style={{ minHeight: 0, fontSize: 13.5 }}
                     >
                       Forgot password?
                     </button>
                   </span>
-                  <span className="relative mt-1.5 block">
+                  <span className="as-pass">
                     <input
                       type={showPass ? "text" : "password"}
                       required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className={field + " pr-12"}
+                      className="ad-input as-input"
+                      style={{ paddingRight: 70 }}
                       placeholder="••••••••"
                       autoComplete="current-password"
-                      style={{
-                        color: "#163300",
-                        WebkitTextFillColor: "#163300",
-                      }}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPass((v) => !v)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-[#6b7280] hover:text-[#163300]"
                       aria-label={showPass ? "Hide password" : "Show password"}
                     >
                       {showPass ? "Hide" : "Show"}
@@ -248,58 +219,29 @@ export default function AdminLoginPage() {
                 </label>
 
                 {gateMessage && (
-                  <p
-                    role="alert"
-                    className="rounded-xl bg-red-50 px-3 py-2.5 text-sm font-medium text-red-800"
-                  >
+                  <p role="alert" className="ad-banner err" style={{ margin: 0 }}>
                     {gateMessage}
                   </p>
                 )}
 
-                <button
-                  type="submit"
-                  disabled={busy}
-                  className="btn w-full justify-center bg-[#9fe870] py-3.5 text-[#163300] hover:bg-[#86d957] disabled:opacity-60"
-                >
+                <button type="submit" disabled={busy} className="ad-btn lime block">
                   {busy ? "Signing in…" : "Sign in"}
-                  <Icon name="arrowRight" className="h-4 w-4" />
                 </button>
               </form>
-            </>
+            </div>
           )}
         </div>
 
-        <div className="mt-5 rounded-2xl border border-[#e5e7eb] bg-white/80 px-4 py-3">
-          <p className="flex items-start gap-2 text-xs leading-relaxed text-[#4b5563]">
-            <Icon name="lock" className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#163300]" />
-            Protected with Firebase Auth. Only staff accounts can open leads.
-            Never share your password.
-          </p>
-        </div>
+        <p className="as-foot">
+          <Ico icon={ShieldIcon} size={16} />
+          Protected with Firebase Auth and a code from your authenticator app. Only
+          staff accounts can open leads. Never share your password.
+        </p>
 
-        <Link
-          href="/"
-          className="mt-6 text-center text-sm font-semibold text-[#4b5563] hover:text-[#163300]"
-        >
-          ← Back to website
+        <Link href="/" className="ad-btn quiet" style={{ justifySelf: "center" }}>
+          Back to website
         </Link>
       </div>
-
-      {/* Autofill contrast fix (Chrome often paints white text) */}
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-        .admin-login-field:-webkit-autofill,
-        .admin-login-field:-webkit-autofill:hover,
-        .admin-login-field:-webkit-autofill:focus {
-          -webkit-text-fill-color: #163300 !important;
-          caret-color: #163300;
-          box-shadow: 0 0 0 1000px #f6f6f4 inset !important;
-          transition: background-color 9999s ease-in-out 0s;
-        }
-      `,
-        }}
-      />
     </div>
   );
 }

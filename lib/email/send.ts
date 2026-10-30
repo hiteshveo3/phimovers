@@ -1,5 +1,7 @@
 /** Send transactional email via Resend (preferred) or Zoho/SMTP. */
 
+import { EMAIL } from "../contact";
+
 export function isMailConfigured() {
   return Boolean(
     process.env.RESEND_API_KEY?.trim() ||
@@ -16,10 +18,25 @@ function fromAddress() {
   );
 }
 
+/** Where office copies go: OFFICE_EMAIL, then LEADS_NOTIFY_EMAIL, then the public site email. */
+export function officeEmail() {
+  return (
+    process.env.OFFICE_EMAIL?.trim() ||
+    process.env.LEADS_NOTIFY_EMAIL?.trim() ||
+    EMAIL
+  );
+}
+
+/**
+ * text: plain-text part (recommended; some clients and spam filters read it).
+ * replyTo: where a reply goes; customer emails reply to the office.
+ */
 export async function sendMail(input: {
   to: string;
   subject: string;
   html: string;
+  text?: string;
+  replyTo?: string;
 }) {
   const resendKey = process.env.RESEND_API_KEY?.trim();
   if (resendKey) {
@@ -34,6 +51,8 @@ export async function sendMail(input: {
         to: [input.to],
         subject: input.subject,
         html: input.html,
+        ...(input.text ? { text: input.text } : {}),
+        ...(input.replyTo ? { reply_to: input.replyTo } : {}),
       }),
     });
     if (!res.ok) {
@@ -72,5 +91,7 @@ export async function sendMail(input: {
     to: input.to,
     subject: input.subject,
     html: input.html,
+    ...(input.text ? { text: input.text } : {}),
+    ...(input.replyTo ? { replyTo: input.replyTo } : {}),
   });
 }

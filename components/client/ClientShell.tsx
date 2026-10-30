@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Icon } from "@/components/icons";
+import NotificationBell from "./NotificationBell";
 import { useClientAuth } from "./ClientAuthProvider";
 
 const nav = [
   { href: "/client", label: "Home", icon: "dashboard", exact: true },
+  { href: "/client/bookings", label: "Bookings", icon: "calendar", exact: false },
   { href: "/client/quotes", label: "Quotes", icon: "mail", exact: false },
   { href: "/client/account", label: "Account", icon: "user", exact: false },
 ];
@@ -21,7 +23,7 @@ export default function ClientShell({
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
+  const pathname = usePathname() ?? "";
   const { profile, user, logout } = useClientAuth();
   const bare =
     pathname === "/client/login" || pathname === "/client/complete-profile";
@@ -31,7 +33,13 @@ export default function ClientShell({
   }
 
   const title =
-    pathname.startsWith("/client/quotes/")
+    pathname === "/client/bookings/new"
+      ? "Book a move"
+      : pathname.startsWith("/client/bookings/")
+        ? "Booking"
+        : pathname.startsWith("/client/bookings")
+          ? "My bookings"
+          : pathname.startsWith("/client/quotes/")
       ? "Quote"
       : pathname.startsWith("/client/quotes")
         ? "My quotes"
@@ -44,6 +52,8 @@ export default function ClientShell({
       <header className="sticky top-0 z-40 border-b border-line bg-surface/95 backdrop-blur-sm lg:hidden">
         <div className="flex h-14 items-center justify-between gap-3 px-4">
           <p className="truncate text-base font-extrabold">{title}</p>
+          <span className="flex items-center gap-2">
+          <NotificationBell />
           <Link href="/" aria-label="Website">
             <img
               src="/logo.png"
@@ -51,6 +61,7 @@ export default function ClientShell({
               className="no-grayscale h-8 w-8 rounded-lg object-cover"
             />
           </Link>
+          </span>
         </div>
       </header>
 
@@ -68,6 +79,9 @@ export default function ClientShell({
                 {profile?.name || user?.email}
               </p>
             </div>
+          </div>
+          <div className="border-b border-line px-5 py-3">
+            <NotificationBell align="left" />
           </div>
           <nav className="flex-1 space-y-1 p-3">
             {nav.map((item) => {
@@ -91,11 +105,11 @@ export default function ClientShell({
           </nav>
           <div className="space-y-2 border-t border-line p-4">
             <Link
-              href="/#quote"
+              href="/book"
               className="flex items-center gap-2 text-sm font-medium text-muted hover:text-[#163300]"
             >
               <Icon name="plus" className="h-4 w-4" />
-              New quote
+              Book a move
             </Link>
             <button
               type="button"
@@ -114,7 +128,7 @@ export default function ClientShell({
       </div>
 
       <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-line bg-surface lg:hidden">
-        <div className="mx-auto grid h-16 max-w-lg grid-cols-3">
+        <div className="mx-auto grid h-16 max-w-lg grid-cols-4">
           {nav.map((item) => {
             const on = active(pathname, item.href, item.exact);
             return (

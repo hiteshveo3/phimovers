@@ -2,12 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Icon } from "@/components/icons";
+import { Warning2 as AlertIcon } from "iconsax-reactjs";
+import { Ico } from "@/kit/components/Ico";
+import { useAdminAuth } from "./AdminAuthProvider";
 import { useLeads } from "./LeadsProvider";
 
 export default function ConnectionBanner() {
   const pathname = usePathname();
   const { error } = useLeads();
+  const { demo } = useAdminAuth();
   const [offline, setOffline] = useState(false);
 
   useEffect(() => {
@@ -22,16 +25,27 @@ export default function ConnectionBanner() {
   }, []);
 
   if (pathname === "/admin/login") return null;
-  if (!offline && !error) return null;
 
   return (
-    <div className="mb-4 flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-sm text-amber-950">
-      <Icon name="alert" className="mt-0.5 h-4 w-4 shrink-0" />
-      <p>
-        {offline
-          ? "You’re offline — showing last loaded leads. Changes may fail until you’re back."
-          : error}
-      </p>
+    <div style={{ display: "grid", gap: 10, marginBottom: offline || error || demo ? 16 : 0 }}>
+      {demo && (
+        <div className="ad-banner info" role="status">
+          <Ico icon={AlertIcon} size={20} />
+          <p style={{ margin: 0 }}>
+            Demo mode: sample data held in this browser tab. Nothing is saved.
+          </p>
+        </div>
+      )}
+      {(offline || error) && (
+        <div className="ad-banner" role="alert">
+          <Ico icon={AlertIcon} size={20} />
+          <p style={{ margin: 0 }}>
+            {offline
+              ? "You are offline, so these are the last loaded leads. Changes may fail until you are back."
+              : error}
+          </p>
+        </div>
+      )}
     </div>
   );
 }
