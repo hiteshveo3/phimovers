@@ -18,14 +18,25 @@ import { ServiceTiles } from '../../../kit/components/AreaBits';
 
 const SITE = SITE_URL;
 
+// The two busiest services are built with the site; every other area x service page is built on its first visit
+// and kept for a day (ISR). This keeps the Vercel build short. Unknown combinations are a 404.
+const PREBUILT_SERVICES = ['house-removals', 'man-and-van'];
+const comboKey = (borough: string, service: string) => `${borough}/${service}`;
+const VALID = new Set(allAreaServiceParams().map((p) => comboKey(p.borough, p.service)));
+
 export const getStaticPaths: GetStaticPaths = async () => ({
-  paths: allAreaServiceParams().map((p) => ({ params: { borough: p.borough, service: p.service } })),
-  fallback: false,
+  paths: allAreaServiceParams()
+    .filter((p) => PREBUILT_SERVICES.includes(p.service))
+    .map((p) => ({ params: { borough: p.borough, service: p.service } })),
+  fallback: 'blocking',
 });
 
-export const getStaticProps: GetStaticProps<{ borough: string; service: string }> = async ({ params }) => ({
-  props: { borough: String(params?.borough), service: String(params?.service) },
-});
+export const getStaticProps: GetStaticProps<{ borough: string; service: string }> = async ({ params }) => {
+  const borough = String(params?.borough);
+  const service = String(params?.service);
+  if (!VALID.has(comboKey(borough, service))) return { notFound: true, revalidate: 86400 };
+  return { props: { borough, service }, revalidate: 86400 };
+};
 
 const WHY: [string, (a: string) => string][] = [
   ['Fixed, transparent prices', () => 'The quote you agree for your addresses is the price you pay — no hidden fees on the day.'],

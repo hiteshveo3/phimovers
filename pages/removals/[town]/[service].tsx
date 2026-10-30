@@ -8,14 +8,19 @@ import { PHONE_E164, SITE_URL } from '../../../lib/contact';
 import { Breadcrumbs, CtaBand, DcPage, FaqSplit, HeroBadge, HeroButtons, SideCard, TrustChips, band, card, faqSchema, h1Style, h2Style, leadStyle, monoLabel } from '../../../kit/components/DcPage';
 import { TickList } from '../../../kit/components/Blocks';
 
+// Built on the first visit and kept for a day (ISR) instead of at build time, which keeps the Vercel build short.
+// A town only has the services listed in lib/towns.ts; anything else is a 404.
 export const getStaticPaths: GetStaticPaths = async () => ({
-  paths: towns.flatMap((t) => t.services.map((service) => ({ params: { town: t.slug, service } }))),
-  fallback: false,
+  paths: [],
+  fallback: 'blocking',
 });
 
-export const getStaticProps: GetStaticProps<{ town: string; service: string }> = async ({ params }) => ({
-  props: { town: String(params?.town), service: String(params?.service) },
-});
+export const getStaticProps: GetStaticProps<{ town: string; service: string }> = async ({ params }) => {
+  const town = String(params?.town);
+  const service = String(params?.service);
+  if (!getTown(town)?.services.includes(service as Town['services'][number])) return { notFound: true, revalidate: 86400 };
+  return { props: { town, service }, revalidate: 86400 };
+};
 
 type Faq = { q: string; a: string };
 type Section = { h2: string; paras: string[] };

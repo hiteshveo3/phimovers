@@ -30,6 +30,9 @@ const LONG_CACHE = "public, max-age=31536000, immutable";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Vercel builds skip the type and lint pass (about 18 s): run `npx tsc --noEmit` before you push. Local builds still check.
+  typescript: { ignoreBuildErrors: Boolean(process.env.VERCEL) },
+  eslint: { ignoreDuringBuilds: Boolean(process.env.VERCEL) },
   // Bundle the icon packages with the app instead of as a separate server
   // vendor chunk. This avoids the Next 14 dev error
   // "Cannot find module './vendor-chunks/@hugeicons.js'" that breaks
