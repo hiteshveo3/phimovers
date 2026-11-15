@@ -2,7 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { Breadcrumbs, CtaBand, FaqSplit, HeroBadge, HeroButtons, LIME, LINE, MUTED, Photo, TEL, TrustLine, band, card, chipStyle, h1Style, h2Style, h3Style, icon, insuredChip } from './DcPage';
 import { TickList } from './Blocks';
 import { useHomeMotion } from './HomeMotion';
-import QuoteForm from './QuoteForm';
+import { WhatsAppButton } from './WhatsApp';
 import { CostTable, SERVICE_PRICE_CSS, ServicePriceCard, TypicalJob, priceMode } from './ServicePrice';
 import { FREE_MILES, HELPER_RATE, INSURED_TEXT, MIN_HOURS, PER_MILE, PHONE_DISPLAY, RATES, RESPONSE_PROMISE } from '../site-facts';
 import { bookHref } from '../estimate';
@@ -118,7 +118,7 @@ function SectionNav({ links, book }: { links: { id: string; label: string }[]; b
             <li key={l.id}><a href={`#${l.id}`} aria-current={active === l.id ? 'true' : undefined}>{l.label}</a></li>
           ))}
         </ul>
-        <a href={book} className="sv-nav-book">Book online</a>
+        <a href={book} target="_blank" rel="noopener noreferrer" className="sv-nav-book">Book now</a>
       </div>
     </nav>
   );
@@ -338,10 +338,10 @@ export default function ServiceDetail({ item, categoryTitle, copy, related, area
 
         <aside className="dc-aside">
           <div style={card()}>
-            <p style={h3Style(18, '0 0 10px')}>Book or get a fixed quote</p>
+            <p style={h3Style(18, '0 0 10px')}>Get a fixed quote</p>
             <p style={{ margin: '0 0 14px', fontSize: 14.5, lineHeight: 1.55, color: MUTED }}>{RESPONSE_PROMISE}. No obligation.</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'flex-start' }}>
-              <a href={book} className="dc-btn dc-btn-lime dc-btn-mark" style={{ fontSize: 15, padding: '13px 20px' }}>Book online</a>
+              <a href={book} target="_blank" rel="noopener noreferrer" className="dc-btn dc-btn-lime dc-btn-mark" style={{ fontSize: 15, padding: '13px 20px' }}>Get a quote on WhatsApp</a>
               <a href={TEL} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontWeight: 600, fontSize: 14.5, textDecoration: 'underline', textUnderlineOffset: 3 }}>{icon(CallIcon, 16)} {PHONE_DISPLAY}</a>
             </div>
           </div>
@@ -416,9 +416,9 @@ export default function ServiceDetail({ item, categoryTitle, copy, related, area
 
       <section id="quote" className="sv-anchor" style={{ ...band(true, 'clamp(30px,4vw,56px) 5vw'), borderBottom: 0 }}>
         <h2 className="dc-text" style={h2Style('0 0 8px')}>Get a fixed quote</h2>
-        <p className="dc-text" style={{ margin: '0 0 24px', fontSize: 16, color: 'rgba(15,26,9,.62)', maxWidth: '60ch' }}>Call us or send a quote request — we usually reply within about one working hour. No obligation.</p>
+        <p className="dc-text" style={{ margin: '0 0 24px', fontSize: 16, color: 'rgba(15,26,9,.62)', maxWidth: '60ch' }}>Call us or message us on WhatsApp — we usually reply within about one working hour. No obligation.</p>
         <div style={{ maxWidth: 840 }}>
-          <QuoteForm serviceTitle={item.title} />
+          <WhatsAppButton label="Book now" text={`Hi Phi Movers, I need a quote for ${item.title}.`} className="dc-btn dc-btn-lime dc-btn-wa" style={{ fontSize: 16, padding: '15px 24px' }} />
         </div>
       </section>
 

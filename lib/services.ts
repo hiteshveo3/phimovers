@@ -1206,7 +1206,7 @@ const copy: Record<string, Partial<ServiceCopy>> = {
     included: [
       "Pre-job assessment from your photos and measurements (or a survey visit)",
       "Written plan and risk assessment for the lift",
-      "Rated ropes, slings and lifting gear, checked before every job",
+      "Rated lifting equipment, checked before every job",
       "Protective wrapping for the item, window frame and walls",
       "Exclusion zone and a banksman at street level during the lift",
       "Hand-guiding the item in through the window, balcony or door and placing it in the room",
@@ -1229,8 +1229,8 @@ const copy: Record<string, Partial<ServiceCopy>> = {
         body: "We check where the van can park, whether the pavement below needs coning off, and whether a parking bay suspension is needed. If you rent or live in a managed block, we’ll ask you to get the landlord’s or managing agent’s permission for the lift and, if needed, for a window to be opened or a sash removed.",
       },
       {
-        title: "Set-up and rigging",
-        body: "On the day the crew protects the item, the window frame and the walls, sets an exclusion zone at street level and rigs the lifting gear from a secure anchor point. Every rope, sling and fitting is checked before any weight goes on it.",
+        title: "Set-up",
+        body: "On the day the crew protects the item, the window frame and the walls, sets an exclusion zone at street level and sets up the lifting equipment from a secure anchor point. Everything is checked before any weight goes on it.",
       },
       {
         title: "The lift",
@@ -1238,7 +1238,7 @@ const copy: Record<string, Partial<ServiceCopy>> = {
       },
       {
         title: "Placement and tidy-up",
-        body: "We unwrap the item, place it in the room you want and refit legs or reassemble any sections we removed. The rigging comes down, the window is closed and secured, and we only leave once you’re happy.",
+        body: "We unwrap the item, place it in the room you want and refit legs or reassemble any sections we removed. The equipment comes down, the window is closed and secured, and we only leave once you’re happy.",
       },
     ],
     affects: [

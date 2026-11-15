@@ -270,7 +270,7 @@ export default function QuoteForm({ serviceTitle = 'House Removals' }: { service
             <button type="button" className="dc-btn dc-btn-white" style={{ fontSize: 16, padding: '14px 24px' }} onClick={() => setStep(1)}>Back</button>
             <button type="submit" disabled={busy} className="dc-btn dc-btn-lime" style={{ fontSize: 16, padding: '14px 24px' }}>{busy ? 'Sending…' : 'Send quote request'}</button>
           </div>
-          <p className="qf-next">Or call <a href={PHONE_TEL}>{PHONE_DISPLAY}</a>. Your details stay private and there is no card required to enquire. Ready to pick a date? <a href="/book">Book online</a>.</p>
+          <p className="qf-next">Or call <a href={PHONE_TEL}>{PHONE_DISPLAY}</a>. Your details stay private and there is no card required to enquire.</p>
         </form>
       )}
     </div>

@@ -147,7 +147,7 @@ export const posts: BlogPost[] = [
     slug: "how-to-hoist-a-sofa-through-a-window-or-balcony",
     title: "How to hoist a sofa through a window or over a balcony",
     excerpt:
-      "When a furniture hoist is the answer, the measurements and permissions you need, and why DIY rope lifts are a bad idea.",
+      "When a furniture hoist is the answer, the measurements and permissions you need, and why a planned, professional lift matters.",
     category: "Sofa & furniture",
     readMins: 7,
     date: "2026-10-09",

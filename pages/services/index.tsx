@@ -200,7 +200,7 @@ export default function Services() {
               <Head id="all-services" eyebrow="Full list" title={`All ${TOTAL} services`} />
             </div>
             {groups.length === 0 && (
-              <p className="pk-card sv-empty">Nothing matches “{q}”. Describe the job when you <a href={BOOK}>book online</a> and we will tell you which van and crew it needs.</p>
+              <p className="pk-card sv-empty">Nothing matches “{q}”. Describe the job <a href={BOOK} target="_blank" rel="noopener noreferrer">on WhatsApp</a> and we will tell you which van and crew it needs.</p>
             )}
             {groups.map((g, gi) => (
               <div key={g.id} id={g.id} className="sv-group" style={gi === 0 ? { paddingTop: 0 } : undefined}>
@@ -230,7 +230,7 @@ export default function Services() {
             <div className="pk-band sv-unsure">
               <div>
                 <h2 id="unsure-h" className="pk-h2 mo-head"><Words text="Not sure which one you need?" /></h2>
-                <p>Pick a van, helpers and hours in the calculator to see a price, then book it or ask us which fits.</p>
+                <p>Pick a van, helpers and hours in the calculator to see a price, then message us on WhatsApp or ask which fits.</p>
               </div>
               <a href="/pricing#calculator" className="pk-btn mo-btn">{kitIcon(CalculatorIcon, 18)} Open the calculator <CtaMark /></a>
             </div>

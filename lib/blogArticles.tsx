@@ -2525,7 +2525,7 @@ const articles: Record<string, Article> = {
       { id: "measure", label: "Measurements to take first" },
       { id: "checks", label: "Window and balcony checks" },
       { id: "permission", label: "Permissions: landlord and building" },
-      { id: "diy", label: "Why DIY rope lifts are risky" },
+      { id: "diy", label: "Why DIY lifts are risky" },
       { id: "job", label: "What a professional hoist job involves" },
       { id: "faqs", label: "FAQs" },
     ],
@@ -2587,7 +2587,7 @@ const articles: Record<string, Article> = {
             ["Diagonal depth", "From the top of the back to the front edge of the seat", "Often lets a sofa tilt through a smaller opening"],
             ["Window or door opening", "Clear width and height once fully open, not the frame", "Sashes, mullions and stays reduce the usable space"],
             ["Balcony railing height", "From the balcony floor to the top rail", "The sofa has to be lifted clear of it"],
-            ["Height from the ground", "Pavement or garden to the opening", "Decides the equipment and rigging needed"],
+            ["Height from the ground", "Pavement or garden to the opening", "Decides the equipment needed"],
             ["Ground space below", "Clear area beneath the opening", "Somewhere safe to stage the lift and keep people away"],
           ]}
         />
@@ -2647,17 +2647,17 @@ const articles: Record<string, Article> = {
           particularly on removing original windows. If in doubt, ask your
           building manager before booking anything.
         </P>
-        <H2 id="diy">Why DIY rope lifts are risky</H2>
+        <H2 id="diy">Why DIY lifts are risky</H2>
         <P>
-          It’s tempting to borrow some rope, gather three friends and haul the
-          sofa up over the balcony. Please don’t. A three-seater sofa is heavy,
+          It’s tempting to gather a few friends and lift the sofa up over the
+          balcony yourselves. Please don’t. A three-seater sofa is heavy,
           awkward and unbalanced, and once it’s off the ground there’s very
           little anyone can do if it slips.
         </P>
         <Check
           items={[
-            "Ordinary rope and knots aren’t rated for lifting and can fail or slip without warning.",
-            "Hauling by hand puts people at the top close to an open edge, leaning out at height.",
+            "Household equipment isn’t rated for lifting and can fail or slip without warning.",
+            "Lifting by hand puts people at the top close to an open edge, leaning out at height.",
             "Railings, sills and frames aren’t designed to carry a load being dragged over them.",
             "A swinging sofa can hit windows, people below or the building.",
             "Home and contents insurance may not cover damage caused this way — check before you take the risk.",
@@ -2680,7 +2680,7 @@ const articles: Record<string, Article> = {
             "Assessment: measurements and photos, then a site visit if needed to confirm the opening, anchor points and ground space.",
             "Quote and paperwork: a custom price, plus a risk assessment and method statement for your building if management asks for one.",
             "Preparation: windows removed if needed, the sofa wrapped and padded, and the lift zone below cordoned off.",
-            "Rigging: suitable lifting equipment set up by trained staff, with the load secured and guided.",
+            "Set-up: suitable lifting equipment put in place by trained staff, with the load protected and guided.",
             "The lift: the sofa raised steadily with someone controlling it from below and receiving it above.",
             "Finish: the sofa carried to its room, the window refitted if it was removed, and the area left clear.",
           ]}
@@ -2855,7 +2855,7 @@ const articles: Record<string, Article> = {
           dismantled, lifting it through a window or over a balcony may be the
           answer. Hoisting needs a clear opening, safe ground space below,
           permission from the building and properly rated lifting equipment —
-          it isn’t something to attempt with a rope and some friends.
+          it isn’t something to attempt yourself with a few friends.
         </P>
         <P>
           Our{" "}

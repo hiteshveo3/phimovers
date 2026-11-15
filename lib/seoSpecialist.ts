@@ -55,7 +55,7 @@ export const specialistSeo: Record<string, ServiceSeo> = {
         label: "Safety",
         h2: "How we hoist furniture over a balcony or through a window safely",
         paras: [
-          "Every hoist is planned and risk-assessed before the day. We decide where the lifting gear will be anchored, how the item will be wrapped and attached, and how many crew the lift needs. All ropes, slings and fittings are rated for lifting and checked before each job.",
+          "Every hoist is planned and risk-assessed before the day. We decide where the lifting gear will be anchored, how the item will be wrapped and protected, and how many crew the lift needs. All lifting equipment is rated and checked before each job.",
           "On the day a banksman keeps an exclusion zone clear on the pavement below while the item comes up steadily and is guided in by hand. Window frames, balcony railings and walls are padded so nothing is scraped on the way through. If weather or access on the day makes the lift unsafe, we stop and rearrange — we don’t take chances with your sofa or the people below.",
         ],
       },

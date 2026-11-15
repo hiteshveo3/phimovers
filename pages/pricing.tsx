@@ -280,7 +280,7 @@ function JobPicker() {
           </dl>
         )}
         <div>
-          <a href={bookHref({ ...crew, hours: s.quoted ? undefined : hours })} className="pp-btn mo-btn">{s.quoted ? 'Ask for a quote' : 'Book online'} <CtaMark /></a>
+          <a href={bookHref({ ...crew, hours: s.quoted ? undefined : hours })} target="_blank" rel="noopener noreferrer" className="pp-btn mo-btn">{s.quoted ? 'Ask for a quote' : 'Get this quote'} <CtaMark /></a>
         </div>
       </div>
     </div>

@@ -84,7 +84,7 @@ export default function Trust() {
         </section>
       </div>
 
-      <CtaBand title="Happy with what you found?" text="Book online or ask us anything first." book={BOOK} />
+      <CtaBand title="Happy with what you found?" text="Message us on WhatsApp or ask us anything first." book={BOOK} />
     </DcPage>
   );
 }

@@ -82,7 +82,7 @@ export function ServicePriceCard({ item, area }: { item: PricedItem; area?: stri
             <small>{/^from\s/i.test(item.price) ? `Jobs start from ${fromPrice(item.price)}. ` : ''}A fixed price agreed before the day.</small>
           </div>
         </div>
-        <a href={bookHref({ service: item.slug })} className="spc-btn mo-btn" style={{ justifySelf: 'start' }}>Ask for a price <CtaMark /></a>
+        <a href={bookHref({ service: item.slug })} target="_blank" rel="noopener noreferrer" className="spc-btn mo-btn" style={{ justifySelf: 'start' }}>Ask for a price <CtaMark /></a>
       </div>
     );
   }
@@ -105,7 +105,7 @@ export function ServicePriceCard({ item, area }: { item: PricedItem; area?: stri
           <strong aria-live="polite">{gbp(q.total)}</strong>
           <small>{q.rate.short}{crew.helpers ? ` + ${crew.helpers} helper${crew.helpers > 1 ? 's' : ''}` : ', driver only'} · {hours} h</small>
         </div>
-        <a href={bookHref({ service: item.slug, van, hours, helpers: crew.helpers })} className="spc-btn mo-btn">Book <CtaMark /></a>
+        <a href={bookHref({ service: item.slug, van, hours, helpers: crew.helpers })} target="_blank" rel="noopener noreferrer" className="spc-btn mo-btn">Get this quote <CtaMark /></a>
       </div>
       <p className="spc-note">{MIN_HOURS}-hour minimum, then 30-minute steps. First {FREE_MILES} miles included.</p>
     </div>
