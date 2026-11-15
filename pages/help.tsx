@@ -36,7 +36,6 @@ const DOCS: [string, string, string][] = [
   ['Complaints', 'How to raise a problem and what happens next', '/complaints'],
   ['Terms and conditions', 'Bookings, liability and cancellations in full', '/terms'],
   ['Privacy policy', 'What we keep and why', '/privacy'],
-  ['My bookings', 'See your quotes and bookings', '/my-bookings'],
 ];
 
 const faqs = allFaqs();

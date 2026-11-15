@@ -10,22 +10,26 @@ import { PHONE_DISPLAY, WHATSAPP_TEXT, whatsappLink } from '../site-facts';
 
 export const WA_GREEN = '#25d366';
 
-// The WhatsApp logo glyph (Simple Icons, CC0). Green by default; pass a colour to change it.
-const WA_PATH = 'M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z';
+// The WhatsApp Business glyph (Hugeicons "whatsapp-business", outline). Inline SVG, so it adds no package weight.
+// Green by default; pass a colour (or "currentColor") to change it.
+const WA_PATHS = [
+  "M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 13.3789 2.27907 14.6926 2.78382 15.8877C3.06278 16.5481 3.20226 16.8784 3.21953 17.128C3.2368 17.3776 3.16334 17.6521 3.01642 18.2012L2 22L5.79877 20.9836C6.34788 20.8367 6.62244 20.7632 6.87202 20.7805C7.12161 20.7977 7.45185 20.9372 8.11235 21.2162C9.30745 21.7209 10.6211 22 12 22Z",
+  "M12.8824 12C14.0519 12 15 13.0074 15 14.25C15 15.4926 14.0519 16.5 12.8824 16.5H10.4118C9.74625 16.5 9.4135 16.5 9.20675 16.2972C9 16.0945 9 15.7681 9 15.1154V12M12.8824 12C14.0519 12 15 10.9926 15 9.75C15 8.50736 14.0519 7.5 12.8824 7.5H10.4118C9.74625 7.5 9.4135 7.5 9.20675 7.70277C9 7.90554 9 8.2319 9 8.88462V12M12.8824 12H9",
+];
 
 export function WaIcon({ size = 18, style, color = WA_GREEN }: { size?: number; style?: CSSProperties; color?: string }) {
   return (
-    <svg viewBox="0 0 24 24" width={size} height={size} fill={color} aria-hidden="true" focusable="false" style={{ flex: 'none', ...style }}>
-      <path d={WA_PATH} />
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false" style={{ flex: "none", ...style }}>
+      {WA_PATHS.map((d) => <path key={d} d={d} />)}
     </svg>
   );
 }
 
-/** The secondary button next to Book online. `text` is the message typed in for the visitor. */
+/** A WhatsApp button. `text` is the message typed in for the visitor. */
 export function WhatsAppButton({ text = WHATSAPP_TEXT, label = 'WhatsApp us', style, className = 'dc-btn dc-btn-white dc-btn-wa' }: { text?: string; label?: string; style?: CSSProperties; className?: string }) {
   return (
     <a href={whatsappLink(text)} target="_blank" rel="noopener noreferrer" className={className} style={style} data-wa="">
-      <WaIcon size={20} /> {label}
+      <WaIcon size={20} color={className.includes("lime") ? "currentColor" : undefined} /> {label}
     </a>
   );
 }

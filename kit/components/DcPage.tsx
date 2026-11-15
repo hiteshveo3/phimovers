@@ -8,7 +8,7 @@ import CookieConsent from './CookieConsent';
 import SiteHeader from './SiteHeader';
 import AppNav from './AppNav';
 import AssistantLauncher from './assistant/AssistantLauncher';
-import { WA_CSS, WaIcon, WhatsAppButton, WhatsAppFloat } from './WhatsApp';
+import { WA_CSS, WaIcon } from './WhatsApp';
 import { BLOCKS_CSS } from './blocks-css';
 import { MOTION_CSS } from './HomeMotion';
 import { PRICE_EXPLORER_CSS } from './PriceExplorer';
@@ -322,10 +322,10 @@ export function HeroBadge({ ico, children }: { ico: IconType; children: ReactNod
   );
 }
 
-// The public booking page. Service pages pass their own /book?service= link.
-export const BOOK = '/book';
+// Online booking is hidden for now: "BOOK" is a plain WhatsApp chat link. Service pages pass their own (kit/estimate bookHref).
+export const BOOK = WHATSAPP_URL;
 
-// One primary action everywhere: Get a quote. WhatsApp is the second button; calling is a plain text link.
+// One primary action everywhere: a WhatsApp button. Calling is a plain text link.
 export function CallLink({ pre = '', style }: { pre?: string; style?: CSSProperties }) {
   return <a href={TEL} style={{ fontWeight: 600, color: 'inherit', textDecoration: 'underline', textUnderlineOffset: 3, whiteSpace: 'nowrap', ...style }}>{pre}{PHONE_DISPLAY}</a>;
 }
@@ -333,10 +333,9 @@ export function CallLink({ pre = '', style }: { pre?: string; style?: CSSPropert
 /** `book` lets a service page open the booking page on its own service. */
 export function HeroButtons({ book = BOOK }: { book?: string }) {
   return (
-    <>
-      <a href={book} data-hero-cta="" className="dc-btn dc-btn-lime dc-btn-mark" style={{ fontSize: 16.5, padding: '15px 24px' }}>Get a quote</a>
-      <WhatsAppButton style={{ fontSize: 16.5, padding: '15px 22px' }} />
-    </>
+    <a href={book} target="_blank" rel="noopener noreferrer" data-hero-cta="" data-wa="" className="dc-btn dc-btn-lime dc-btn-wa" style={{ fontSize: 16.5, padding: '15px 24px' }}>
+      <WaIcon size={20} color="currentColor" /> Get a quote on WhatsApp
+    </a>
   );
 }
 
@@ -382,8 +381,9 @@ export function CtaBand({ title, text, facts, book = BOOK }: { title: string; te
           <p className="dc-text" style={{ margin: 0, fontSize: 16, lineHeight: 1.6, color: 'rgba(15,26,9,.78)', maxWidth: '46ch' }}>{text}</p>
         </div>
         <div style={{ display: 'flex', gap: '12px 20px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center' }}>
-          <a href={book} className="dc-btn dc-btn-white dc-btn-mark" style={{ fontSize: 16, padding: '15px 24px', borderColor: 'transparent' }}>Get a quote</a>
-          <WhatsAppButton style={{ fontSize: 16, padding: '15px 22px', borderColor: 'transparent' }} />
+          <a href={book} target="_blank" rel="noopener noreferrer" data-wa="" className="dc-btn dc-btn-white dc-btn-wa" style={{ fontSize: 16, padding: '15px 24px', borderColor: 'transparent' }}>
+            <WaIcon size={20} /> Get a quote on WhatsApp
+          </a>
         </div>
       </div>
       {facts && facts.length > 0 && (
@@ -452,8 +452,9 @@ export function InlineCta({ title, text, lime = false, book = BOOK }: { title: s
         <p style={{ margin: 0, fontSize: 15, lineHeight: 1.5, color: lime ? 'rgba(15,26,9,.72)' : MUTED }}>{text}</p>
       </div>
       <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'center' }}>
-        <a href={book} className="dc-btn dc-btn-lime dc-btn-mark" style={{ fontSize: 15, padding: '13px 20px' }}>Get a quote</a>
-        <WhatsAppButton style={{ fontSize: 15, padding: '13px 18px' }} />
+        <a href={book} target="_blank" rel="noopener noreferrer" data-wa="" className="dc-btn dc-btn-lime dc-btn-wa" style={{ fontSize: 15, padding: '13px 20px' }}>
+          <WaIcon size={18} color="currentColor" /> Get a quote on WhatsApp
+        </a>
       </div>
     </div>
   );
@@ -465,8 +466,9 @@ export function SideCard({ title, text, book = BOOK }: { title: string; text: st
       <p style={{ ...h3Style(18, '0 0 10px') }}>{title}</p>
       <p style={{ margin: '0 0 14px', fontSize: 14.5, lineHeight: 1.55, color: MUTED }}>{text}</p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'flex-start' }}>
-        <a href={book} className="dc-btn dc-btn-lime dc-btn-mark" style={{ fontSize: 15, padding: '13px 20px' }}>Get a quote</a>
-        <WhatsAppButton style={{ fontSize: 15, padding: '13px 18px' }} />
+        <a href={book} target="_blank" rel="noopener noreferrer" data-wa="" className="dc-btn dc-btn-lime dc-btn-wa" style={{ fontSize: 15, padding: '13px 20px' }}>
+          <WaIcon size={18} color="currentColor" /> Get a quote on WhatsApp
+        </a>
       </div>
     </div>
   );
@@ -638,13 +640,10 @@ const FOOTER_COMPANY: [string, string][] = [
 ];
 
 const FOOTER_RESOURCES: [string, string][] = [
-  ['Book online', '/book'],
   ['Pricing', '/pricing'],
   ['Customer care', '/help'],
   ['Areas we cover', '/areas'],
   ['Moving guides', '/blog'],
-  ['My bookings', '/my-bookings'],
-  ['Track your quote', '/track'],
   ['Delete account', '/delete-account'],
   ['Site map', '/all-pages'],
 ];
@@ -871,7 +870,6 @@ export function DcPage({ title, description, path, crumbs, ogImage = '/logo.png'
         )}
       </div>
       {!focus && !app && <AppNav />}
-      {!focus && !app && <WhatsAppFloat />}
       {!focus && <AssistantLauncher />}
       <CookieConsent />
     </>

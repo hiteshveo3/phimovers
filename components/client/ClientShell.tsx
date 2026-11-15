@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Icon } from "@/components/icons";
+import { WaIcon } from "../../kit/components/WhatsApp";
+import { WHATSAPP_URL } from "../../kit/site-facts";
 import NotificationBell from "./NotificationBell";
 import { useClientAuth } from "./ClientAuthProvider";
 
@@ -104,13 +106,15 @@ export default function ClientShell({
             })}
           </nav>
           <div className="space-y-2 border-t border-line p-4">
-            <Link
-              href="/book"
+            <a
+              href={WHATSAPP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center gap-2 text-sm font-medium text-muted hover:text-[#163300]"
-            >
-              <Icon name="plus" className="h-4 w-4" />
-              Book a move
-            </Link>
+              >
+                <WaIcon size={16} />
+                WhatsApp us
+              </a>
             <button
               type="button"
               onClick={() => logout()}

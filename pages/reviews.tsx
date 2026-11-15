@@ -124,7 +124,7 @@ export default function Reviews() {
             <span style={{ fontFamily: DISPLAY, fontWeight: 500, fontSize: 34, lineHeight: 1, letterSpacing: '-.02em' }}>{ratingValue}<span style={{ fontSize: 16, color: NOTE }}> / 5</span></span>
             <span style={{ display: 'grid', gap: 2, fontSize: 13.5, color: NOTE }}><RatingStars rating={5} size={15} />{siteReviews.length} customer reviews</span>
           </span>
-          <a href={BOOK} className="dc-btn dc-btn-lime" style={{ fontSize: 15, padding: '12px 20px' }}>Book online</a>
+          <a href={BOOK} target="_blank" rel="noopener noreferrer" className="dc-btn dc-btn-lime" style={{ fontSize: 15, padding: '12px 20px' }}>Get a quote on WhatsApp</a>
         </div>
         <p className="rv-source">The score above is the average of the {siteReviews.length} customer reviews on this page.{sources.length > 0 ? ' Read more, or leave your own, on our public profiles.' : ''}</p>
         {sources.length > 0 && (

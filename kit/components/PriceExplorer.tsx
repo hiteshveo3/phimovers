@@ -203,7 +203,7 @@ export function PriceExplorer({ share = false, full = false, heading = 'Who do y
           <strong aria-live="polite"><span key={`${crew}-${hours}-${helpers}-${when}-${q.total}`} className="flip-in">{gbp(q.total)}</span></strong>
           <p>{q.hours}-hour move · {rate.short}{helpers > 0 ? ` + ${helpers} helper${helpers > 1 ? 's' : ''}` : ''}<small>That is {gbp(Math.round((q.total / q.hours) * 100) / 100)} an hour. A guide price, confirmed in your fixed quote.</small></p>
         </div>
-        <a href={book} className="pe-btn mo-btn">Book {hours} h <CtaMark /></a>
+        <a href={book} target="_blank" rel="noopener noreferrer" className="pe-btn mo-btn">Get this quote on WhatsApp <CtaMark /></a>
       </div>
       {full && (
         <dl className="pe-rows">

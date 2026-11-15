@@ -5,7 +5,7 @@
 // The size guide further down turns a home size into hours on the same rates. 4–5 bedroom homes have no
 // guide price, so they are quoted individually.
 
-import { DEPOSIT, FREE_MILES, HELPER_RATE, MIN_HOURS, PER_MILE, RATES, type Rate } from './site-facts';
+import { DEPOSIT, FREE_MILES, HELPER_RATE, MIN_HOURS, PER_MILE, RATES, whatsappLink, type Rate } from './site-facts';
 
 export type VanId = Rate['id'];
 
@@ -82,22 +82,15 @@ export function quotePrice(input: PriceInput): PriceQuote {
 /** Van + helpers for the hours given, no extras: the rate-card figure. */
 export const rateCardPrice = (van: VanId | string, hours: number, helpers = 0) => quotePrice({ van, hours, helpers }).total;
 
-/** Hand-off to the public booking page, carrying the calculator's choice. */
-/** Services the online booking flow can book. Every other service is quoted by the office, so its buttons open the quote form on /contact with the service filled in. */
-const BOOKABLE = new Set([
-  'house-removals', 'flat-removals', 'studio-moves', 'man-and-van', 'student-moves', 'office-removals',
-  'single-item-delivery', 'sofa-delivery', 'furniture-assembly', 'full-packing-service', 'secure-storage',
-]);
-
+/** Online booking is switched off for now: every "book" / "get a quote" button opens a WhatsApp chat with the choice typed in. */
 export function bookHref(o: { van?: string; hours?: number; helpers?: number; service?: string } = {}) {
-  if (o.service && !BOOKABLE.has(o.service)) return `/contact?service=${encodeURIComponent(o.service)}#quote`;
-  const q = new URLSearchParams();
-  if (o.van) q.set('van', o.van);
-  if (o.hours) q.set('hours', String(o.hours));
-  if (o.helpers) q.set('helpers', String(o.helpers));
-  if (o.service) q.set('service', o.service);
-  const s = q.toString();
-  return s ? `/book?${s}` : '/book';
+  const bits: string[] = [];
+  if (o.service) bits.push(o.service.replace(/-/g, ' '));
+  const van = RATES.find((r) => r.id === o.van);
+  if (van) bits.push(van.name.toLowerCase());
+  if (o.hours) bits.push(`${o.hours} hours`);
+  if (o.helpers) bits.push(`${o.helpers} helper${o.helpers === 1 ? '' : 's'}`);
+  return whatsappLink(bits.length ? `Hi Phi Movers, I need a quote: ${bits.join(', ')}.` : undefined);
 }
 
 export const gbp = (n: number) => `£${Number.isInteger(n) ? n : n.toFixed(2)}`;

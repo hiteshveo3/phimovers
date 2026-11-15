@@ -517,9 +517,9 @@ export default function Home() {
                   <li data-reveal="" style={{ '--i': 3 } as Vars}>
                     <div className="ih-card ih-step ih-step-survey">
                       <span className="ih-num icon-pop">{icon(ShieldTickIcon, 18)}</span>
-                      <h3>Book a free home survey and get a fixed-price quote from our expert movers</h3>
+                      <h3>Ask for a free home survey and get a fixed-price quote from our expert movers</h3>
                       <p>Free Survey &amp; Quote · No obligation · fixed-price quote</p>
-                      <a href={BOOK} className="ih-step-link">Book Free Survey {icon(ArrowRightIcon, 15)}</a>
+                      <a href={BOOK} target="_blank" rel="noopener noreferrer" className="ih-step-link">WhatsApp for a free survey {icon(ArrowRightIcon, 15)}</a>
                     </div>
                   </li>
                 </ol>
@@ -637,8 +637,7 @@ export default function Home() {
               <h2 id="cta-h" className="ih-h2 mo-head"><Words text="Ready to book your stress-free move?" /></h2>
               <p className="mo-lead">Start your free quote in under a minute — we usually reply within about one working hour. No obligation, no hidden fees.</p>
               <div className="ih-cta-row">
-                <a href={BOOK} className="ih-btn ih-btn-white mo-btn">Get my free quote <CtaMark /></a>
-                <WhatsAppButton style={{ fontSize: 16, padding: '13px 20px', borderColor: 'transparent' }} />
+                <a href={BOOK} target="_blank" rel="noopener noreferrer" className="ih-btn ih-btn-white mo-btn">Get my free quote on WhatsApp <CtaMark /></a>
                 <span>or call <CallLink />, {HOURS_TEXT}</span>
               </div>
             </div>

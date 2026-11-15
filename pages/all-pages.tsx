@@ -22,10 +22,9 @@ const AP_CSS = `
 `;
 
 const MAIN: [string, string][] = [
-  ['Home', '/'], ['Services', '/services'], ['Pricing and calculator', '/pricing'], ['Book online', '/book'], ['Areas we cover', '/areas'],
+  ['Home', '/'], ['Services', '/services'], ['Pricing and calculator', '/pricing'], ['Areas we cover', '/areas'],
   ['UK removals by town', '/removals'], ['Reviews', '/reviews'], ['Moving guides', '/blog'], ['About us', '/about'], ['Contact', '/contact'],
-  ['Help and FAQs', '/help'], ['Insurance', '/insurance'], ['Trust and verification', '/trust'], ['My bookings', '/my-bookings'], ['Track your quote', '/track'],
-];
+  ['Help and FAQs', '/help'], ['Insurance', '/insurance'], ['Trust and verification', '/trust'],];
 const LEGAL: [string, string][] = [
   ['Terms and conditions', '/terms'], ['Privacy policy', '/privacy'], ['Cookie policy', '/cookies'], ['Complaints', '/complaints'],
   ['Accessibility', '/accessibility'], ['Legal', '/legal'], ['Delete your account', '/delete-account'],

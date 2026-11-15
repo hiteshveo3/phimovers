@@ -54,6 +54,11 @@ const nextConfig = {
       { protocol: "https", hostname: "phimovers.co.uk" },
     ],
   },
+  // Online booking is hidden for now: the booking page sends visitors to Contact (WhatsApp, phone, quote form).
+  // Temporary (307) so it can be switched back on by deleting this block.
+  redirects: async () => [
+    { source: "/book", destination: "/contact", permanent: false },
+  ],
   headers: async () => [
     { source: "/brand/:path*", headers: [{ key: "Cache-Control", value: LONG_CACHE }] },
     { source: "/vendor/:path*", headers: [{ key: "Cache-Control", value: LONG_CACHE }] },

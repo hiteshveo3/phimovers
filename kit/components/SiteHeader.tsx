@@ -95,13 +95,11 @@ type SearchEntry = { title: string; href: string; kind: string; text?: string };
 // Every service in the catalogue, then the main pages. `text` is searched but not shown.
 const searchEntries: SearchEntry[] = [
   ...allServiceCards.map((c) => ({ title: c.title, href: c.href, kind: 'Service', text: c.text })),
-  { title: 'Book online', href: '/book', kind: 'Page', text: 'booking book quote get a price' },
   { title: 'Pricing', href: '/pricing', kind: 'Page', text: 'prices rates cost how much hourly' },
   { title: 'Price calculator', href: '/pricing#calculator', kind: 'Page', text: 'calculator estimate cost price my move hours van helpers' },
   { title: 'Help and FAQs', href: '/help', kind: 'Page', text: 'customer care questions faq deposit cancel cancellation claims' },
   { title: 'Insurance', href: '/insurance', kind: 'Page', text: 'insured cover goods in transit public liability damage' },
   { title: 'Trust and verification', href: '/trust', kind: 'Page', text: 'company number companies house verify legitimate' },
-  { title: 'My bookings', href: '/my-bookings', kind: 'Page', text: 'account sign in login my quotes track' },
   { title: 'All pages', href: '/all-pages', kind: 'Page', text: 'site map sitemap directory' },
   { title: 'All services', href: '/services', kind: 'Page' },
   { title: 'Areas we cover', href: '/areas', kind: 'Page', text: 'boroughs locations london' },
@@ -237,7 +235,7 @@ function SiteSearch() {
                 </div>
               )}
               {term.length >= 2 && results.length === 0 && (
-                <p className="qs-none">Nothing matches “{term}”. If it is in Greater London, we cover it. <a href="/book" onClick={close}>Get a price</a></p>
+                <p className="qs-none">Nothing matches “{term}”. If it is in Greater London, we cover it. <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" onClick={close}>Get a price on WhatsApp</a></p>
               )}
               {results.length > 0 && (
                 <ul id={`${id}-results`} role="listbox" aria-label="Matching pages" className="qs-list">
@@ -419,7 +417,7 @@ export default function SiteHeader() {
                     <p className={s.megaPromoTitle}>{m.promo.title}</p>
                     <p className={s.megaPromoText}>{m.promo.text}</p>
                   </div>
-                  <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className={s.megaCta}>Get a quote {icon(ArrowRight2Icon, 16)}</a>
+                  <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className={s.megaCta}>Book now {icon(ArrowRight2Icon, 16)}</a>
                 </div>
               )}
             </aside>
@@ -450,9 +448,8 @@ export default function SiteHeader() {
         <div className={s.actions}>
           <SiteSearch />
           <a href={PHONE_TEL} className={`${s.phoneLink} ${s.desktopOnly}`}>{icon(CallIcon, 18)} {PHONE_DISPLAY}</a>
-          <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className={s.iconBtnOutline} aria-label="WhatsApp us (opens WhatsApp)" title="WhatsApp us"><WaIcon size={21} /></a>
           <a href={PHONE_TEL} className={`${s.iconBtnOutline} ${s.phoneOnly}`} aria-label={`Call ${PHONE_DISPLAY}`} title="Call us">{icon(CallIcon, 20)}</a>
-          <a href="/book" className={s.btnLime} aria-current={current('/book')}>Book online</a>
+          <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className={s.btnLime} style={{ display: "inline-flex", alignItems: "center", gap: 8 }}><WaIcon size={18} color="currentColor" /> Book now</a>
         </div>
       </div>
     </header>

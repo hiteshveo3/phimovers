@@ -1,6 +1,6 @@
 import { ArrowRight as ArrowRightIcon, ExportSquare as ExportSquareIcon } from 'iconsax-reactjs';
 import { Breadcrumbs, DcPage, MapEmbed, band, bodySmall, h1Style, h2Style, icon, leadStyle } from '../kit/components/DcPage';
-import QuoteForm from '../kit/components/QuoteForm';
+import { WhatsAppButton } from '../kit/components/WhatsApp';
 import { ADDRESS, CALL_HREF, CALL_LABEL, EMAIL, EMAIL_HREF, SITE_URL } from '../lib/contact';
 
 // Three hairline rows (phone, email, address), the quote form (#quote) and a short "what to include" list.
@@ -68,7 +68,9 @@ export default function Contact() {
 
       <section id="quote" style={band(true)}>
         <div className="ct-quote">
-          <QuoteForm />
+          <h2 style={h2Style('0 0 10px', 'clamp(22px,2.6vw,30px)')}>Get a quote</h2>
+          <p style={{ ...bodySmall, margin: '0 0 18px' }}>Message us on WhatsApp with your postcodes and what is moving. We usually reply within about one working hour.</p>
+          <WhatsAppButton label="Book now" className="dc-btn dc-btn-lime dc-btn-wa" style={{ fontSize: 16, padding: '15px 24px' }} />
         </div>
       </section>
 

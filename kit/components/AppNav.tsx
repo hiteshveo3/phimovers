@@ -19,8 +19,8 @@ const TABS: Tab[] = [
   { href: '/', label: 'Home', icon: Home2Icon, on: (p) => p === '/' },
   { href: '/services', label: 'Services', icon: CategoryIcon, on: (p) => p.startsWith('/services') },
   { href: '/pricing', label: 'Pricing', icon: TagIcon, on: (p) => p === '/pricing' },
-  // The primary action gets its own tab: one tap to the booking page from anywhere. The client portal lives in the menu sheet.
-  { href: '/book', label: 'Book', icon: ClockIcon, on: (p) => p.startsWith('/book') },
+  // The primary action gets its own tab: one tap to a WhatsApp chat from anywhere (online booking is hidden for now).
+  { href: WHATSAPP_URL, label: 'Quote', icon: ClockIcon, on: () => false },
 ];
 
 // Eight tiles: the sections people look for most, then their own quotes and tracking. Ask Phi has its own floating button on phones.
@@ -31,8 +31,6 @@ const TILES: { href: string; label: string; icon: IconType }[] = [
   { href: '/reviews', label: 'Reviews', icon: Star1Icon },
   { href: '/blog', label: 'Blog', icon: Book1Icon },
   { href: '/contact', label: 'Contact', icon: SmsIcon },
-  { href: '/my-bookings', label: 'My quotes', icon: ProfileIcon },
-  { href: '/track', label: 'Track', icon: TrackIcon },
 ];
 
 const TYPING = 'input:not([type=checkbox]):not([type=radio]):not([type=button]):not([type=submit]):not([type=range]),textarea,[contenteditable=true]';
@@ -172,7 +170,7 @@ export default function AppNav() {
             <li className="tb-rule" aria-hidden="true" data-on={active >= 0 ? '' : undefined} style={{ ['--at' as string]: Math.max(active, 0), ['--n' as string]: TABS.length + 1 }}><span /></li>
             {TABS.map((t, i) => (
               <li key={t.href}>
-                <a href={t.href} className="tb-tab" aria-current={active === i ? 'page' : undefined}>
+                <a href={t.href} className="tb-tab" aria-current={active === i ? 'page' : undefined} {...(t.href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
                   <Ico icon={t.icon} size={22} variant={active === i ? 'Bold' : 'Linear'} />
                   <span>{t.label}</span>
                 </a>
@@ -221,8 +219,7 @@ export default function AppNav() {
             </ul>
           </div>
           <div className="tb-foot">
-            <a href="/book" className="tb-book">Book online</a>
-            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="tb-book tb-wa"><WaIcon size={20} /> WhatsApp us</a>
+            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="tb-book tb-wa"><WaIcon size={20} /> Get a quote on WhatsApp</a>
             <a href={PHONE_TEL} className="tb-call">Or call {PHONE_DISPLAY}</a>
           </div>
         </div>
